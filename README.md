@@ -1,4 +1,4 @@
-![Eclipse Leda](docs/eclipse-leda.png)
+![Eclipse Leda](https://eclipse-leda.github.io/leda/assets/eclipse-leda.png)
 
 # Eclipse Leda
 
