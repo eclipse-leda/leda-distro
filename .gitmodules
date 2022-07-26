@@ -36,7 +36,7 @@
 [submodule "meta-rauc-community"]
 	path = meta-rauc-community
 	url = https://github.com/rauc/meta-rauc-community
-[submodule "sdv-edge-core-utils"]
-	path = sdv-edge-core-utils
-	url = https://github.com/SoftwareDefinedVehicle/sdv-edge-core-utils
+[submodule "leda-utils"]
+	path = leda-utils
+	url = https://github.com/eclipse-leda/leda-utils
 	branch = main
