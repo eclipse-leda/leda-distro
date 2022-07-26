@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "../.."
+		},
+		{
+			"path": "../../../leda-utils"
+		}
+	],
+	"settings": {
+		"git.ignoreLimitWarning": true,
+		"search.followSymlinks": false,
+		"search.maxResults": 2000
+	}
+}
