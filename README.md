@@ -13,26 +13,23 @@ Eclipse Leda provides a Poky-based reference build pipeline and an OpenEmbedded 
 
 # Usage
 
-1. Download [latest Eclipse Leda release](docs/general-usage/download-releases.md)
+1. Download [latest Eclipse Leda release](https://eclipse-leda.github.io/leda/docs/general-usage/download-releases/)
+   or [build from sources](https://eclipse-leda.github.io/leda/docs/build/)
 2. Run Eclipse Leda
-   - on [emulated Qemu devices](docs/qemu/readme.md) or
-   - on [Raspberry Pi 4](docs/raspberry-pi/readme.md)
-3. Configure device, e.g. [provision the device](docs/device-provisioning/readme.md)
-4. Explore the [device tools](docs/misc/tools.md)
+   - on [emulated Qemu devices](https://eclipse-leda.github.io/leda/docs/general-usage/running-qemu/) or
+   - on [Raspberry Pi 4](https://eclipse-leda.github.io/leda/docs/general-usage/raspberry-pi/)
+3. Configure device, e.g. [provision the device](https://eclipse-leda.github.io/leda/docs/device-provisioning/)
+4. Explore the [device tools](https://eclipse-leda.github.io/leda/docs/build/misc/tools/)
 5. Develop your first Vehicle App using [Eclipse Velocitas template](https://github.com/eclipse-velocitas/vehicle-app-python-template)
-6. [Deploy a Vehicle App to the device](docs/app-deployment/readme.md)
+6. [Deploy a Vehicle App to the device](https://eclipse-leda.github.io/leda/docs/app-deployment/)
 
 Supported Machines / Build Configurations
-- Emulated Qemu: x86-64, ARM64, ARM
+- Emulated Qemu: x86-64, ARM64
 - Raspberry Pi 4
 
 # Documentation
 
-Please see [Eclipse Leda Documentation](docs/readme.md)
-
-# Overview
-
-![Eclipse Leda Component Overview](docs/eclipse-leda-arch-overview.png)
+Please see [Eclipse Leda Documentation](https://eclipse-leda.github.io/leda/)
 
 ## Features
 
@@ -54,10 +51,10 @@ Please see [Eclipse Leda Documentation](docs/readme.md)
 
 # Contributing
 
-Running BitBake to build your own images requires some extra setup on the build machine. Please see [Building Eclipse Leda quickstart images](docs/build/readme.md]) for more information about the build process itself and how to setup a development and build infrastructure.
+Running BitBake to build your own images requires some extra setup on the build machine. Please see [Building Eclipse Leda quickstart images](https://eclipse-leda.github.io/leda/docs/build/) for more information about the build process itself and how to setup a development and build infrastructure.
 
 If you want to contribute bug reports or feature requests, please use *GitHub Issues*.
-For reporting security vulnerabilities, please follow our [security guideline](docs/security/readme.md).
+For reporting security vulnerabilities, please follow our [security guideline](https://eclipse-leda.github.io/leda/docs/project-info/security/).
 
 # License and Copyright
 
