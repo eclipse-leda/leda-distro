@@ -88,6 +88,18 @@ We currently take advantage of [junit-report-rs](https://github.com/bachp/junit-
 
 We use [tokio's runtime](https://tokio.rs/) to handle all asynchronous tasks as it gives us the flexibility to target a wide range of platforms. If you want to add your custom tests, please make sure to implement the `TestParser` trait to your customs struct. The `run_test` function makes sure to return a `TestCase` which is necessary for creating the XML report. There are already multiple examples in the `tests` folder.
 
+### Dependencies
+
+Display dependency tree:
+```
+cargo tree --target x86_64-unknown-linux-musl
+```
+
+Updating dependencies:
+```
+cargo update
+```
+
 ## To do
 - Use Rust's native platform cross compiliation instead of `cargo cross`
 - Reduce final binary size by removing dependencies we do not need anymore
