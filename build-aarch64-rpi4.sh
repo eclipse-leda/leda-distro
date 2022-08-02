@@ -19,12 +19,6 @@ pushd poky
 # Yocto LTS - Dunfell 3.1
 git switch honister
 
-
-# Temporary adaptation of rauc fstab file. This will be moved to it's own layer.
-if ! grep -q mmcblk0p4 ../meta-rauc-community/meta-rauc-raspberrypi/recipes-core/base-files/files/fstab; then
-	echo '/dev/mmcblk0p4  /home   ext4    x-systemd.growfs        0       0' >> ../meta-rauc-community/meta-rauc-raspberrypi/recipes-core/base-files/files/fstab
-fi
-
 source oe-init-build-env ../build-sdv-aarch64-rpi4
 
 export BB_ENV_EXTRAWHITE="$BB_ENV_EXTRAWHITE REMOTE_CONTAINERS_IPC HTTP_PROXY HTTPS_PROXY http_proxy ftp_proxy https_proxy all_proxy ALL_PROXY no_proxy XDG_RUNTIME_DIR"
