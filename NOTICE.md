@@ -32,6 +32,7 @@ The project maintains the following source code repositories:
 * https://github.com/eclipse-leda/leda
 * https://github.com/eclipse-leda/leda-distro
 * https://github.com/eclipse-leda/meta-leda
+* https://github.com/eclipse-leda/leda-utils
 
 ## Third-party Content
 
