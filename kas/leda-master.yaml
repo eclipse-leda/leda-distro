@@ -29,6 +29,10 @@ local_conf_header:
     INHERIT:remove = " archiver"
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
+  sign_conf: |
+    RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
+    RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
+    RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
 repos:
   # This entry includes the repository where the config file is located
   # to the bblayers.conf:
