@@ -33,6 +33,19 @@ local_conf_header:
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
     RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+  keep_images: |
+    RM_WORK_EXCLUDE += " sdv-image-full"
+    RM_WORK_EXCLUDE += " sdv-image-minimal"
+    RM_WORK_EXCLUDE += " sdv-image-rescue"
+    RM_WORK_EXCLUDE += " sdv-image-all"
+    RM_WORK_EXCLUDE += " sdv-rauc-bundle"
+  tweaks: |
+    EXTRA_IMAGE_FEATURES += "debug-tweaks"
+    MACHINE_FEATURES:append = " pcbios efi"
+    EXTRA_IMAGEDEPENDS += "ovmf"
+    PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"
+    do_image_wic[depends] += "boot-image:do_deploy"
+    WKS_FILES = "qemux86-grub-efi.wks"
 repos:
   # This entry includes the repository where the config file is located
   # to the bblayers.conf:
