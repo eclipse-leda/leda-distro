@@ -33,6 +33,9 @@ local_conf_header:
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
     RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+  rauc_vars: |
+    MACHINE_FEATURES:append = " pcbios efi"
+    EXTRA_IMAGEDEPENDS += "ovmf"
 repos:
   # This entry includes the repository where the config file is located
   # to the bblayers.conf:
