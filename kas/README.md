@@ -4,6 +4,8 @@ To start a full build, e.g. for the Kirkstone release, run the following command
 
     kas build kas/leda-kirkstone.yaml
 
+    kas build -c cleanall kas/leda-kirkstone.yaml k3s
+
 kas will then check out all necessary dependencies as specified in the project configuration file. After that, it will start the build for the machine, distro and target device.
 
 # Running
@@ -27,4 +29,5 @@ The following commands show the layer setup and information about which recipes 
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-overlayed'
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-recipes'
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-appends'
+    kas shell kas/leda-kirkstone.yaml -c 'bitbake -c cleanall '
     
