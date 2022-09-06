@@ -24,7 +24,7 @@ qemu-system-x86_64 \
  -machine q35 \
  -smp 4 \
  -m 2048 \
- -serial mon:stdio \
+# -serial mon:stdio \
  -serial null \
  -nographic \
  -kernel ./build-sdv-x86_64/tmp/deploy/images/qemux86-64/bzImage--5.14.21+git0+f9e349e174_9d5572038e-r0-qemux86-64-20220323081046.bin \

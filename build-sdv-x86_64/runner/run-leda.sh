@@ -100,7 +100,7 @@ sudo qemu-system-x86_64 \
  -device virtio-rng-pci,rng=rng0 \
  -drive id=hd,file=sdv-image-all-qemux86-64.wic.qcow2,if=virtio,format=qcow2 \
  -enable-kvm \
- -serial mon:stdio \
+# -serial mon:stdio \
  -serial null \
  -serial mon:vc \
  -nographic \
