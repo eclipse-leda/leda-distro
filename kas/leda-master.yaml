@@ -71,3 +71,5 @@ repos:
       meta-leda-bsp:
       meta-leda-components:
       meta-leda-distro:
+  patch-kubernetes:
+    path: patch
