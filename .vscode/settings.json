@@ -10,5 +10,6 @@
         "**/build/downloads/**": true,
         "**/build/sstate-cache/**": true,
         "**/build/tmp/**": true
-    }
+    },
+    "search.useIgnoreFiles": false
 }
