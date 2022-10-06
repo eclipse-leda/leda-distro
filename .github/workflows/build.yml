@@ -13,6 +13,7 @@
 
 name: BitBake Build
 on:
+  push:
   workflow_dispatch:
 
 jobs:
