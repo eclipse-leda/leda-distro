@@ -40,7 +40,6 @@ build-sdv-*/source-release/**
 build/
 
 # Do not commit the kas-managed layers
-meta-leda/
 meta-openembedded/
 meta-rauc-community/
 meta-rauc/
