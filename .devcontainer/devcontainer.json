@@ -20,6 +20,12 @@
 		// Use bullseye on local arm64/Apple Silicon.
 		"args": { "VARIANT": "bullseye" }
 	},
+	"hostRequirements": {
+		"cpus": 2,
+		"memory": "4gb",
+		"storage": "128gb"
+	},
+	"postAttachCommand": ".devcontainer/post-attach.sh",
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
@@ -33,6 +39,7 @@
 	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode",
 	"features": {
+		"docker-in-docker": "latest",
 		"github-cli": "latest"
 	}
 }

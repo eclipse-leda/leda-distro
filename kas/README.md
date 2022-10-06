@@ -12,7 +12,7 @@ kas will then check out all necessary dependencies as specified in the project c
 
 Running with user-level networking, in case the host does not have TAP/TUN set up properly. If you have TAP/TUN set up, remove the `slirp` keyword. Also enable the OVMF bios for multiboot. If you have kvm enabled on your host, add the `kvm` keyword:
 
-    kas shell kas/leda-kirkstone.yaml -c 'runqemu slirp nographic ovmf'
+    kas shell kas/leda-kirkstone.yaml -c 'runqemu nographic ovmf kvm'
 
 Boot directly into a specific partition:
 
