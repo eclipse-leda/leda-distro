@@ -60,7 +60,7 @@ repos:
       meta-yocto-bsp:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: krikstone
+    refspec: kirkstone
     layers:
       meta-rauc-qemux86:
   meta-rauc:
