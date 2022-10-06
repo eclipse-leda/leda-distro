@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  leda-qemux86:
+  leda-qemux86_64:
     name: "Leda image qemux86_64 (Kirkstone)"
     runs-on: self-hosted
     steps:
@@ -28,7 +28,10 @@ jobs:
     - name: Install kas
       run: sudo pip3 install kas
     - name: Build sdv-image-all
-      run: kas build kas/leda-kirkstone.yaml
+      env:
+        KAS_MACHINE=raspberrypi4-64 
+      run: |
+        kas build kas/leda-kirkstone.yaml
     - name: Package all files
       run: |
         export ARC=eclipse-leda-qemu-x86_64.tar
@@ -59,7 +62,7 @@ jobs:
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
-  leda-rpi4:
+  leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
     runs-on: self-hosted
     steps:
