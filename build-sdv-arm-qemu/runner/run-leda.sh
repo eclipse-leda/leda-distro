@@ -83,7 +83,8 @@ sudo qemu-system-arm \
     -drive id=disk0,file=sdv-image-all-qemuarm.wic.qcow2,if=none,format=qcow2 \
     -device virtio-blk-device,drive=disk0 \
     -device qemu-xhci \
-    -serial mon:stdio -serial null -nographic \
+#    -serial mon:stdio \
+    -serial null -nographic \
     -object can-bus,id=canbus0  \
     -device kvaser_pci,canbus=canbus0  \
     -machine virt,highmem=off \

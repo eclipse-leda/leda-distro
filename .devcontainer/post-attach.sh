@@ -1,3 +1,4 @@
+#!/bin/bash
 # /********************************************************************************
 # * Copyright (c) 2022 Contributors to the Eclipse Foundation
 # *
@@ -11,15 +12,10 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 
-# We have a conf and classes directory, add to BBPATH
-BBPATH .= ":${LAYERDIR}"
+# Enable KVM
+# sudo groupadd --system kvm
+# sudo gpasswd -a $USER kvm
 
-# We have recipes-* directories, add to BBFILES
-BBFILES += "${LAYERDIR}/recipes-*/*/*.bb ${LAYERDIR}/recipes-*/*/*.bbappend"
-
-BBFILE_COLLECTIONS += "patch"
-BBFILE_PATTERN_patch = "^${LAYERDIR}/"
-BBFILE_PRIORITY_patch = "6"
-
-LAYERDEPENDS_patch = "core"
-LAYERSERIES_COMPAT_patch = "kirkstone"
+# Enable KVM Device for access to user (as qemu us run as non-root
+sudo chown root:kvm /dev/kvm
+sudo chmod 0660 /dev/kvm
