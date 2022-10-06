@@ -42,7 +42,7 @@ local_conf_header:
   tweaks: |
     EXTRA_IMAGE_FEATURES += "debug-tweaks"
     MACHINE_FEATURES:append = " pcbios efi"
-    EXTRA_IMAGEDEPENDS += "ovmf"
+    EXTRA_IMAGEDEPENDS:qemux86-64 += "ovmf"
     PREFERRED_RPROVIDER_virtual-grub-bootconf = "rauc-qemu-grubconf"
     do_image_wic[depends] += "boot-image:do_deploy"
     WKS_FILES = "qemux86-grub-efi.wks"
@@ -77,6 +77,9 @@ repos:
       meta-filesystems:
       meta-python:
       meta-networking:
+  meta-raspberrypi:
+    url: "https://git.yoctoproject.org/meta-raspberrypi"
+    refspec: kirkstone
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     refspec: kirkstone

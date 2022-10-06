@@ -64,6 +64,9 @@ repos:
       meta-filesystems:
       meta-python:
       meta-networking:
+  meta-raspberrypi:
+    url: "https://git.yoctoproject.org/meta-raspberrypi"
+    refspec: honister
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     refspec: honister
