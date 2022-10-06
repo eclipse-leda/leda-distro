@@ -69,7 +69,8 @@ jobs:
     - name: Install kas
       run: sudo pip3 install kas
     - name: Build sdv-image-all
-      run: KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
+      run: |
+          KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
     - name: Package all files
       run: |
           export ARC=eclipse-leda-raspberrypi.tar
