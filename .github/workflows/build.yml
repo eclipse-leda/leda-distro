@@ -69,30 +69,32 @@ jobs:
     - name: Install kas
       run: sudo pip3 install kas
     - name: Build sdv-image-all
+      env:
+        KAS_MACHINE=raspberrypi4-64 
       run: |
-          KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
+        kas build kas/leda-kirkstone.yaml
     - name: Package all files
       run: |
-          export ARC=eclipse-leda-raspberrypi.tar
-          rm -f ${ARC}.xz
-          time tar --create --verbose --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
-          time tar --create --verbose --file ${ARC} -C build-sdv-aarch64-rpi4/runner/ \
-            readme.txt
-          time tar --append --verbose --file ${ARC} -C ./ \
-            LICENSE \
-            NOTICE.md \
-            CHANGELOG.md \
-            README.md \
-            3rdparty-licenses.tar.gz \
-            examples
-          time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/raspberrypi4-64/ \
-            Image-raspberrypi4-64.bin \
-            sdv-image-all-raspberrypi4-64.wic.bz2 \
-            sdv-rauc-bundle-raspberrypi4-64.raucb
-          time xz -v -1 -T0 ${ARC}
-      - name: Upload files
-        uses: actions/upload-artifact@v2
-        with: 
-          name: eclipse-leda-raspberrypi.tar.xz
-          if-no-files-found: error
-          path: eclipse-leda-raspberrypi.tar.xz
+        export ARC=eclipse-leda-raspberrypi.tar
+        rm -f ${ARC}.xz
+        time tar --create --verbose --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --verbose --file ${ARC} -C build-sdv-aarch64-rpi4/runner/ \
+          readme.txt
+        time tar --append --verbose --file ${ARC} -C ./ \
+          LICENSE \
+          NOTICE.md \
+          CHANGELOG.md \
+          README.md \
+          3rdparty-licenses.tar.gz \
+          examples
+        time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/raspberrypi4-64/ \
+          Image-raspberrypi4-64.bin \
+          sdv-image-all-raspberrypi4-64.wic.bz2 \
+          sdv-rauc-bundle-raspberrypi4-64.raucb
+        time xz -v -1 -T0 ${ARC}
+    - name: Upload files
+      uses: actions/upload-artifact@v2
+      with: 
+        name: eclipse-leda-raspberrypi.tar.xz
+        if-no-files-found: error
+        path: eclipse-leda-raspberrypi.tar.xz
