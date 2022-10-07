@@ -2,12 +2,19 @@
 
 Please see the [Leda Documentation](https://eclipse-leda.github.io/leda/docs/build/) for the build requirements and steps involved.
 
-If you are using the provided DevContainer, you can run a build using the `kas` tooling:
+## Quick Steps
 
-    kas build kas/leda-kirkstone.yaml
+1. Clone the leda-distro repository:
 
-By default, it will build images for QEMU x86-64.
+        git clone https://github.com/eclipse-leda/leda-distro.git
 
-To build for another target machine, set the `KAS_MACHINE` environment variable:
+2. Install [kas tool](https://kas.readthedocs.io/en/latest/userguide.html#dependencies-installation). If you are using the provided DevContainer, the build tools are already preinstalled.
 
-    KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
+3. Start the build for qemux86_64:
+
+        kas build kas/leda-kirkstone.yaml
+
+4. To build for another target machine, set the `KAS_MACHINE` environment variable:
+
+        KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
+
