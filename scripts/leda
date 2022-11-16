@@ -15,6 +15,10 @@
 # Starter script for developers who are building the project
 # and testing on qemu
 #
+
+KAS_CONFIG = "./kas/leda-kirkstone.yaml"
+KAS_CMD = "kas shell kas/leda-kirkstone.yaml -c 'runqemu nographic ovmf kvm'"
+
 MACHINE=$(bitbake-getvar --value MACHINE | tail -1)
 
 case $MACHINE in
