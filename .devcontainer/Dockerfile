@@ -45,6 +45,13 @@ RUN echo \
 RUN sudo apt-get update
 RUN sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
+# Install blobfuse2 since blobfuse1 is not avaialable in MS repos for Debian 11
+RUN sudo apt-get -y install software-properties-common \
+    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add - \
+    && sudo apt-add-repository https://packages.microsoft.com/debian/11/prod/ \
+    && sudo apt-get -y update \
+    && sudo apt-get -y install libfuse3-dev fuse3 blobfuse2
+
 # Try to enable KVM to improve performance of qemu-system-x86 on x86 hosts.
 # This is also run in post-attach.sh
 RUN /bin/bash -c "(groupadd --system kvm; gpasswd -a vscode kvm; chown root:kvm /dev/kvm; chmod 0660 /dev/kvm; echo 'KVM permissions set up') || true"

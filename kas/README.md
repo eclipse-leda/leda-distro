@@ -30,4 +30,9 @@ The following commands show the layer setup and information about which recipes 
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-recipes'
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-appends'
     kas shell kas/leda-kirkstone.yaml -c 'bitbake -c cleanall '
-    
+
+# Mirrors and sstate-cache
+
+To use our project cache, include the `mirrors.yaml` configuration file when building:
+
+    kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml

@@ -26,6 +26,7 @@
 		"storage": "128gb"
 	},
 	"postAttachCommand": ".devcontainer/post-attach.sh",
+	"postStartCommand": ".devcontainer/post-start.sh",
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
