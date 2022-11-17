@@ -74,6 +74,14 @@ jobs:
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
+    - uses: LanceMcCarthy/Action-AzureBlobUpload@v2
+      name: Update remote sstate-cache
+      with:
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        container_name: sdvyocto
+        source_folder: build\sstate-cache\
+        destination_folder: sstate-cache
+
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
     runs-on: ubuntu-latest
@@ -86,6 +94,10 @@ jobs:
       run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
+    - name: Start BitBake Hash Equivalence Server
+      run: |
+        git clone https://github.com/openembedded/bitbake
+        bitbake/bin/bitbake-hashserv -b :1234 &
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: raspberrypi4-64
@@ -119,3 +131,10 @@ jobs:
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error
         path: eclipse-leda-raspberrypi.tar.xz
+    - uses: LanceMcCarthy/Action-AzureBlobUpload@v2
+      name: Update remote sstate-cache
+      with:
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+        container_name: sdvyocto
+        source_folder: build\sstate-cache\
+        destination_folder: sstate-cache
