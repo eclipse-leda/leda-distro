@@ -10,7 +10,11 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-
+#
+# To run on Eclipse managed GitHub Runner, set to run on self-hosted and add a container name to the job:
+#   runs-on: self-hosted
+#   container: debian:bullseye
+#
 name: BitBake Build
 on:
   workflow_dispatch:
@@ -18,8 +22,8 @@ on:
 jobs:
   leda-qemux86_64:
     name: "Leda image qemux86_64 (Kirkstone)"
-    runs-on: self-hosted
-    container: debian:bullseye
+#    runs-on: self-hosted
+#    container: debian:bullseye
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -67,8 +71,8 @@ jobs:
         path: eclipse-leda-qemu-x86_64.tar.xz
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
-    runs-on: self-hosted
-    container: debian:bullseye
+#    runs-on: self-hosted
+#    container: debian:bullseye
     steps:
     - name: Checkout
       uses: actions/checkout@v3
