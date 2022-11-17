@@ -24,6 +24,8 @@ machine: qemux86-64
 distro: leda
 target: sdv-image-all
 local_conf_header:
+  temp_fixes: |
+    SRC_URI_nerdctl = "git://github.com/containerd/nerdctl;protocol=https;branch=main"
   sign_conf: |
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
