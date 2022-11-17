@@ -32,7 +32,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86_64
       run: |
-        kas build kas/leda-kirkstone.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -41,7 +41,7 @@ jobs:
         export ARC=eclipse-leda-qemu-x86_64.tar
         rm -f ${ARC}.xz
         time tar --create --file 3rdparty-licenses.tar -C ./build/tmp/deploy/licenses/ .
-        time tar --create --verbose --file ${ARC} -C ./build-sdv-x86_64/runner/ \
+        time tar --create --verbose --file ${ARC} -C ./resources/runners/qemux86_64/ \
           run-leda.sh \
           run-leda.cmd \
           readme.txt
@@ -81,7 +81,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        kas build kas/leda-kirkstone.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -90,7 +90,7 @@ jobs:
         export ARC=eclipse-leda-raspberrypi.tar
         rm -f ${ARC}.xz
         time tar --create --verbose --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
-        time tar --create --verbose --file ${ARC} -C build-sdv-aarch64-rpi4/runner/ \
+        time tar --create --verbose --file ${ARC} -C resources/runners/raspberrypi4/ \
           readme.txt
         time tar --append --verbose --file ${ARC} -C ./ \
           LICENSE \
