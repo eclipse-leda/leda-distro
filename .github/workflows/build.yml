@@ -34,7 +34,7 @@ jobs:
       run: sudo pip3 install kas
     - name: Build sdv-image-all
       env:
-        KAS_MACHINE: qemux86_64
+        KAS_MACHINE: qemux86-64
       run: |
         kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
