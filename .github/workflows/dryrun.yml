@@ -12,8 +12,18 @@
 # ********************************************************************************/
 
 name: BitBake DryRun
+
 on:
+  pull_request:
+    types:
+      - opened
   push:
+    paths:
+      - '.github/workflows/dryrun.yml'
+      - 'kas/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'examples/**'
   workflow_dispatch:
 
 jobs:
