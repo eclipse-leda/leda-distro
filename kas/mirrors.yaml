@@ -19,7 +19,24 @@ header:
   # is increased on every format change.
   version: 12
 # The machine as it is written into the `local.conf` of bitbake.
+#    SSTATE_MIRRORS = "file://.* https://sdvyocto.blob.core.windows.net/yocto-sstate-cache/sstate-cache/PATH"
+#    BB_FETCH_PREMIRRORONLY = "1"
 local_conf_header:
   mirror: |
-    BB_HASHSERVE = "127.0.0.1:1234"
-    SSTATE_MIRRORS = "file://.* https://sdvyocto.blob.core.windows.net/yocto-sstate-cache/sstate-cache/PATH"
+    BB_HASHSERVE = "20.238.216.74:1234"
+    MIRROR_SERVER = "https://sdvyocto.blob.core.windows.net/downloads/"
+    INHERIT += "own-mirrors"
+    SOURCE_MIRROR_URL = "${MIRROR_SERVER}"
+    UNINATIVE_URL = "${MIRROR_SERVER}"
+    PREMIRRORS ?= "\
+      bzr://.*/.\* ${MIRROR_SERVER} \
+      cvs://.*/.\* ${MIRROR_SERVER} \
+      git://.*/.\* ${MIRROR_SERVER} \
+      hg://.*/.\*  ${MIRROR_SERVER} \
+      osc://.*/.\* ${MIRROR_SERVER} \
+      p4://.*/.\*  ${MIRROR_SERVER} \
+      svn://.*/.\* ${MIRROR_SERVER}"
+    MIRRORS =+ "\
+      ftp://.*/.\*   ${MIRROR_SERVER} \
+      http://.*/.\*  ${MIRROR_SERVER} \
+      https://.*/.\* ${MIRROR_SERVER}"
