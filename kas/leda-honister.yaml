@@ -53,6 +53,9 @@ repos:
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
     refspec: honister
+  meta-kanto:
+    url: "https://github.com/eclipse-kanto/meta-kanto.git"
+    refspec: main
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
     refspec: honister
