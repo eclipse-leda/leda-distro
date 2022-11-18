@@ -48,7 +48,7 @@ jobs:
       run: |
         export ARC=eclipse-leda-qemu-x86_64.tar
         rm -f ${ARC}.xz
-        time tar --create --file 3rdparty-licenses.tar -C ./build/tmp/deploy/licenses/ .
+        time tar --create --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
         time tar --create --verbose --file ${ARC} -C ./resources/runners/qemux86_64/ \
           run-leda.sh \
           run-leda.cmd \
@@ -74,13 +74,6 @@ jobs:
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
-    - uses: LanceMcCarthy/Action-AzureBlobUpload@v2
-      name: Update remote sstate-cache
-      with:
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-        container_name: sdvyocto
-        source_folder: build\sstate-cache\
-        destination_folder: sstate-cache
 
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
@@ -131,10 +124,3 @@ jobs:
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error
         path: eclipse-leda-raspberrypi.tar.xz
-    - uses: LanceMcCarthy/Action-AzureBlobUpload@v2
-      name: Update remote sstate-cache
-      with:
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-        container_name: sdvyocto
-        source_folder: build\sstate-cache\
-        destination_folder: sstate-cache
