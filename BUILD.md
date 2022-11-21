@@ -18,3 +18,7 @@ Please see the [Leda Documentation](https://eclipse-leda.github.io/leda/docs/bui
 
         KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
 
+
+5. To build using mirrors which greatly improves build time:
+
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml

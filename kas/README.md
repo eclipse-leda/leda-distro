@@ -30,4 +30,38 @@ The following commands show the layer setup and information about which recipes 
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-recipes'
     kas shell kas/leda-kirkstone.yaml -c 'bitbake-layers show-appends'
     kas shell kas/leda-kirkstone.yaml -c 'bitbake -c cleanall '
-    
+
+# Mirrors and Build Caching
+
+In general, run a BitBake Hash Equivalence Server centrally.
+## Using the cache to improve build performance
+
+To use our project cache, include the `mirrors.yaml` configuration file when building:
+
+    kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+
+## Updating the build cache
+
+On a central build authoritative server, run the following commands to pre-download sources tar balls and fill up the downloads cache.
+
+Pre-Requisites:
+- Create the following repository secrets. The secret access key can be obtained via Azure Portal:
+
+    AZURE_STORAGE_ACCESS_KEY="<secret>"
+    AZURE_STORAGE_ACCOUNT="sdvyocto"
+
+- Performing the same steps for the sstate-cache to improve build performance.
+
+    # Ask BitBake to perform only the fetch tasks for each recipe, downloading the sources
+    # and archiving them as a tar archive in the build/downloads/ folder.
+    kas shell kas/leda-kirkstone.yaml:kas/mirrors.yaml:kas/generate-mirror.yaml -c 'bitbake --runall=fetch sdv-image-all'
+
+    # Respectively, for other machines:
+    KAS_MACHINE=raspberrypi4-64 kas shell kas/leda-kirkstone.yaml:kas/mirrors.yaml:kas/generate-mirror.yaml -c 'bitbake --runall=fetch sdv-image-all'
+
+    # Upload the downloads folder to the remote mirror.
+    # In this example, an Azure Blob Storage is used
+    mkdir /tmp/downloads
+    export TEMPD=$(mktemp -d)
+    blobfuse2 --disable-version-check mount /tmp/downloads --use-https=true --tmp-path=${TEMPD} --container-name=downloads
+    cp -v build/downloads/*.tar.gz /tmp/downloads/

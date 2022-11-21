@@ -1,3 +1,4 @@
+#!/bin/bash
 # /********************************************************************************
 # * Copyright (c) 2022 Contributors to the Eclipse Foundation
 # *
@@ -11,26 +12,7 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 
-DISTRO = "leda"
-MACHINE ??= "qemuarm"
-DL_DIR ?= "${TOPDIR}/../downloads"
-PACKAGE_CLASSES ?= "package_deb"
-EXTRA_IMAGE_FEATURES ?= "debug-tweaks"
-PATCHRESOLVE = "noop"
-
-BB_DISKMON_DIRS ??= "\
-    STOPTASKS,${TMPDIR},1G,100K \
-    STOPTASKS,${DL_DIR},1G,100K \
-    STOPTASKS,${SSTATE_DIR},1G,100K \
-    STOPTASKS,/tmp,100M,100K \
-    ABORT,${TMPDIR},100M,1K \
-    ABORT,${DL_DIR},100M,1K \
-    ABORT,${SSTATE_DIR},100M,1K \
-    ABORT,/tmp,10M,1K"
-
-CONF_VERSION = "2"
-
-# Additional 500MB of disk space
-#IMAGE_ROOTFS_EXTRA_SPACE = "512000"
-
-#IMAGE_FSTYPES = "wic.qcow2"
+git clone https://github.com/openembedded/bitbake
+pushd bitbake
+docker build --tag "leda-bitbake-hashserv:latest" -f ./contrib/hashserv/Dockerfile .
+docker run --detach --rm --publish 1234:1234 --name bb-hashserv leda-bitbake-hashserv:latest -b :1234

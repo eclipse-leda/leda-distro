@@ -10,29 +10,37 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-
+#
+# To run on Eclipse managed GitHub Runner, set to run on self-hosted and add a container name to the job:
+#   runs-on: self-hosted
+#   container: debian:bullseye
+#
 name: BitBake Build
 on:
-  push:
   workflow_dispatch:
 
 jobs:
   leda-qemux86_64:
     name: "Leda image qemux86_64 (Kirkstone)"
-    runs-on: self-hosted
-    container: debian:bullseye
+    runs-on: ubuntu-latest
+#    runs-on: self-hosted
+#    container: debian:bullseye
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
-      run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+      run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
+    - name: Start BitBake Hash Equivalence Server
+      run: |
+        git clone https://github.com/openembedded/bitbake
+        bitbake/bin/bitbake-hashserv -b :1234 &
     - name: Build sdv-image-all
       env:
-        KAS_MACHINE: qemux86_64
+        KAS_MACHINE: qemux86-64
       run: |
-        kas build kas/leda-kirkstone.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -40,8 +48,8 @@ jobs:
       run: |
         export ARC=eclipse-leda-qemu-x86_64.tar
         rm -f ${ARC}.xz
-        time tar --create --file 3rdparty-licenses.tar -C ./build/tmp/deploy/licenses/ .
-        time tar --create --verbose --file ${ARC} -C ./build-sdv-x86_64/runner/ \
+        time tar --create --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --verbose --file ${ARC} -C ./resources/runners/qemux86_64/ \
           run-leda.sh \
           run-leda.cmd \
           readme.txt
@@ -66,22 +74,28 @@ jobs:
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
+
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
-    runs-on: self-hosted
-    container: debian:bullseye
+    runs-on: ubuntu-latest
+#    runs-on: self-hosted
+#    container: debian:bullseye
     steps:
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
-      run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+      run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
+    - name: Start BitBake Hash Equivalence Server
+      run: |
+        git clone https://github.com/openembedded/bitbake
+        bitbake/bin/bitbake-hashserv -b :1234 &
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        kas build kas/leda-kirkstone.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -90,7 +104,7 @@ jobs:
         export ARC=eclipse-leda-raspberrypi.tar
         rm -f ${ARC}.xz
         time tar --create --verbose --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
-        time tar --create --verbose --file ${ARC} -C build-sdv-aarch64-rpi4/runner/ \
+        time tar --create --verbose --file ${ARC} -C resources/runners/raspberrypi4/ \
           readme.txt
         time tar --append --verbose --file ${ARC} -C ./ \
           LICENSE \

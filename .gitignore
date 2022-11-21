@@ -45,3 +45,10 @@ meta-rauc-community/
 meta-rauc/
 meta-virtualization/
 poky/
+
+# Remote sstate-cache on Azure Storage
+azure-sstate-cache/
+bitbake/
+
+# BitBake Hash Equivalence Server database
+hashserv.db
