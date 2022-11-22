@@ -18,6 +18,7 @@
 name: BitBake Build
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   leda-qemux86_64:
