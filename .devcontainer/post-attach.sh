@@ -27,15 +27,24 @@ sudo chmod 0660 /dev/kvm
 # AZURE_STORAGE_ACCESS_KEY="<Access key>"
 # AZURE_STORAGE_ACCOUNT="sdvyocto" // Replace with your storage name
 # AZURE_STORAGE_ACCOUNT_CONTAINER="yocto-sstate-cache" // Replace with your storage container name
-if [ -n "${AZURE_MOUNT_POINT}" ] && [ -n "${AZURE_STORAGE_ACCOUNT_CONTAINER}" ]; then
-    [ -d ${AZURE_MOUNT_POINT} ] || mkdir -p ${AZURE_MOUNT_POINT}
-    if $(blobfuse2 mount list | grep -q "${AZURE_MOUNT_POINT}"); then
-        echo "Unmounting remote sstate-cache: ${AZURE_MOUNT_POINT}"
-        blobfuse2 --disable-version-check unmount ${AZURE_MOUNT_POINT}
+function azure-mount() {
+    local AZURE_MOUNT_POINT="$1"
+    local AZURE_STORAGE_ACCOUNT_CONTAINER="$2"
+    if [ -n "${AZURE_MOUNT_POINT}" ] && [ -n "${AZURE_STORAGE_ACCOUNT_CONTAINER}" ]; then
+        [ -d ${AZURE_MOUNT_POINT} ] || mkdir -p ${AZURE_MOUNT_POINT}
+        if $(blobfuse2 mount list | grep -q "${AZURE_MOUNT_POINT}"); then
+            echo "Already mounted: ${AZURE_MOUNT_POINT}"
+        else
+            TEMPD=$(mktemp -d)
+            echo "Mounting remote Azure Storage ${AZURE_STORAGE_ACCOUNT_CONTAINER} to local path: ${AZURE_MOUNT_POINT}"
+            blobfuse2 --disable-version-check mount ${AZURE_MOUNT_POINT} --log-level LOG_DEBUG --use-https=true --tmp-path=$TEMPD --container-name=${AZURE_STORAGE_ACCOUNT_CONTAINER} || true
+        fi
+    else
+        echo "Warning: No AZURE_MOUNT_POINT or no AZURE_STORAGE_ACCOUNT_CONTAINER set for mounting."
     fi
-    TEMPD=$(mktemp -d)
-    echo "Mounting remote sstate-cache on Azure Storage Account ${AZURE_STORAGE_ACCOUNT_CONTAINER} to local path: ${AZURE_MOUNT_POINT}"
-    blobfuse2 --disable-version-check mount ${AZURE_MOUNT_POINT} --log-level LOG_DEBUG --use-https=true --tmp-path=$TEMPD --container-name=${AZURE_STORAGE_ACCOUNT_CONTAINER} || true
-else
-    echo "Warning: No AZURE_MOUNT_POINT or no AZURE_STORAGE_ACCOUNT_CONTAINER set for remote sstate-cache."
-fi
+}
+
+# First arg: local mount point
+# Second arg: Name of Azure container
+azure-mount "azure-sstate-cache" "yocto-sstate-cache"
+azure-mount "azure-downloads-cache" "downloads"
