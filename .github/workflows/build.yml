@@ -69,7 +69,7 @@ jobs:
           ovmf.qcow2
         time xz -v -8 -T0 ${ARC}
     - name: Upload files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with: 
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
@@ -119,7 +119,7 @@ jobs:
           sdv-rauc-bundle-raspberrypi4-64.raucb
         time xz -v -1 -T0 ${ARC}
     - name: Upload files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with: 
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error

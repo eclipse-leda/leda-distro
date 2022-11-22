@@ -24,7 +24,7 @@ local_conf_header:
     BB_HASHSERVE = "20.238.216.74:1234"
     MIRROR_SERVER = "https://sdvyocto.blob.core.windows.net/downloads/"
     SSTATE_MIRRORS = "file://.* https://sdvyocto.blob.core.windows.net/yocto-sstate-cache/sstate-cache/PATH"
-    BB_FETCH_PREMIRRORONLY = "1"
+    BB_FETCH_PREMIRRORONLY = "0"
     INHERIT += "own-mirrors"
     SOURCE_MIRROR_URL = "${MIRROR_SERVER}"
     UNINATIVE_URL = "${MIRROR_SERVER}"
