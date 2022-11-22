@@ -33,7 +33,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends so
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates \
     curl \
     gnupg \
-    lsb-release
+    lsb-release \
+    uml-utilities \
+    isc-dhcp-server
 
 # Install latest docker
 RUN sudo mkdir -p /etc/apt/keyrings
