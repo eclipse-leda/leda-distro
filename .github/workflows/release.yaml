@@ -15,7 +15,7 @@ name: Leda Release
 
 on:
   release:
-    types: [created, edited]
+    types: [published]
 
 jobs:
   call-build:
