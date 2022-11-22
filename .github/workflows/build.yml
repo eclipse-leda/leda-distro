@@ -77,6 +77,14 @@ jobs:
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      with:
+        source_dir: 'build/sstate-cache/'
+        extra_args: '--destination-path sstate-cache/'
+        container_name: 'yocto-sstate-cache'
+        overwrite: 'false'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
@@ -127,3 +135,11 @@ jobs:
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error
         path: eclipse-leda-raspberrypi.tar.xz
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      with:
+        source_dir: 'build/sstate-cache/'
+        extra_args: '--destination-path sstate-cache/'
+        container_name: 'yocto-sstate-cache'
+        overwrite: 'false'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
