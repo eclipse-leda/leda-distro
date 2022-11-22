@@ -45,6 +45,7 @@ meta-rauc-community/
 meta-rauc/
 meta-raspberrypi
 meta-kanto/
+meta-leda/
 meta-virtualization/
 poky/
 
