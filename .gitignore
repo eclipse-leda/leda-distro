@@ -43,12 +43,20 @@ build/
 meta-openembedded/
 meta-rauc-community/
 meta-rauc/
+meta-raspberrypi/
+meta-kanto/
+meta-leda/
+meta-spdxscanner/
 meta-virtualization/
 poky/
 
 # Remote sstate-cache on Azure Storage
 azure-sstate-cache/
+azure-downloads-cache/
 bitbake/
 
 # BitBake Hash Equivalence Server database
 hashserv.db
+scripts/dhcp.pid
+scripts/dhcpc.leases*
+**/*.qcow2
