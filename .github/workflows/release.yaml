@@ -21,6 +21,7 @@ jobs:
   call-build:
     name: Build
     uses: ./.github/workflows/build.yml
+    secrets: inherit
 
   upload-assets:
     name: Upload assets
