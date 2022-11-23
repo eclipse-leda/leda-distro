@@ -119,6 +119,7 @@ jobs:
         export ARC=eclipse-leda-qemu-arm64.tar
         rm -f ${ARC}.xz
         time tar --create --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --gzip --file 3rdparty-spdx.tar.gz -C ./build/tmp/deploy/spdx/ .
         time tar --create --verbose --file ${ARC} -C ./resources/runners/qemuarm64/ \
           run-leda.sh \
           run-leda.cmd \
@@ -131,6 +132,7 @@ jobs:
           CHANGELOG.md \
           README.md \
           3rdparty-licenses.tar.gz \
+          3rdparty-spdx.tar.gz \
           examples
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemuarm64/ \
           bzImage-qemuarm64.bin \
