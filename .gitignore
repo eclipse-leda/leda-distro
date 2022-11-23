@@ -43,8 +43,9 @@ build/
 meta-openembedded/
 meta-rauc-community/
 meta-rauc/
-meta-raspberrypi
+meta-raspberrypi/
 meta-kanto/
+meta-spdxscanner/
 meta-leda/
 meta-virtualization/
 poky/
@@ -62,5 +63,5 @@ scripts/dhcp.pid
 scripts/dhcpc.leases
 scripts/dhcpc.leases~
 
-# Qemu Disk Images - QCOW2
-*.qcow2
+# QEMU Disk Images
+**/*.qcow2

@@ -23,7 +23,7 @@ on:
 jobs:
   leda-qemux86_64:
     name: "Leda image qemux86_64 (Kirkstone)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
@@ -52,6 +52,7 @@ jobs:
         export ARC=eclipse-leda-qemu-x86_64.tar
         rm -f ${ARC}.xz
         time tar --create --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --gzip --file 3rdparty-spdx.tar.gz -C ./build/tmp/deploy/spdx/ .
         time tar --create --verbose --file ${ARC} -C ./resources/runners/qemux86_64/ \
           run-leda.sh \
           run-leda.cmd \
@@ -64,6 +65,7 @@ jobs:
           CHANGELOG.md \
           README.md \
           3rdparty-licenses.tar.gz \
+          3rdparty-spdx.tar.gz \
           examples
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemux86-64/ \
           bzImage-qemux86-64.bin \
@@ -88,7 +90,7 @@ jobs:
 
   leda-qemuarm64:
     name: "Leda image qemuarm64 (Kirkstone)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
@@ -117,6 +119,7 @@ jobs:
         export ARC=eclipse-leda-qemu-arm64.tar
         rm -f ${ARC}.xz
         time tar --create --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --gzip --file 3rdparty-spdx.tar.gz -C ./build/tmp/deploy/spdx/ .
         time tar --create --verbose --file ${ARC} -C ./resources/runners/qemuarm64/ \
           run-leda.sh \
           run-leda.cmd \
@@ -129,6 +132,7 @@ jobs:
           CHANGELOG.md \
           README.md \
           3rdparty-licenses.tar.gz \
+          3rdparty-spdx.tar.gz \
           examples
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemuarm64/ \
           bzImage-qemuarm64.bin \
@@ -153,7 +157,7 @@ jobs:
 
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
@@ -180,6 +184,7 @@ jobs:
         export ARC=eclipse-leda-raspberrypi.tar
         rm -f ${ARC}.xz
         time tar --create --verbose --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --gzip --file 3rdparty-spdx.tar.gz -C ./build/tmp/deploy/spdx/ .
         time tar --create --verbose --file ${ARC} -C resources/runners/raspberrypi4/ \
           readme.txt
         time tar --append --verbose --file ${ARC} -C ./ \
@@ -188,6 +193,7 @@ jobs:
           CHANGELOG.md \
           README.md \
           3rdparty-licenses.tar.gz \
+          3rdparty-spdx.tar.gz \
           examples
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/raspberrypi4-64/ \
           Image-raspberrypi4-64.bin \
