@@ -80,7 +80,7 @@ jobs:
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
@@ -135,10 +135,10 @@ jobs:
           3rdparty-spdx.tar.gz \
           examples
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemuarm64/ \
-          bzImage-qemuarm64.bin \
+          Image-qemuarm64.bin \
           sdv-image-all-qemuarm64.wic.qcow2 \
           sdv-rauc-bundle-qemuarm64.raucb \
-          ovmf.qcow2
+          u-boot.bin
         time xz -v -8 -T0 ${ARC}
     - name: Upload files
       uses: actions/upload-artifact@v3
@@ -147,7 +147,7 @@ jobs:
         if-no-files-found: error
         path: eclipse-leda-qemu-arm64.tar.xz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
@@ -207,7 +207,7 @@ jobs:
         if-no-files-found: error
         path: eclipse-leda-raspberrypi.tar.xz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
