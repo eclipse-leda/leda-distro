@@ -86,6 +86,71 @@ jobs:
         overwrite: 'false'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
+  leda-qemuarm64:
+    name: "Leda image qemuarm64 (Kirkstone)"
+    runs-on: ubuntu-latest
+#    runs-on: self-hosted
+#    container: debian:bullseye
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Start BitBake Hash Equivalence Server
+      run: |
+        git clone https://github.com/openembedded/bitbake
+        bitbake/bin/bitbake-hashserv -b :1234 &
+    - name: Build sdv-image-all
+      env:
+        KAS_MACHINE: qemuarm64
+      run: |
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+    - name: Generate CHANGELOG.md
+      run: |
+        docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
+    - name: Package all files
+      run: |
+        export ARC=eclipse-leda-qemu-arm64.tar
+        rm -f ${ARC}.xz
+        time tar --create --gzip --file 3rdparty-licenses.tar.gz -C ./build/tmp/deploy/licenses/ .
+        time tar --create --verbose --file ${ARC} -C ./resources/runners/qemuarm64/ \
+          run-leda.sh \
+          run-leda.cmd \
+          readme.txt
+        time tar --append --verbose --file ${ARC} -C scripts/ \
+          provision-device.sh
+        time tar --append --verbose --file ${ARC} -C ./ \
+          LICENSE \
+          NOTICE.md \
+          CHANGELOG.md \
+          README.md \
+          3rdparty-licenses.tar.gz \
+          examples
+        time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemuarm64/ \
+          bzImage-qemuarm64.bin \
+          sdv-image-all-qemuarm64.wic.qcow2 \
+          sdv-rauc-bundle-qemuarm64.raucb \
+          ovmf.qcow2
+        time xz -v -8 -T0 ${ARC}
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-qemu-arm64.tar.xz
+        if-no-files-found: error
+        path: eclipse-leda-qemu-arm64.tar.xz
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      with:
+        source_dir: 'build/sstate-cache/'
+        extra_args: '--destination-path sstate-cache/'
+        container_name: 'yocto-sstate-cache'
+        overwrite: 'false'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
     runs-on: ubuntu-latest
