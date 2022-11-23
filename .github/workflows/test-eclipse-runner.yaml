@@ -1,0 +1,36 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+
+name: Test Eclipse Runner
+on:
+  workflow_dispatch:
+
+jobs:
+  mybranch:
+    name: Yocto (This Branch)
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/softwaredefinedvehicle/actions-container:prepare-actions-container
+    defaults:
+      run:
+        working-directory: /home/bbuser
+
+    steps:
+    - name: Create Workdir
+      run: mkdir leda
+
+    - name: Checkout repo (unprivileged)
+      run: git clone --recurse-submodules https://github.com/${{github.repository}} leda/
+
+    - name: DryRun sdv-image-all
+      run: cd leda && kas build kas/leda-kirkstone.yaml --target sdv-image-all -- --dry-run
