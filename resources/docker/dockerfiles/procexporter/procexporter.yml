@@ -1,0 +1,6 @@
+# Note: The strings under "comm" must be concatenated to 15 characters, otherwise it will not match
+process_names:
+  - name: "{{.ExeBase}}"
+    comm: 
+    - qemu-system-aar
+    - qemu-system-x86

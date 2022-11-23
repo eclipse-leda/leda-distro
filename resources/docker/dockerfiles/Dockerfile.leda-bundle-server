@@ -1,0 +1,51 @@
+# syntax=docker/dockerfile:1
+#
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TZ=Etc/UTC
+
+# "impish" is Ubuntu 21.10
+FROM ubuntu:latest AS builder
+LABEL name="leda-bundle-server"
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils
+
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends gh
+
+WORKDIR /root
+
+RUN gh release download --pattern 'eclipse-leda-qemu-x86_64.tar.xz'
+RUN gh release download --pattern 'eclipse-leda-qemu-arm64.tar.xz'
+
+# For extracting release artifacts (gh release download [release-tag])
+RUN tar xf eclipse-leda-qemu-x86_64.tar.xz sdv-rauc-bundle-qemux86-64.raucb \
+  && rm -rf eclipse-leda-qemu-x86_64.tar.xz
+RUN tar xf eclipse-leda-qemu-arm64.tar.xz sdv-rauc-bundle-qemuarm64.raucb \
+  && rm -rf eclipse-leda-qemu-arm64.tar.xz
+
+# For extracting build artifacts (gh run download)
+# RUN tar xf eclipse-leda-qemu-x86_64.tar.xz/eclipse-leda-qemu-x86_64.tar.xz sdv-rauc-bundle-qemux86-64.raucb \
+#   && rm -rf eclipse-leda-qemu-x86_64.tar.xz/
+# RUN tar xf eclipse-leda-qemu-arm64.tar.xz/eclipse-leda-qemu-arm64.tar.xz sdv-rauc-bundle-qemuarm64.raucb \
+#   && rm -rf eclipse-leda-qemu-arm64.tar.xz/
+
+FROM nginx AS runtime 
+COPY --from=builder /root/sdv-rauc-bundle-qemux86-64.raucb /usr/share/nginx/html/
+COPY --from=builder /root/sdv-rauc-bundle-qemuarm64.raucb /usr/share/nginx/html/

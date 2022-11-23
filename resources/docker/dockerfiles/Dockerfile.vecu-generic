@@ -1,0 +1,39 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+# A very simple "Virtual Embedded Control Unit", simulating some vehicle signals
+# on the CAN-Bus (SocketCAN)
+# 
+# Spec of vehicle signal:
+# https://github.com/COVESA/vehicle_signal_specification/blob/master/spec/Powertrain/Battery.vspec
+#
+# DBC File taken from:
+# https://github.com/eclipse/kuksa.val/blob/master/kuksa_feeders/dbc2val/Model3CAN.dbc
+#
+# Decode packets:
+# candump can0 | cantools decode 2022_04_06_Model3CAN.dbc
+#
+FROM ubuntu:latest AS builder
+LABEL name="vecu-generic"
+
+WORKDIR /root
+
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends curl sudo ca-certificates can-utils
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends uml-utilities iptables iproute2 iputils-ping dnsutils bind9-utils ssh
+
+COPY ./dockerfiles/can-bus-recordings/SOC_Manual_candump-2022-04-06_125818.log ./
+COPY ./dockerfiles/can-bus-recordings/2022_04_06_Model3CAN.dbc ./
+COPY ./dockerfiles/can-bus-recordings/vecu-entrypoint.sh ./
+
+ENTRYPOINT [ "/bin/bash" ]
