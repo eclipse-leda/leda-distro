@@ -28,15 +28,15 @@ jobs:
     needs: call-build
     steps:
       - name: Download qemux86_64 archive
+        id: download
         uses: actions/download-artifact@v3
         with:
           path: build/
       - name: Upload assets
         uses: softprops/action-gh-release@v1
         with:
-          draft: true
           fail_on_unmatched_files: true
           files: |
-            build/eclipse-leda-qemu-x86_64.tar.xz
-            build/eclipse-leda-qemu-arm64.tar.xz
-            build/eclipse-leda-raspberrypi.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-x86_64.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-arm64.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-raspberrypi.tar.xz
