@@ -1,0 +1,48 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+
+name: OCaaS Compliance checks
+ 
+on:
+  workflow_dispatch:
+ 
+jobs:
+  ocaas-scan:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: OCaaS Scans
+        id: ocaas
+        uses: docker://osmipublic.azurecr.io/ocaas-ci:latest
+        continue-on-error: true # Built artifacts also should also be uploaded if the scan finds violations.
+        with:
+          args: auth generate-token run start download
+        env:
+          OCAAS_USERNAME: ${{ secrets.OCAAS_USERNAME }}
+          OCAAS_PASSWORD: ${{ secrets.OCAAS_PASSWORD }}
+          PROJECT_NAME: "Eclipse Leda Yocto Distro"
+          PIPELINE_ID: 377 # Your pipeline ID. Provided by the OSMI team.
+          VCS_URL: ${{ github.server_url }}/${{ github.repository }}.git
+          VCS_REVISION: ${{ github.ref_name }}
+          APPLICATION_CATEGORY: "BT11"
+          BLOCKING: true
+          REPORT_FILES: DISCLOSURE_DOCUMENT_PDF,VULNERABILITY_REPORT_PDF,SCAN_REPORT_WEB_APP_HTML
+          OUTPUT_DIR: reports/
+      - name: Upload reports
+        id: upload
+        uses: actions/upload-artifact@v3
+        with:
+          name: reports
+          path: reports/
+      - name: Check for violations
+        if: steps.ocaas.outcome != 'success' || steps.upload.outcome != 'success'
+        run: exit 1
