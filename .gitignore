@@ -45,8 +45,8 @@ meta-rauc-community/
 meta-rauc/
 meta-raspberrypi/
 meta-kanto/
-meta-leda/
 meta-spdxscanner/
+meta-leda/
 meta-virtualization/
 poky/
 
@@ -57,6 +57,11 @@ bitbake/
 
 # BitBake Hash Equivalence Server database
 hashserv.db
+
+# DHCP Leases
 scripts/dhcp.pid
-scripts/dhcpc.leases*
+scripts/dhcpc.leases
+scripts/dhcpc.leases~
+
+# QEMU Disk Images
 **/*.qcow2
