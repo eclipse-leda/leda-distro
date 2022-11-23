@@ -18,7 +18,7 @@ on:
  
 jobs:
   ocaas-scan:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: OCaaS Scans
         id: ocaas

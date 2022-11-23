@@ -23,7 +23,7 @@ on:
 jobs:
   leda-qemux86_64:
     name: "Leda image qemux86_64 (Kirkstone)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
@@ -90,7 +90,7 @@ jobs:
 
   leda-qemuarm64:
     name: "Leda image qemuarm64 (Kirkstone)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
@@ -157,7 +157,7 @@ jobs:
 
   leda-raspberrypi4-64:
     name: "Leda image raspi4 (Kirkstone)"
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
