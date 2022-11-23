@@ -38,6 +38,6 @@ jobs:
         with:
           fail_on_unmatched_files: true
           files: |
-            ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-x86_64.tar.xz
-            ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-arm64.tar.xz
-            ${{steps.download.outputs.download-path}}/eclipse-leda-raspberrypi.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-x86_64.tar.xz/eclipse-leda-qemu-x86_64.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-arm64.tar.xz/eclipse-leda-qemu-arm64.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-raspberrypi.tar.xz/eclipse-leda-raspberrypi.tar.xz
