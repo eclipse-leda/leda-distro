@@ -36,6 +36,13 @@
 # See https://compose-spec.io/
 version: "3.8"
 
+#
+# Required for building from private github repos
+#
+secrets:
+  githubtoken:
+    environment: GITHUB_TOKEN
+
 services:
   # mqtt-broker: A convenience MQTT Broker working as a bridge to both MQTT brokers on the QEMU Leda instances
   # By subscribing to this MQTT broker, you can monitor all messages from both devices at once.
@@ -50,12 +57,26 @@ services:
       - ./dockerfiles/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
       - 1883:1883
+    healthcheck:
+      test: "mosquitto_pub -h localhost -p 1883 -t '/broker/health' -n"
+      interval: 10s
+      timeout: 5s
+      retries: 100
+      start_period: 10s
   # leda-bundle-server is a webserver with both RAUC Update Bundles pre-installed
   # for easy show case of the SelfUpdate mechanisms.
   leda-bundle-server:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-bundle-server
+      args:
+        GITHUB_REPOSITORY: "${GITHUB_REPOSITORY}"
+      secrets:
+        - source: githubtoken
+          target: githubtoken
+          uid: "1001"
+          gid: "1001"
+          mode: 0440
     container_name: leda-bundle-server
     networks:
       leda-network:
@@ -74,7 +95,19 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-quickstart-x86
+      args:
+        GITHUB_REPOSITORY: "${GITHUB_REPOSITORY}"
+      secrets:
+        - source: githubtoken
+          target: githubtoken
+          uid: "1001"
+          gid: "1001"
+          mode: 0440
     container_name: leda-x86
+    depends_on:
+      - dns-proxy
+      - mqtt-broker
+      - leda-bundle-server
     privileged: true
     stdin_open: true
     tty: true
@@ -90,7 +123,7 @@ services:
     ports:
       - "1443:6443"
     healthcheck:
-      test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active k3s"
+      test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
       timeout: 5s
       retries: 100
@@ -100,7 +133,19 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-quickstart-arm64
+      args:
+        GITHUB_REPOSITORY: "${GITHUB_REPOSITORY}"
+      secrets:
+        - source: githubtoken
+          target: githubtoken
+          uid: "1001"
+          gid: "1001"
+          mode: 0440
     container_name: leda-arm64
+    depends_on:
+      - dns-proxy
+      - mqtt-broker
+      - leda-bundle-server
     privileged: true
     stdin_open: true
     tty: true
@@ -116,7 +161,7 @@ services:
     ports:
       - "2443:6443"
     healthcheck:
-      test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active k3s"
+      test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
       timeout: 5s
       retries: 100

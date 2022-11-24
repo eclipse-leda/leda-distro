@@ -11,7 +11,7 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
-FROM ubuntu:latest
+FROM debian:bullseye
 LABEL name="leda-devshell"
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
     apt-get install -y --no-install-recommends iputils-ping uml-utilities iptables iproute2 iputils-ping dnsutils bind9-utils ssh mosquitto-clients curl wget git

@@ -25,13 +25,13 @@ TAP=
 
 function setupTap() {
     TAP=`$TUNCTL -b $GROUP 2>&1`
-    n=$[ (`echo $TAP | sed 's/tap//'` * 2) + 1 ]
-    $IFCONFIG addr add 192.168.7.$n/32 broadcast 192.168.7.255 dev $TAP
+    n=1
+    $IFCONFIG addr add 192.168.7.1/32 broadcast 192.168.7.255 dev $TAP
     $IFCONFIG link set dev $TAP up
-    dest=$[ (`echo $TAP | sed 's/tap//'` * 2) + 2 ]
-    $IFCONFIG route add to 192.168.7.$dest dev $TAP
-    $IPTABLES -A POSTROUTING -t nat -j MASQUERADE -s 192.168.7.$n/32
-    $IPTABLES -A POSTROUTING -t nat -j MASQUERADE -s 192.168.7.$dest/32
+    dest=2
+    $IFCONFIG route add to 192.168.7.3 dev $TAP
+    $IPTABLES -A POSTROUTING -t nat -j MASQUERADE -s 192.168.7.1/32
+    $IPTABLES -A POSTROUTING -t nat -j MASQUERADE -s 192.168.7.2/32
     sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
     sudo bash -c "echo 1 > /proc/sys/net/ipv4/conf/$TAP/proxy_arp"
     $IPTABLES -P FORWARD ACCEPT
@@ -42,10 +42,8 @@ function teardownTap() {
     echo "Tearing down TAP network interface: $TAP"
     $TUNCTL -d $TAP
     $IFCONFIG link del $TAP
-    n=$[ (`echo $TAP | sed 's/tap//'` * 2) + 1 ]
-    dest=$[ (`echo $TAP | sed 's/tap//'` * 2) + 2 ]
-    $IPTABLES -D POSTROUTING -t nat -j MASQUERADE -s 192.168.7.$n/32
-    $IPTABLES -D POSTROUTING -t nat -j MASQUERADE -s 192.168.7.$dest/32
+    $IPTABLES -D POSTROUTING -t nat -j MASQUERADE -s 192.168.7.1/32
+    $IPTABLES -D POSTROUTING -t nat -j MASQUERADE -s 192.168.7.2/32
 }
 
 trap teardownTap EXIT
@@ -53,19 +51,26 @@ trap teardownTap EXIT
 setupTap
 
 # Forward network traffic for SSH to the QEMU Guest
-iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to-destination 192.168.7.$dest:22
+iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to-destination 192.168.7.2:22
 
 # Forward network traffic for SSH to the QEMU Guest
-iptables -t nat -A PREROUTING -p tcp --dport 31883 -j DNAT --to-destination 192.168.7.$dest:31883
+iptables -t nat -A PREROUTING -p tcp --dport 1883 -j DNAT --to-destination 192.168.7.2:1883
 
 # Forward Kubernetes Server API Port
-iptables -t nat -A PREROUTING -p tcp --dport 6433 -j DNAT --to-destination 192.168.7.$dest:6443
+iptables -t nat -A PREROUTING -p tcp --dport 6433 -j DNAT --to-destination 192.168.7.2:6443
 
 # Masquerade the IP Address of the sender, so that the packet will go back to the gateway
 iptables -t nat -A POSTROUTING -j MASQUERADE
 
+# Run the DHCP server
+mkdir -p /var/lib/dhcp/
+touch /var/lib/dhcp/dhcpd.leases
+/usr/sbin/dhcpd
+
+printf -v macaddr "52:54:%02x:%02x:%02x:%02x" $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff )) $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff ))
+
 qemu-system-aarch64 \
--device virtio-net-device,netdev=net0,mac=52:54:00:12:34:03 \
+-device virtio-net-device,netdev=net0,mac=$macaddr \
 -netdev tap,id=net0,ifname=$TAP,script=no,downscript=no \
 -object rng-random,filename=/dev/urandom,id=rng0 \
 -device virtio-rng-pci,rng=rng0 \

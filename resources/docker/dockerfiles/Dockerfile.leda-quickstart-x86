@@ -43,10 +43,12 @@
 # exits once qemu exits and it's the pid1 for the container.
 # 
 
+FROM debian:bullseye
+
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC
+ARG GITHUB_REPOSITORY
 
-FROM ubuntu:latest
 LABEL name="leda-quickstart-x86"
 
 RUN apt-get update
@@ -60,18 +62,28 @@ RUN apt-get install -y --no-install-recommends gh
 
 WORKDIR /root
 
-RUN gh release download --pattern 'eclipse-leda-qemu-x86_64.tar.xz'
+RUN --mount=type=secret,id=githubtoken gh auth login --with-token < /run/secrets/githubtoken
+RUN gh release download --repo "${GITHUB_REPOSITORY}" --pattern 'eclipse-leda-qemu-x86_64.tar.xz'
 
 RUN apt-get install -y --no-install-recommends xz-utils
 RUN tar xf eclipse-leda-qemu-x86_64.tar.xz && rm eclipse-leda-qemu-x86_64.tar.xz
 
-RUN apt-get install -y --no-install-recommends qemu-system-x86 uml-utilities iptables iproute2
+RUN apt-get install -y --no-install-recommends qemu-system-x86 uml-utilities iptables iproute2 isc-dhcp-server
 
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends iputils-ping dnsutils bind9-utils ssh
 
-COPY ./dockerfiles/leda-quickstart-docker-entrypoint.sh ./
-RUN chmod a+x ./leda-quickstart-docker-entrypoint.sh
-ENTRYPOINT [ "./leda-quickstart-docker-entrypoint.sh" ]
+# Configure DHCP Server
+COPY ./dockerfiles/dhcpd.conf /etc/dhcp/dhcpd.conf
+COPY ./dockerfiles/isc-dhcp-server /etc/default/isc-dhcp-server
+RUN touch /var/lib/dhcp/dhcpd.leases
+
+# Original runner and a temporary modified one ("...-x86.sh")
+RUN mkdir -p /docker
+COPY ./dockerfiles/leda-quickstart-docker-entrypoint.sh /docker/
+COPY ./dockerfiles/leda-quickstart-docker-entrypoint-x86.sh /docker/
+RUN chmod a+x /docker/leda-quickstart-docker-entrypoint.sh
+RUN chmod a+x /docker/leda-quickstart-docker-entrypoint-x86.sh
+ENTRYPOINT [ "/docker/leda-quickstart-docker-entrypoint-x86.sh" ]
 
 # Expose SSH access
 EXPOSE 22

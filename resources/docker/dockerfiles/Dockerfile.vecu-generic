@@ -23,7 +23,8 @@
 # Decode packets:
 # candump can0 | cantools decode 2022_04_06_Model3CAN.dbc
 #
-FROM ubuntu:latest AS builder
+FROM debian:bullseye AS builder
+
 LABEL name="vecu-generic"
 
 WORKDIR /root

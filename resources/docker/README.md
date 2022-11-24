@@ -7,12 +7,6 @@ Pre-Requisites:
 - A recent Docker and Docker Compose Plugin version (compose file is using build secrets).
 - A potent host machine, e.g 16 vCPU, 32 GB RAM
 
-# Plain Docker
-
-If you want to run a single instance, without the MQTT or WebServer infrastructure, you can do so by running a single Docker container directly:
-
-    docker run --privileged ghcr.io/eclipse-leda/leda-distro/leda-x86
-
 # Docker Compose - General Usage
 
 Starting up Docker Compose:
@@ -22,6 +16,15 @@ Starting up Docker Compose:
 Shutting down Docker Compose:
 
     ./stop-docker.sh
+
+## Building
+
+The build configuration and the Dockerfiles will download the latest public release of the Eclipse Leda quickstart distribution,
+install necessary dependencies for runtime and some configuration changes.
+
+    docker compose build
+
+*Note: For building outside of a GitHub Codespace, you may need to manually set and export the `GITHUB_TOKEN` environment variable to access the github repository.*
 
 ## Developer Shell
 
@@ -36,9 +39,9 @@ From there, you can log in to either Leda on QEMU x86-64, or log in to Leda on Q
 
 # Interacting with Eclipse Leda
 
-### Local Device Provisioning
+### Device Provisioning
 
-Use `docker-provision.sh` to initiate the device provisioning. The script will use Azure CLI and SSH to configure the cloud connector in the Leda instances.
+*Note: The device provisioning is work in progress.*
 
 ### Sending C2D Messages to a connected device
 
@@ -76,30 +79,39 @@ in a containerized network called `leda-network` (192.168.8.x).
 
 The containers wrapping the QEMU instances will forward the following ports to the respective QEMU process:
 - SSH on port 22
-- Mosquitto on port 31883
+- Mosquitto on port 1883
 - Kubernetes API on port 6433
 
-## Leda Initializer and proper DNS setup
+## DHCP and DNS setup
 
-The `leda-initializer` docker container will reconfigure the quickstart containers (leda-arm64, leda-x86) to use the internal DNS Proxy (leda-dns-proxy).
-The internal DNS proxy is a proxy which will redirect DNS requests first to the docker-built-in DNS server, so that other containers can be resolved
-using their service name. Requests outside of the `.leda-network` will be routed to the host's nameservers by default, allowing the quickstart images
-to resolve external domains.
+Each Leda-QEMU container is running a local DHCP on the `tap0` network interface and listens for DHCP requests by the Leda Distro running inside of QEMU.
+The DHCP server will respond with the same IP address (`192.168.7.2`) to the request from QEMU.
 
-The manually reconfigure the network, e.g. when running containers without Docker Compose, the DNS reconfiguration is as follows:
-Run these commands on the QEMU instance and replace `DNS_PROXY_IP` with the IP Address of the DNS Proxy.
+The DHCP response contains a DNS nameserver pointing to the `dns-proxy.leda-network` (`192.168.8.14`) IP, which in turn forwards to Docker's internal `127.0.0.11` nameserver.
+This allows the QEMU guests to resolve Docker Compose Services by their service name, e.g. `leda-bundle-server.leda-network`.
 
-*Important Note: The IP Address must be reachable from `leda-network`, it **must not** be the default Docker DNS Service running in 127.0.0.11, as this interface is not reachable from within the QEMU instance.
+## Volumes
 
-        DNS_PROXY_IP=$(dig dns-proxy.leda-network +short)
-        systemd-resolve --interface eth0 --set-dns ${DNS_PROXY_IP} --set-domain leda-network"
-        systemctl restart systemd-resolved
+The `/root` path inside of the Leda containers is mounted as a volume and contains the raw disk image and runner scripts for the QEMU Leda distribution.
+Changes on the QEMU filesystem are made persistent on a copy of the QCOW2 disk image, so that restarting the device will keep any changes.
+
+To reset to the original state, delete the respective docker volumes and restart the containers:
+
+    docker compose down
+    docker compose rm --force --stop --volumes
+    docker volume rm leda-arm64
+    docker volume rm leda-x86
+
+# Troubleshooting
+
+If login to Leda Docker DevShell does not work, or if you want to attach directly into the container running QEMU, you need to execute a one-off command shell in the running container:
+
+    docker compose exec leda-x86 /bin/bash
 
 # Profiles
 
 There are two profiles currently:
 - `tools`: Contains docker containers which are not essential at runtime, must useful for testing and development purposes
-- `experimental`: Docker containers which are not yet tested or which are currently unstable or even unusable.
 
 # Metrics Dashboards
 

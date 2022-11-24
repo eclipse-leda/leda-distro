@@ -16,11 +16,9 @@
 #
 #set -e
 
-# Run the system
 if ! docker compose up --no-recreate --remove-orphans --detach
 then
     echo "Error starting containers, aborting."
     echo "If you were not authenticated, try: docker login ghcr.io --username <github-username>"
     exit 1
 fi 
-
