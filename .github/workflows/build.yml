@@ -85,7 +85,7 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
-        overwrite: 'false'
+        overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-qemuarm64:
@@ -152,7 +152,7 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
-        overwrite: 'false'
+        overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-raspberrypi4-64:
@@ -212,5 +212,5 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
-        overwrite: 'false'
+        overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
