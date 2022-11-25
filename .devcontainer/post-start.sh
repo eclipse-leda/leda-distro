@@ -12,7 +12,6 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 
-git clone https://github.com/openembedded/bitbake
-pushd bitbake
-docker build --tag "leda-bitbake-hashserv:latest" -f ./contrib/hashserv/Dockerfile .
-docker run --detach --rm --publish 1234:1234 --name bb-hashserv leda-bitbake-hashserv:latest -b :1234
+pushd scripts
+sudo ./setup-taps.sh
+sudo ./run-dhcp.sh &
