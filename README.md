@@ -1,7 +1,10 @@
+[![BitBake DryRun](https://github.com/eclipse-leda/leda-distro/actions/workflows/dryrun.yml/badge.svg)](https://github.com/eclipse-leda/leda-distro/actions/workflows/dryrun.yml)
+[![BitBake Build](https://github.com/eclipse-leda/leda-distro/actions/workflows/build.yml/badge.svg)](https://github.com/eclipse-leda/leda-distro/actions/workflows/build.yml)
+[![OCaaS Compliance checks](https://github.com/eclipse-leda/leda-distro/actions/workflows/ocaas.yaml/badge.svg)](https://github.com/eclipse-leda/leda-distro/actions/workflows/ocaas.yaml)
+
 ![Eclipse Leda](https://eclipse-leda.github.io/leda/assets/eclipse-leda.png)
 
 # Eclipse Leda
-
 
 The Eclipse Leda project provides system image "recipes" to deliver a functional and always-available Linux-based image/distribution in the context of SDV (Software Defined Vehicle), by pulling together individual contributor pieces from [Eclipse SDV](https://sdv.eclipse.org/) and the larger OSS community.
 
@@ -16,7 +19,7 @@ Eclipse Leda provides a Poky-based reference build pipeline and an OpenEmbedded 
 1. Download [latest Eclipse Leda release](https://eclipse-leda.github.io/leda/docs/general-usage/download-releases/)
    or [build from sources](https://eclipse-leda.github.io/leda/docs/build/)
 2. Run Eclipse Leda
-   - on [emulated Qemu devices](https://eclipse-leda.github.io/leda/docs/general-usage/running-qemu/) or
+   - on [emulated QEMU devices](https://eclipse-leda.github.io/leda/docs/general-usage/running-qemu/) or
    - on [Raspberry Pi 4](https://eclipse-leda.github.io/leda/docs/general-usage/raspberry-pi/)
 3. Configure device, e.g. [provision the device](https://eclipse-leda.github.io/leda/docs/device-provisioning/)
 4. Explore the [device tools](https://eclipse-leda.github.io/leda/docs/build/misc/tools/)
@@ -24,7 +27,7 @@ Eclipse Leda provides a Poky-based reference build pipeline and an OpenEmbedded 
 6. [Deploy a Vehicle App to the device](https://eclipse-leda.github.io/leda/docs/app-deployment/)
 
 Supported Machines / Build Configurations
-- Emulated Qemu: x86-64, ARM64
+- Emulated QEMU: x86-64, ARM64
 - Raspberry Pi 4
 
 # Documentation
@@ -35,19 +38,20 @@ Please see [Eclipse Leda Documentation](https://eclipse-leda.github.io/leda/)
 
 - Base operating system: Poky from the Yocto project
 - Container Runtime: containerd.io
-- Kubernetes Control Plane: Rancher's k3s.io
-- Logging and Telemetr: CNCF's OpenTelemetry
+- Control Plane: Kanto Container Management
+- Logging and Telemetry: CNCF's OpenTelemetry
 - Vehicle Application templates by Eclipse Velocitas
 - Vehicle Apps and Vehicle Services programming model by Eclipse Velocitas
-- Cloud Connectivity by Eclipse kanto
+- Vehicle Data Broker by Eclipse Kuksa.VAL
+- Cloud Connectivity by Eclipse Kanto
 - Local Messaging by Mosquitto
 - Vehicle Signal Specification by Covesa
 
 ## Roadmap
 
 - Integration of additional Eclipse Automotive, Eclipse SDV and Eclipse IoT components, e.g.
-  - Eclipse Backend Function Bindings
-  - Eclipse Kuksa.val
+  - Eclipse Backend Function Bindings (Specification for automotive cloud services)
+  - Eclipse SommR (Some/IP)
 
 # Contributing
 
