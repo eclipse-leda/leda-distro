@@ -28,7 +28,7 @@ on:
 jobs:
   prebuild-qemux86-64:
     name: "Prebuild qemux86-64"
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     steps:
     - name: Checkout
       uses: actions/checkout@v3
