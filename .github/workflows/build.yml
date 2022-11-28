@@ -37,7 +37,7 @@ jobs:
       run: sudo pip3 install kas
     - name: Cache SState
       id: cache-sstate
-      uses: actions/cache@v3
+      uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
         key: bb-sstate-cache
@@ -106,7 +106,7 @@ jobs:
       run: sudo pip3 install kas
     - name: Cache SState
       id: cache-sstate
-      uses: actions/cache@v3
+      uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
         key: bb-sstate-cache
@@ -173,7 +173,7 @@ jobs:
       run: sudo pip3 install kas
     - name: Cache SState
       id: cache-sstate
-      uses: actions/cache@v3
+      uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
         key: bb-sstate-cache
