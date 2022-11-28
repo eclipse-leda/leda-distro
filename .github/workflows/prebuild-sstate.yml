@@ -27,7 +27,7 @@ on:
 
 jobs:
   prebuild-qemux86-64:
-    name: "Prebuild"
+    name: "Prebuild qemux86-64"
     runs-on: self-hosted
     steps:
     - name: Checkout
@@ -59,7 +59,7 @@ jobs:
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   prebuild-qemuarm64:
-    name: "Prebuild"
+    name: "Prebuild qemuarm64"
     runs-on: self-hosted
     needs: prebuild-qemux86-64
     steps:
