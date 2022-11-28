@@ -60,7 +60,7 @@ jobs:
 
   prebuild-qemuarm64:
     name: "Prebuild qemuarm64"
-    runs-on: self-hosted
+    runs-on: ubuntu-22.04
     needs: prebuild-qemux86-64
     steps:
     - name: Checkout
