@@ -41,7 +41,7 @@ jobs:
       with:
         path: build/sstate-cache
         key: bb-sstate-cache
-    - name: Build sdv-image-all
+    - name: setscene-only (multiple machines)
       run: |
         KAS_MACHINE=qemux86-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
         KAS_MACHINE=qemuarm64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
