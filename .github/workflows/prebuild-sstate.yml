@@ -46,9 +46,9 @@ jobs:
         key: bb-sstate-cache
     - name: Prebuild qemux86-64 (max 4 hrs)
       if: always()
+      continue-on-error: true
       run: |
         KAS_MACHINE=qemux86-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/mirrors.yaml
-        exit 1
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
@@ -79,9 +79,9 @@ jobs:
         key: bb-sstate-cache
     - name: Prebuild qemuarm64 (max 4 hrs)
       if: always()
+      continue-on-error: true
       run: |
         KAS_MACHINE=qemuarm64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/mirrors.yaml
-        exit 1
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
