@@ -25,19 +25,15 @@ distro: leda
 target: sdv-image-all
 local_conf_header:
   meta-leda: |
-    INHERIT:append = " rm_work"
     INHERIT:remove = " archiver"
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
-  sign_conf: |
+  rauc-sign-conf: |
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
     RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
-  scancode: |
-    PREFERRED_VERSION_python3-pluggy-native = "0.13.1"
-    #INHERIT += "scancode-tk"
-    INHERIT += "create-spdx"
-    SPDX_ORG = "Eclipse Foundation (Leda Dev Team)"
+  buils-stats: |
+    USER_CLASSES += "buildstats buildstats-summary"
 repos:
   # This entry includes the repository where the config file is located
   # to the bblayers.conf:

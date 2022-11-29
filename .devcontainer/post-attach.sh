@@ -37,7 +37,7 @@ function azure-mount() {
         else
             TEMPD=$(mktemp -d)
             echo "Mounting remote Azure Storage ${AZURE_STORAGE_ACCOUNT_CONTAINER} to local path: ${AZURE_MOUNT_POINT}"
-            blobfuse2 --disable-version-check mount ${AZURE_MOUNT_POINT} --log-level LOG_DEBUG --use-https=true --tmp-path=$TEMPD --container-name=${AZURE_STORAGE_ACCOUNT_CONTAINER} || true
+            blobfuse2 --disable-version-check mount ${AZURE_MOUNT_POINT} --use-https=true --tmp-path=$TEMPD --container-name=${AZURE_STORAGE_ACCOUNT_CONTAINER} || true
         fi
     else
         echo "Warning: No AZURE_MOUNT_POINT or no AZURE_STORAGE_ACCOUNT_CONTAINER set for mounting."

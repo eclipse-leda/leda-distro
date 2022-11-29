@@ -21,8 +21,8 @@ on:
   workflow_call:
 
 jobs:
-  leda-qemux86_64:
-    name: "Leda image qemux86_64 (Kirkstone)"
+  prep-cache:
+    name: "Preparing cache (setscene)"
     runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
@@ -35,10 +35,42 @@ jobs:
         sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
-    - name: Start BitBake Hash Equivalence Server
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache
+    - name: setscene-only (multiple machines)
       run: |
-        git clone https://github.com/openembedded/bitbake
-        bitbake/bin/bitbake-hashserv -b :1234 &
+        KAS_MACHINE=qemux86-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
+        KAS_MACHINE=qemuarm64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
+        KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
+    - name: Report build folder
+      run: |
+        du -s -h build/*
+
+  leda-qemux86_64:
+    name: "qemux86_64"
+    needs: prep-cache
+    runs-on: ubuntu-22.04
+#    runs-on: self-hosted
+#    container: debian:bullseye
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: qemux86-64
@@ -85,11 +117,12 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
-        overwrite: 'false'
+        overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-qemuarm64:
-    name: "Leda image qemuarm64 (Kirkstone)"
+    name: "qemuarm64"
+    needs: leda-qemux86_64
     runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
@@ -102,10 +135,12 @@ jobs:
         sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
-    - name: Start BitBake Hash Equivalence Server
-      run: |
-        git clone https://github.com/openembedded/bitbake
-        bitbake/bin/bitbake-hashserv -b :1234 &
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: qemuarm64
@@ -152,12 +187,13 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
-        overwrite: 'false'
+        overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-raspberrypi4-64:
-    name: "Leda image raspi4 (Kirkstone)"
+    name: "raspberrypi4-64"
     runs-on: ubuntu-22.04
+    needs: leda-qemuarm64
 #    runs-on: self-hosted
 #    container: debian:bullseye
     steps:
@@ -167,10 +203,12 @@ jobs:
       run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
-    - name: Start BitBake Hash Equivalence Server
-      run: |
-        git clone https://github.com/openembedded/bitbake
-        bitbake/bin/bitbake-hashserv -b :1234 &
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: raspberrypi4-64
@@ -212,5 +250,5 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
-        overwrite: 'false'
+        overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
