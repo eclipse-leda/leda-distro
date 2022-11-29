@@ -75,7 +75,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -145,7 +145,7 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -213,7 +213,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
