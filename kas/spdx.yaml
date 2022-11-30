@@ -18,15 +18,8 @@ header:
   # out if it is compatible with this file. The version is an integer that
   # is increased on every format change.
   version: 12
-  includes:
-    - kas/leda-kirkstone.yaml
-    - kas/mirrors.yaml
-task: build
-target:
-  - sdv-image-full
 local_conf_header:
   generate-spdx: |
     PREFERRED_VERSION_python3-pluggy-native = "0.13.1"
     INHERIT += "create-spdx"
     SPDX_ORG = "Eclipse Foundation (Leda Dev Team)"
-    do_image[noexec] = "1"
