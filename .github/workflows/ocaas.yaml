@@ -15,6 +15,7 @@ name: OCaaS Compliance checks
  
 on:
   workflow_dispatch:
+  workflow_call:
   pull_request:
     types:
       - opened
@@ -47,7 +48,7 @@ jobs:
         id: upload
         uses: actions/upload-artifact@v3
         with:
-          name: reports
+          name: oss-compliance-reports
           path: reports/
       - name: Check for violations
         if: steps.ocaas.outcome != 'success' || steps.upload.outcome != 'success'
