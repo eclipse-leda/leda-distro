@@ -44,9 +44,9 @@ jobs:
         key: bb-sstate-cache
     - name: setscene-only (multiple machines)
       run: |
-        KAS_MACHINE=qemux86-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
-        KAS_MACHINE=qemuarm64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
-        KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only
+        KAS_MACHINE=qemux86-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only --continue || true
+        KAS_MACHINE=qemuarm64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only --continue || true
+        KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only --continue || true
     - name: Report build folder
       run: |
         du -s -h build/* || true
@@ -76,7 +76,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --continue || true
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -144,7 +144,7 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --continue || true
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -210,7 +210,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --continue || true
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -273,7 +273,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        kas build kas/spdx.yaml
+        kas build kas/spdx.yaml -- --continue || true
     - name: Package all files
       run: |
         time tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
@@ -309,7 +309,7 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        kas build kas/spdx.yaml
+        kas build kas/spdx.yaml -- --continue || true
     - name: Package all files
       run: |
         time tar --create --gzip --file eclipse-leda-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
@@ -345,7 +345,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        kas build kas/spdx.yaml
+        kas build kas/spdx.yaml -- --continue || true
     - name: Package all files
       run: |
         time tar --create --gzip --file eclipse-leda-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
