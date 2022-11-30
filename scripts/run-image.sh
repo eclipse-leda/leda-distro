@@ -39,8 +39,8 @@ TMPDIR="build/tmp"
 #rm -f ovmf-instance-${INSTANCE}.qcow2
 
 # Step 2 - Create new disk overlays
-#$TMPDIR/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin/qemu-img create -F qcow2 -f qcow2 -b build/tmp/deploy/images/qemux86-64/sdv-image-all-qemux86-64.wic.qcow2 disk-instance-${INSTANCE}.qcow2
-#$TMPDIR/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin/qemu-img create -F qcow2 -f qcow2 -b build/tmp/deploy/images/qemux86-64/ovmf.qcow2 ovmf-instance-${INSTANCE}.qcow2
+$TMPDIR/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin/qemu-img create -F qcow2 -f qcow2 -b build/tmp/deploy/images/qemux86-64/sdv-image-all-qemux86-64.wic.qcow2 disk-instance-${INSTANCE}.qcow2
+$TMPDIR/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin/qemu-img create -F qcow2 -f qcow2 -b build/tmp/deploy/images/qemux86-64/ovmf.qcow2 ovmf-instance-${INSTANCE}.qcow2
 
 $TMPDIR/work/x86_64-linux/qemu-helper-native/1.0-r1/recipe-sysroot-native/usr/bin/qemu-system-x86_64 \
 -device virtio-net-pci,netdev=net0,mac=52:54:00:12:34:0${INSTANCE} \

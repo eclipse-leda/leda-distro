@@ -860,7 +860,7 @@ package_configurations:
     vcs:
       type: "Git"
       url: "https://github.com/SoftwareDefinedVehicle/leda-distro-fork.git"
-      revision: "683c0f3216e14f77cc39e8353d1d8bba57f7dfb6"
+      revision: "d2ff5e3320b2cbed425bfc96e9d0cf1d2f576882"
     license_finding_curations:
     - path: "resources/runners/qemux86_64/run-leda.sh"
       start_lines: "8"
@@ -870,6 +870,27 @@ package_configurations:
       reason: "INCORRECT"
       comment: "The file has a proper ASL license header and SDPX license identifier but is still detected incorrectly."
     - path: "scripts/run-image.sh"
+      start_lines: "8"
+      line_count: 2
+      detected_license: "LicenseRef-scancode-biosl-4.0"
+      concluded_license: "Apache-2.0"
+      reason: "INCORRECT"
+      comment: "The file has a proper ASL license header and SDPX license identifier but is still detected incorrectly."
+    - path: ".github/workflows/prebuild-actions-container.yml"
+      start_lines: "8"
+      line_count: 2
+      detected_license: "LicenseRef-scancode-biosl-4.0"
+      concluded_license: "Apache-2.0"
+      reason: "INCORRECT"
+      comment: "The file has a proper ASL license header and SDPX license identifier but is still detected incorrectly."
+    - path: "resources/runners/qemux86_64/run-leda.sh"
+      start_lines: "8"
+      line_count: 2
+      detected_license: "LicenseRef-scancode-biosl-4.0"
+      concluded_license: "Apache-2.0"
+      reason: "INCORRECT"
+      comment: "The file has a proper ASL license header and SDPX license identifier but is still detected incorrectly."
+    - path: "scripts/run-dhcp.sh"
       start_lines: "8"
       line_count: 2
       detected_license: "LicenseRef-scancode-biosl-4.0"
