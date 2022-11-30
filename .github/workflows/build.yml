@@ -21,35 +21,6 @@ on:
   workflow_call:
 
 jobs:
-  prep-cache:
-    name: "Preparing cache (setscene)"
-    runs-on: ubuntu-22.04
-#    runs-on: self-hosted
-#    container: debian:bullseye
-    continue-on-error: true
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Install tools
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
-    - name: Install kas
-      run: sudo pip3 install kas
-    - name: Cache SState
-      id: cache-sstate
-      uses: pat-s/always-upload-cache@v3.0.11
-      with:
-        path: build/sstate-cache
-        key: bb-sstate-cache
-    - name: setscene-only (multiple machines)
-      run: |
-        KAS_MACHINE=qemux86-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only --continue || true
-        KAS_MACHINE=qemuarm64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only --continue || true
-        KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --setscene-only --continue || true
-    - name: Report build folder
-      run: |
-        du -s -h build/* || true
 
   leda-qemux86_64:
     name: "qemux86_64"
@@ -76,7 +47,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --continue || true
+        (r=3;while ! kas build kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -110,6 +81,15 @@ jobs:
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-x86_64.tar.xz
+    - name: Package SPDX files
+      run: |
+        tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-sbom-qemux86_64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-sbom-qemux86_64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
@@ -144,7 +124,7 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --continue || true
+        (r=3;while ! kas build kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -178,6 +158,15 @@ jobs:
         name: eclipse-leda-qemu-arm64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-arm64.tar.xz
+    - name: Package SPDX files
+      run: |
+        tar --create --gzip --file eclipse-leda-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-sbom-qemuarm64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-sbom-qemuarm64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
@@ -210,7 +199,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml -- --continue || true
+        (r=3;while ! kas build kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author
@@ -239,6 +228,15 @@ jobs:
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error
         path: eclipse-leda-raspberrypi.tar.xz
+    - name: Package SPDX files
+      run: |
+        tar --create --gzip --file eclipse-leda-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-sbom-raspberrypi4-64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-sbom-raspberrypi4-64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
       with:
@@ -247,111 +245,3 @@ jobs:
         container_name: 'yocto-sstate-cache'
         overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
-
-  spdx-qemux86_64:
-    name: "spdx qemux86_64"
-    needs: leda-qemux86_64
-    runs-on: ubuntu-22.04
-#    runs-on: self-hosted
-#    container: debian:bullseye
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Install tools
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
-    - name: Install kas
-      run: sudo pip3 install kas
-    - name: Cache SState
-      id: cache-sstate
-      uses: pat-s/always-upload-cache@v3.0.11
-      with:
-        path: build/sstate-cache
-        key: bb-sstate-cache
-    - name: Build sdv-image-all
-      env:
-        KAS_MACHINE: qemux86-64
-      run: |
-        kas build kas/spdx.yaml -- --continue || true
-    - name: Package all files
-      run: |
-        time tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
-    - name: Upload files
-      uses: actions/upload-artifact@v3
-      with: 
-        name: eclipse-leda-sbom-qemux86_64.tar.gz
-        if-no-files-found: error
-        path: eclipse-leda-sbom-qemux86_64.tar.gz
-
-  spdx-qemuarm64:
-    name: "spdx qemuarm64"
-    runs-on: ubuntu-22.04
-    needs: leda-qemuarm64
-#    runs-on: self-hosted
-#    container: debian:bullseye
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Install tools
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
-    - name: Install kas
-      run: sudo pip3 install kas
-    - name: Cache SState
-      id: cache-sstate
-      uses: pat-s/always-upload-cache@v3.0.11
-      with:
-        path: build/sstate-cache
-        key: bb-sstate-cache
-    - name: Build sdv-image-all
-      env:
-        KAS_MACHINE: qemuarm64
-      run: |
-        kas build kas/spdx.yaml -- --continue || true
-    - name: Package all files
-      run: |
-        time tar --create --gzip --file eclipse-leda-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
-    - name: Upload files
-      uses: actions/upload-artifact@v3
-      with: 
-        name: eclipse-leda-sbom-qemuarm64.tar.gz
-        if-no-files-found: error
-        path: eclipse-leda-sbom-qemuarm64.tar.gz
-
-  spdx-raspberrypi4-64:
-    name: "spdx raspberrypi4-64"
-    runs-on: ubuntu-22.04
-    needs: leda-raspberrypi4-64
-#    runs-on: self-hosted
-#    container: debian:bullseye
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Install tools
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
-    - name: Install kas
-      run: sudo pip3 install kas
-    - name: Cache SState
-      id: cache-sstate
-      uses: pat-s/always-upload-cache@v3.0.11
-      with:
-        path: build/sstate-cache
-        key: bb-sstate-cache
-    - name: Build sdv-image-all
-      env:
-        KAS_MACHINE: raspberrypi4-64
-      run: |
-        kas build kas/spdx.yaml -- --continue || true
-    - name: Package all files
-      run: |
-        time tar --create --gzip --file eclipse-leda-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
-    - name: Upload files
-      uses: actions/upload-artifact@v3
-      with: 
-        name: eclipse-leda-sbom-raspberrypi4-64.tar.gz
-        if-no-files-found: error
-        path: eclipse-leda-sbom-raspberrypi4-64.tar.gz
