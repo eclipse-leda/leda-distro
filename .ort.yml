@@ -692,6 +692,10 @@ curations:
       curations:
         comment: "Licenses were scanned manually in source and effective licenses are concluded."
         concluded_license: "Apache-2.0 OR BSL-1.0"
+    - id: "Crate::ryu:1.0.11"
+      curations:
+        comment: "Licenses were scanned manually in source and effective licenses are concluded."
+        concluded_license: "Apache-2.0 OR BSL-1.0"
 package_configurations:
   - id: "Crate::tokio-macros:1.8.0"
     source_artifact_url: "https://crates.io/api/v1/crates/tokio-macros/1.8.0/download"
@@ -707,6 +711,16 @@ package_configurations:
     source_artifact_url: "https://crates.io/api/v1/crates/tokio-util/0.7.3/download"
     license_finding_curations:
       - path: "tokio-util-0.7.3/README.md"
+        start_lines: 11
+        line_count: 2
+        detected_license: "MS-PL OR Apache-2.0"
+        reason: "DOCUMENTATION_OF"
+        comment: "The README.md contains no sign of license different from MIT."
+        concluded_license: "MIT"
+  - id: "Crate::tokio-util:0.7.4"
+    source_artifact_url: "https://crates.io/api/v1/crates/tokio-util/0.7.4/download"
+    license_finding_curations:
+      - path: "tokio-util-0.7.4/README.md"
         start_lines: 11
         line_count: 2
         detected_license: "MS-PL OR Apache-2.0"
@@ -729,6 +743,30 @@ package_configurations:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
       comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows-sys:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows-sys/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows_aarch64_msvc:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows_aarch64_msvc/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows_i686_msvc:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows_i686_msvc/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows_x86_64_msvc:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows_x86_64_msvc/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
   - id: "Crate::winapi:0.3.9"
     source_artifact_url: "https://crates.io/api/v1/crates/winapi/0.3.9/download"
     path_excludes:
@@ -741,14 +779,32 @@ package_configurations:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
       comment: "Used by rust-native-tls for Mac and iOS platforms only. This distribution targets Linux only."
+  - id: "Crate::security-framework:2.7.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/security-framework/2.7.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "Used by rust-native-tls for Mac and iOS platforms only. This distribution targets Linux only."
   - id: "Crate::wasm-bindgen-futures:0.4.31"
     source_artifact_url: "https://crates.io/api/v1/crates/wasm-bindgen-futures/0.4.31/download"
     path_excludes:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
       comment: "Crate used only with target platform WebAssembly. This distribution targets Linux only."
+  - id: "Crate::wasm-bindgen-futures:0.4.33"
+    source_artifact_url: "https://crates.io/api/v1/crates/wasm-bindgen-futures/0.4.33/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "Crate used only with target platform WebAssembly. This distribution targets Linux only."
   - id: "Crate::web-sys:0.3.58"
     source_artifact_url: "https://crates.io/api/v1/crates/web-sys/0.3.58/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "Crate used only with target platform WebAssembly. This distribution targets Linux only."
+  - id: "Crate::web-sys:0.3.60"
+    source_artifact_url: "https://crates.io/api/v1/crates/web-sys/0.3.60/download"
     path_excludes:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
@@ -800,6 +856,26 @@ package_configurations:
       concluded_license: "MIT"
       reason: "CODE"
       comment: "The detected file is build recipe which contains a command line flag named nonfree."
+  - id: "Unmanaged::leda-distro-fork:683c0f3216e14f77cc39e8353d1d8bba57f7dfb6"
+    vcs:
+      type: "Git"
+      url: "https://github.com/SoftwareDefinedVehicle/leda-distro-fork.git"
+      revision: "683c0f3216e14f77cc39e8353d1d8bba57f7dfb6"
+    license_finding_curations:
+    - path: "resources/runners/qemux86_64/run-leda.sh"
+      start_lines: "8"
+      line_count: 2
+      detected_license: "LicenseRef-scancode-biosl-4.0"
+      concluded_license: "Apache-2.0"
+      reason: "INCORRECT"
+      comment: "The file has a proper ASL license header and SDPX license identifier but is still detected incorrectly."
+    - path: "scripts/run-image.sh"
+      start_lines: "8"
+      line_count: 2
+      detected_license: "LicenseRef-scancode-biosl-4.0"
+      concluded_license: "Apache-2.0"
+      reason: "INCORRECT"
+      comment: "The file has a proper ASL license header and SDPX license identifier but is still detected incorrectly."
 resolutions:
   vulnerabilities:
   - id: "sonatype-2021-1715"
