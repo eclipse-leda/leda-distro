@@ -11,7 +11,7 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
-# Pre-Requisuites:
+# Pre-Requisites:
 # $ sudo modprobe vcan
 # $ sudo modprobe vxcan
 # $ sudo modprobe can-gw
@@ -258,6 +258,8 @@ services:
         ipv4_address: 192.168.8.17
       leda-bridge:
   vecu-generic:
+    profiles:
+      - canbus
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.vecu-generic
@@ -266,6 +268,7 @@ services:
       leda-network:
         ipv4_address: 192.168.8.50
       leda-bridge:
+      canbus0:
 volumes:
   leda-x86:
     name: leda-x86
@@ -300,3 +303,10 @@ networks:
       com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
       com.docker.network.bridge.name: "leda0"
       com.docker.network.driver.mtu: "1500"
+  canbus0:
+    name: leda-can0
+    driver: wsovalle/vxcan:latest
+    driver_opts:
+      vxcan.dev: can
+      vxcan.peer: can_docker
+      vxcan.id: 0

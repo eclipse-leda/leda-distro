@@ -16,9 +16,35 @@
 #
 #set -e
 
+if ! command -v docker &> /dev/null
+then
+    echo "Docker could not be found, please install Docker."
+    exit
+fi
+
+# Docker setup may be as follows:
+# sudo ip link add dev vcan0 type vcan
+# sudo ip link add dev vcan1 type vcan
+# sudo ip link set up vcan0
+# sudo ip link set up vcan1
+# echo "Installing Docker Network Plugin for VXCAN to support CAN-Bus networks"
+# if ! docker plugin install --grant-all-permissions wsovalle/vxcan
+# then
+#     echo "Error installing Docker Network Plugin for VXCAN (CAN-Bus)"
+#     echo "Continuing..."
+# else
+# fi
+
 if ! docker compose up --no-recreate --remove-orphans --detach
 then
     echo "Error starting containers, aborting."
-    echo "If you were not authenticated, try: docker login ghcr.io --username <github-username>"
     exit 1
 fi 
+
+echo "Eclipse Leda Docker setup started."
+echo "You can now:"
+echo "- Log in to the devshell:         docker compose run devshell"
+echo "- or check status of containers:  docker compose ps"
+echo "- or send a message:              ./send-message.sh"
+echo "- or watch MQTT:                  mosquitto_sub -h localhost -p 1883 -t '#' -v"
+echo "- or stop the containers:         ./stop-docker.sh"

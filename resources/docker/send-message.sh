@@ -25,11 +25,10 @@ then
     exit 1
 fi
 
-if [ "$1" == "." ]
+if ! command -v az &> /dev/null
 then
-    IOT_HUB="swdc-euwe-dev-ls-0001-iot"
-else 
-    IOT_HUB=$1
+    echo "Azure CLI (az) could not be found, please install. See https://learn.microsoft.com/en-us/cli/azure/install-azure-cli for instructions"
+    exit
 fi
 
 DEVICE_OWNER=$GITHUB_USER

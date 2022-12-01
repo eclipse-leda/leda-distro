@@ -37,7 +37,11 @@ From there, you can log in to either Leda on QEMU x86-64, or log in to Leda on Q
     ssh leda-x86
     ssh leda-arm64
 
-# Interacting with Eclipse Leda
+## Interacting with Eclipse Leda
+
+1. Check the general system status
+
+    sdv-health
 
 ### Device Provisioning
 
@@ -108,9 +112,15 @@ If login to Leda Docker DevShell does not work, or if you want to attach directl
 
     docker compose exec leda-x86 /bin/bash
 
+When the building of the Docker containers fails as there is no access to the latest release artifacts or build artifacts, you may want to set the current GITHUB_REPOSITORY variable to your own build repository, before running the run-docker.sh script:
+
+    export GITHUB_REPOSITORY="MyGithubOrg/my-leda-distro-fork"
+    ./run-docker.sh
+
 # Profiles
 
-There are two profiles currently:
+Profiles can be used to determine which containers (services) docker compose should be starting by default.
+This is mostly used to have the `devshell` container not start up by default.
 - `tools`: Contains docker containers which are not essential at runtime, must useful for testing and development purposes
 
 # Metrics Dashboards
