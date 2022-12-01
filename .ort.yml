@@ -217,12 +217,12 @@ curations:
     reason: "INCORRECT"
     comment: "The license of the script is Apache 2.0"
     concluded_license: "Apache-2.0"
-  - path: "build-sdv-**/runner/run-leda.sh"
+  - path: "scripts/run-dhcp.sh"
     detected_license: "LicenseRef-scancode-biosl-4.0"
     reason: "INCORRECT"
     comment: "The license of the script is Apache 2.0"
     concluded_license: "Apache-2.0"
-  - path: "build-sdv-**/conf/local.conf"
+  - path: "resources/runners/**/run-leda.sh"
     detected_license: "LicenseRef-scancode-biosl-4.0"
     reason: "INCORRECT"
     comment: "The license of the script is Apache 2.0"
@@ -692,6 +692,10 @@ curations:
       curations:
         comment: "Licenses were scanned manually in source and effective licenses are concluded."
         concluded_license: "Apache-2.0 OR BSL-1.0"
+    - id: "Crate::ryu:1.0.11"
+      curations:
+        comment: "Licenses were scanned manually in source and effective licenses are concluded."
+        concluded_license: "Apache-2.0 OR BSL-1.0"
 package_configurations:
   - id: "Crate::tokio-macros:1.8.0"
     source_artifact_url: "https://crates.io/api/v1/crates/tokio-macros/1.8.0/download"
@@ -707,6 +711,16 @@ package_configurations:
     source_artifact_url: "https://crates.io/api/v1/crates/tokio-util/0.7.3/download"
     license_finding_curations:
       - path: "tokio-util-0.7.3/README.md"
+        start_lines: 11
+        line_count: 2
+        detected_license: "MS-PL OR Apache-2.0"
+        reason: "DOCUMENTATION_OF"
+        comment: "The README.md contains no sign of license different from MIT."
+        concluded_license: "MIT"
+  - id: "Crate::tokio-util:0.7.4"
+    source_artifact_url: "https://crates.io/api/v1/crates/tokio-util/0.7.4/download"
+    license_finding_curations:
+      - path: "tokio-util-0.7.4/README.md"
         start_lines: 11
         line_count: 2
         detected_license: "MS-PL OR Apache-2.0"
@@ -729,6 +743,30 @@ package_configurations:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
       comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows-sys:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows-sys/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows_aarch64_msvc:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows_aarch64_msvc/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows_i686_msvc:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows_i686_msvc/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
+  - id: "Crate::windows_x86_64_msvc:0.42.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/windows_x86_64_msvc/0.42.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "The distribution target architectures do not include windows."
   - id: "Crate::winapi:0.3.9"
     source_artifact_url: "https://crates.io/api/v1/crates/winapi/0.3.9/download"
     path_excludes:
@@ -741,8 +779,20 @@ package_configurations:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
       comment: "Used by rust-native-tls for Mac and iOS platforms only. This distribution targets Linux only."
+  - id: "Crate::security-framework:2.7.0"
+    source_artifact_url: "https://crates.io/api/v1/crates/security-framework/2.7.0/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "Used by rust-native-tls for Mac and iOS platforms only. This distribution targets Linux only."
   - id: "Crate::wasm-bindgen-futures:0.4.31"
     source_artifact_url: "https://crates.io/api/v1/crates/wasm-bindgen-futures/0.4.31/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "Crate used only with target platform WebAssembly. This distribution targets Linux only."
+  - id: "Crate::wasm-bindgen-futures:0.4.33"
+    source_artifact_url: "https://crates.io/api/v1/crates/wasm-bindgen-futures/0.4.33/download"
     path_excludes:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
@@ -753,53 +803,18 @@ package_configurations:
     - pattern: "**/**"
       reason: "OPTIONAL_COMPONENT_OF"
       comment: "Crate used only with target platform WebAssembly. This distribution targets Linux only."
+  - id: "Crate::web-sys:0.3.60"
+    source_artifact_url: "https://crates.io/api/v1/crates/web-sys/0.3.60/download"
+    path_excludes:
+    - pattern: "**/**"
+      reason: "OPTIONAL_COMPONENT_OF"
+      comment: "Crate used only with target platform WebAssembly. This distribution targets Linux only."
   - id: "Crate::sysinfo:0.24.7"
     source_artifact_url: "https://crates.io/api/v1/crates/sysinfo/0.24.7/download"
     path_excludes:
     - pattern: "**/**"
       reason: "TEST_OF"
       comment: "Crate used only during testing. Security vulnerability will not affect the production release."
-  - id: "Unmanaged::sdv-edge-distro-yocto:24f7af7e08fb3859d84c88deb399421d34e39ca8"
-    vcs:
-      type: "Git"
-      url: "https://github.com/SoftwareDefinedVehicle/sdv-edge-distro-yocto.git"
-      revision: "24f7af7e08fb3859d84c88deb399421d34e39ca8"
-    license_finding_curations:
-    - path: "meta-openembedded/meta-networking/recipes-core/packagegroups/packagegroup-meta-networking.bb"
-      start_lines: "215"
-      line_count: 1
-      detected_license: "LicenseRef-scancode-proprietary-license"
-      concluded_license: "MIT"
-      reason: "CODE"
-      comment: "Code which checks for a license flag, metalayer code is MIT licensed"
-    - path: "meta-openembedded/meta-oe/licenses/OGPL"
-      start_lines: "24"
-      line_count: 4
-      detected_license: "LicenseRef-scancode-proprietary-license"
-      concluded_license: "MIT"
-      reason: "DOCUMENTATION_OF"
-      comment: "Metalayers contain various license texts of optional components. Metalayer itself is MIT"
-    - path: "meta-raspberrypi/files/custom-licenses/Broadcom-RPi"
-      start_lines: "5"
-      line_count: 25
-      detected_license: "LicenseRef-scancode-proprietary-license"
-      concluded_license: "MIT"
-      reason: "DOCUMENTATION_OF"
-      comment: "Metalayer contains documentation of proprietary Broadcom license. Metalayer itself is MIT"
-    - path: "meta-raspberrypi/recipes-graphics/userland/files/0002-wayland-Add-support-for-the-Wayland-winsys.patch"
-      start_lines: "737"
-      line_count: 2
-      detected_license: "LicenseRef-scancode-proprietary-license"
-      concluded_license: "MIT"
-      reason: "CODE"
-      comment: "The detected file is a patch for graphics-related source code with license headers. Graphics recipes such as for Wayland are not used in Leda. The Metalayer itself is considered to be MIT licensed."
-    - path: "meta-raspberrypi/recipes-multimedia/omxplayer/omxplayer/0001-Specify-cc-cxx-and-ld-variables-from-environment.patch"
-      start_lines: "41"
-      line_count: 1
-      detected_license: "LicenseRef-scancode-proprietary-license"
-      concluded_license: "MIT"
-      reason: "CODE"
-      comment: "The detected file is build recipe which contains a command line flag named nonfree."
 resolutions:
   vulnerabilities:
   - id: "sonatype-2021-1715"

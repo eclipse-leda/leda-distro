@@ -1,3 +1,5 @@
+tmp
+
 build-*/cache/*
 build-*/tmp/*
 build-*/tmp-*/*
@@ -59,9 +61,12 @@ bitbake/
 hashserv.db
 
 # DHCP Leases
-scripts/dhcp.pid
-scripts/dhcpc.leases
-scripts/dhcpc.leases~
+**/dhcp.pid
+**/dhcpc.leases
+**/dhcpc.leases~
 
 # QEMU Disk Images
 **/*.qcow2
+
+# During testing of workflow
+eclipse-leda-sbom-*.tar.gz

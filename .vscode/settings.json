@@ -3,13 +3,15 @@
         "**/build/cache/**": true,
         "**/build/downloads/**": true,
         "**/build/sstate-cache/**": true,
-        "**/build/tmp/**": true
+        "**/build/tmp/**": true,
+        "**/azure-**-cache/**": true
     },
     "files.exclude": {
         "**/build/cache/**": true,
         "**/build/downloads/**": true,
         "**/build/sstate-cache/**": true,
-        "**/build/tmp/**": true
+        "**/build/tmp/**": true,
+        "**/azure-**-cache/**": true
     },
     "search.useIgnoreFiles": false
 }

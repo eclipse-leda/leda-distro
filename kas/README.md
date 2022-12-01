@@ -65,3 +65,11 @@ Pre-Requisites:
     export TEMPD=$(mktemp -d)
     blobfuse2 --disable-version-check mount /tmp/downloads --use-https=true --tmp-path=${TEMPD} --container-name=downloads
     cp -v build/downloads/*.tar.gz /tmp/downloads/
+
+# Generation of SBOM
+
+To generate Software Bill of Material documents (in SPDX format), run the kas tooling with the spdx configuration:
+
+    kas build kas/spdx.yaml
+
+This will automatically include the configuration for Kirkstone release and using mirrors to speed up build time.

@@ -1,0 +1,125 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+# The build process of the full images takes a lot of time (e.g. 4-5 hours without cache on a 16 CPI machine).
+# Running with a cache, it can be cut down to 30 minutes (16 CPUs) and still involves a lot of I/O, networking and CPU.
+# As the GitHub Runners are limited to 6 hours of job execution time, the build process needs to be split
+# into smalle packages (as we're trying to make it run on GitHub Managed Runners for now)
+#
+# The idea is now that each machine build is granted 4 hours of build time, and then has some remaining time
+# to uploading it's already built packages into a remote sstate-cache. The next time a build runs,
+# it should be able to reuse more of the cache, thus have less remaining work to do, eventually succeeding building within 4 hours.
+#
+name: Prebuild sstate
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  prebuild-qemux86-64:
+    name: "Prebuild qemux86-64"
+    runs-on: ubuntu-22.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache-qemux86-64
+    - name: Prebuild qemux86-64 (max 4 hrs)
+      if: always()
+      continue-on-error: true
+      run: |
+        KAS_MACHINE=qemux86-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      with:
+        source_dir: 'build/sstate-cache/'
+        extra_args: '--destination-path sstate-cache/'
+        container_name: 'yocto-sstate-cache'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
+  prebuild-qemuarm64:
+    name: "Prebuild qemuarm64"
+    runs-on: ubuntu-22.04
+    needs: prebuild-qemux86-64
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache-qemuarm64
+    - name: Prebuild qemuarm64 (max 4 hrs)
+      if: always()
+      continue-on-error: true
+      run: |
+        KAS_MACHINE=qemuarm64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      with:
+        source_dir: 'build/sstate-cache/'
+        extra_args: '--destination-path sstate-cache/'
+        container_name: 'yocto-sstate-cache'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
+  prebuild-raspberrypi4-64:
+    name: "Prebuild raspberrypi4-64"
+    runs-on: ubuntu-22.04
+    needs: prebuild-qemuarm64
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache-raspberrypi4-64
+    - name: Prebuild raspberrypi4-64 (max 4 hrs)
+      if: always()
+      continue-on-error: true
+      run: |
+        KAS_MACHINE=raspberrypi4-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      with:
+        source_dir: 'build/sstate-cache/'
+        extra_args: '--destination-path sstate-cache/'
+        container_name: 'yocto-sstate-cache'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}

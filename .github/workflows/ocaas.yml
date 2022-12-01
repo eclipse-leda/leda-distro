@@ -15,10 +15,18 @@ name: OCaaS Compliance checks
  
 on:
   workflow_dispatch:
+  workflow_call:
+  pull_request:
+    types:
+      - opened
+  push:
+    paths:
+      - '.ort.yml'
  
 jobs:
   ocaas-scan:
     runs-on: ubuntu-22.04
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
       - name: OCaaS Scans
         id: ocaas
@@ -35,13 +43,13 @@ jobs:
           VCS_REVISION: ${{ github.ref_name }}
           APPLICATION_CATEGORY: "BT11"
           BLOCKING: true
-          REPORT_FILES: DISCLOSURE_DOCUMENT_PDF,VULNERABILITY_REPORT_PDF,SCAN_REPORT_WEB_APP_HTML
+          REPORT_FILES: SCAN_REPORT_WEB_APP_HTML
           OUTPUT_DIR: reports/
       - name: Upload reports
         id: upload
         uses: actions/upload-artifact@v3
         with:
-          name: reports
+          name: oss-compliance-reports
           path: reports/
       - name: Check for violations
         if: steps.ocaas.outcome != 'success' || steps.upload.outcome != 'success'
