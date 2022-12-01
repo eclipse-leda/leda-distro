@@ -219,6 +219,7 @@ jobs:
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/raspberrypi4-64/ \
           Image-raspberrypi4-64.bin \
           sdv-image-all-raspberrypi4-64.wic.bz2 \
+          sdv-image-all-raspberrypi4-64.wic.bmap \
           sdv-rauc-bundle-raspberrypi4-64.raucb
         time xz -v -1 -T0 ${ARC}
     - name: Upload files
