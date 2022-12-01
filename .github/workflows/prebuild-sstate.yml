@@ -43,7 +43,7 @@ jobs:
       uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
-        key: bb-sstate-cache
+        key: bb-sstate-cache-qemux86-64
     - name: Prebuild qemux86-64 (max 4 hrs)
       if: always()
       continue-on-error: true
@@ -76,7 +76,7 @@ jobs:
       uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
-        key: bb-sstate-cache
+        key: bb-sstate-cache-qemuarm64
     - name: Prebuild qemuarm64 (max 4 hrs)
       if: always()
       continue-on-error: true
@@ -109,7 +109,7 @@ jobs:
       uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
-        key: bb-sstate-cache
+        key: bb-sstate-cache-raspberrypi4-64
     - name: Prebuild raspberrypi4-64 (max 4 hrs)
       if: always()
       continue-on-error: true

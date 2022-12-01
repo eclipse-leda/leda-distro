@@ -41,7 +41,7 @@ jobs:
       uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
-        key: bb-sstate-cache
+        key: bb-sstate-cache-qemux86-64
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: qemux86-64
@@ -118,7 +118,7 @@ jobs:
       uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
-        key: bb-sstate-cache
+        key: bb-sstate-cache-qemuarm64
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: qemuarm64
@@ -193,7 +193,7 @@ jobs:
       uses: pat-s/always-upload-cache@v3.0.11
       with:
         path: build/sstate-cache
-        key: bb-sstate-cache
+        key: bb-sstate-cache-raspberrypi4-64
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: raspberrypi4-64
