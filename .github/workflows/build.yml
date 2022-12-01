@@ -27,6 +27,7 @@ jobs:
     runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
+    continue-on-error: true
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -90,7 +91,7 @@ jobs:
         if-no-files-found: error
         path: eclipse-leda-sbom-qemux86_64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
@@ -104,6 +105,7 @@ jobs:
     runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
+    continue-on-error: true
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -167,7 +169,7 @@ jobs:
         if-no-files-found: error
         path: eclipse-leda-sbom-qemuarm64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
@@ -181,6 +183,7 @@ jobs:
     needs: leda-qemuarm64
 #    runs-on: self-hosted
 #    container: debian:bullseye
+    continue-on-error: true
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -238,7 +241,7 @@ jobs:
         if-no-files-found: error
         path: eclipse-leda-sbom-raspberrypi4-64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
