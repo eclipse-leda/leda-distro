@@ -18,7 +18,6 @@ header:
   # out if it is compatible with this file. The version is an integer that
   # is increased on every format change.
   version: 12
-# The machine as it is written into the `local.conf` of bitbake.
 local_conf_header:
   generate-spdx: |
     PREFERRED_VERSION_python3-pluggy-native = "0.13.1"

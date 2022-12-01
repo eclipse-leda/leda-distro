@@ -21,9 +21,6 @@ on:
     paths:
       - '.github/workflows/dryrun.yml'
       - 'kas/**'
-      - 'scripts/**'
-      - 'tests/**'
-      - 'examples/**'
   workflow_dispatch:
 
 jobs:
