@@ -26,6 +26,7 @@ on:
 jobs:
   ocaas-scan:
     runs-on: ubuntu-22.04
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
       - name: OCaaS Scans
         id: ocaas
