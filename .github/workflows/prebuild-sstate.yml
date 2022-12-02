@@ -29,6 +29,7 @@ jobs:
   prebuild-qemux86-64:
     name: "Prebuild qemux86-64"
     runs-on: ubuntu-22.04
+    continue-on-error: true
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -50,7 +51,7 @@ jobs:
       run: |
         KAS_MACHINE=qemux86-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
@@ -83,7 +84,7 @@ jobs:
       run: |
         KAS_MACHINE=qemuarm64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
@@ -116,7 +117,7 @@ jobs:
       run: |
         KAS_MACHINE=raspberrypi4-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: always() && ${{ github.repository_owner == 'SoftwareDefinedVehicle' }}
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
