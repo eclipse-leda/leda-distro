@@ -257,7 +257,7 @@ curations:
     reason: "INCORRECT"
     comment: "The license of the script is Apache 2.0"
     concluded_license: "Apache-2.0"
-  - path: "resources/docker/dockerfiles/*"
+  - path: "resources/docker/dockerfiles/**"
     detected_license: "LicenseRef-scancode-biosl-4.0"
     reason: "INCORRECT"
     comment: "The license of the scripts is Apache 2.0"
