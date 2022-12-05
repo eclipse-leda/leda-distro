@@ -1,6 +1,5 @@
 [![BitBake DryRun](https://github.com/eclipse-leda/leda-distro/actions/workflows/dryrun.yml/badge.svg)](https://github.com/eclipse-leda/leda-distro/actions/workflows/dryrun.yml)
 [![BitBake Build](https://github.com/eclipse-leda/leda-distro/actions/workflows/build.yml/badge.svg)](https://github.com/eclipse-leda/leda-distro/actions/workflows/build.yml)
-[![OCaaS Compliance checks](https://github.com/eclipse-leda/leda-distro/actions/workflows/ocaas.yaml/badge.svg)](https://github.com/eclipse-leda/leda-distro/actions/workflows/ocaas.yaml)
 
 ![Eclipse Leda](https://eclipse-leda.github.io/leda/assets/eclipse-leda.png)
 
