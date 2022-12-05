@@ -707,10 +707,10 @@ package_configurations:
         reason: "DOCUMENTATION_OF"
         comment: "The README.md contains no sign of license different from MIT."
         concluded_license: "MIT"
-  - id: "Crate::tokio-util:0.7.3"
-    source_artifact_url: "https://crates.io/api/v1/crates/tokio-util/0.7.3/download"
+  - id: "Crate::tokio-util:0.7.4"
+    source_artifact_url: "https://crates.io/api/v1/crates/tokio-util/0.7.4/download"
     license_finding_curations:
-      - path: "tokio-util-0.7.3/README.md"
+      - path: "tokio-util-0.7.4/README.md"
         start_lines: 11
         line_count: 2
         detected_license: "MS-PL OR Apache-2.0"
