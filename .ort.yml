@@ -697,6 +697,16 @@ curations:
         comment: "Licenses were scanned manually in source and effective licenses are concluded."
         concluded_license: "Apache-2.0 OR BSL-1.0"
 package_configurations:
+  - id: "Crate::tracing-attributes:0.1.23"
+    source_artifact_url: "https://crates.io/api/v1/crates/tracing-attributes/0.1.23/download"
+    license_finding_curations:
+      - path: "tracing-attributes-0.1.23/README.md"
+        start_lines: 89
+        line_count: 2
+        detected_license: "MS-PL OR Apache-2.0"
+        reason: "DOCUMENTATION_OF"
+        comment: "The README.md contains no sign of license different from MIT."
+        concluded_license: "MIT"
   - id: "Crate::tokio-macros:1.8.2"
     source_artifact_url: "https://crates.io/api/v1/crates/tokio-macros/1.8.2/download"
     license_finding_curations:
