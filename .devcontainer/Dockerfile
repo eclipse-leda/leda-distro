@@ -60,3 +60,7 @@ RUN /bin/bash -c "(groupadd --system kvm; gpasswd -a vscode kvm; chown root:kvm 
 
 # Install kas tool to set up Yocto build environment
 RUN pip3 install kas
+
+# Install Rust and cargo cross compiler
+RUN /bin/bash -c "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+RUN /bin/bash -c "source $HOME/.cargo/env && cargo install cross --version 0.1.16"
