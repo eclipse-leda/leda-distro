@@ -23,15 +23,10 @@ jobs:
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
-  call-ocaas:
-    name: OCaaS
-    uses: ./.github/workflows/ocaas.yml
-    secrets: inherit
-
   upload-assets:
     name: Upload assets
     runs-on: ubuntu-22.04
-    needs: [ call-build, call-ocaas ]
+    needs: [ call-build ]
     steps:
       - name: Download qemux86_64 archive
         id: download
@@ -46,4 +41,3 @@ jobs:
             ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-x86_64.tar.xz/eclipse-leda-qemu-x86_64.tar.xz
             ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-arm64.tar.xz/eclipse-leda-qemu-arm64.tar.xz
             ${{steps.download.outputs.download-path}}/eclipse-leda-raspberrypi.tar.xz/eclipse-leda-raspberrypi.tar.xz
-            ${{steps.download.outputs.download-path}}/oss-compliance-reports/scan-report-web-app.html
