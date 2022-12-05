@@ -27,6 +27,8 @@ jobs:
     name: Upload assets
     runs-on: ubuntu-22.04
     needs: [ call-build ]
+    permissions:
+      contents: write
     steps:
       - name: Download qemux86_64 archive
         id: download
