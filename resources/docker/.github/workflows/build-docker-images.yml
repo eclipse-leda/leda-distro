@@ -1,0 +1,58 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+
+name: Build Leda-Docker user images
+
+on:
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+
+  build-matrix:
+    runs-on: ubuntu-22.04
+    name: Docker
+    continue-on-error: true
+    strategy:
+      matrix:
+        leda-component:
+        - leda-devshell
+        - leda-bundle-server
+        - leda-initializer
+        - leda-quickstart-arm64
+        - leda-quickstart-x86
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get Metadata (tags,labels) for Docker images
+        id: meta
+        uses: docker/metadata-action@v4
+        with: 
+          images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ matrix.leda-component }}
+      - name: ${{ matrix.leda-component }}
+        uses: docker/build-push-action@v3
+        continue-on-error: true
+        with:
+          context: resources/docker/
+          file: resources/docker/dockerfiles/Dockerfile.${{ matrix.leda-component }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}

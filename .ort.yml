@@ -257,10 +257,10 @@ curations:
     reason: "INCORRECT"
     comment: "The license of the script is Apache 2.0"
     concluded_license: "Apache-2.0"
-  - path: "sdv-edge-core-utils/src/bash/*"
+  - path: "resources/docker/dockerfiles/**"
     detected_license: "LicenseRef-scancode-biosl-4.0"
     reason: "INCORRECT"
-    comment: "The license of the script is Apache 2.0"
+    comment: "The license of the scripts is Apache 2.0"
     concluded_license: "Apache-2.0"
   - path: "meta-virtualization/files/custom-licenses/Intel-ACPI"
     detected_license: "Intel-ACPI"
@@ -687,6 +687,11 @@ curations:
     reason: "INCORRECT"
     comment: "Dual licensing, selecting Artistic license"
     concluded_license: "Artistic-1.0"
+  - path: "resources/docker/dockerfiles/Dockerfile.leda-initializer"
+    detected_license: "GPL-2.0-only"
+    concluded_license: "Apache-2.0"
+    reason: "INCORRECT"
+    comment: "It's our standard Apache-2.0 license header."
   packages:
     - id: "Crate::ryu:1.0.10"
       curations:
@@ -697,10 +702,10 @@ curations:
         comment: "Licenses were scanned manually in source and effective licenses are concluded."
         concluded_license: "Apache-2.0 OR BSL-1.0"
 package_configurations:
-  - id: "Crate::tokio-macros:1.8.0"
-    source_artifact_url: "https://crates.io/api/v1/crates/tokio-macros/1.8.0/download"
+  - id: "Crate::tokio-macros:1.8.2"
+    source_artifact_url: "https://crates.io/api/v1/crates/tokio-macros/1.8.2/download"
     license_finding_curations:
-      - path: "tokio-macros-1.8.0/README.md"
+      - path: "tokio-macros-1.8.2/README.md"
         start_lines: 11
         line_count: 2
         detected_license: "MS-PL OR Apache-2.0"
