@@ -39,9 +39,6 @@ repos:
       meta:
       meta-poky:
       meta-yocto-bsp:
-  meta-rauc-community:
-    url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: kirkstone
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
     refspec: kirkstone
