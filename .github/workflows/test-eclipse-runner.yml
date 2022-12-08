@@ -33,4 +33,4 @@ jobs:
       run: git clone --recurse-submodules https://github.com/${{github.repository}} leda/
 
     - name: DryRun sdv-image-all
-      run: cd leda && kas build kas/leda-kirkstone.yaml --target sdv-image-all -- --dry-run
+      run: cd leda && kas build kas/leda-qemux86-64.yaml --target sdv-image-all -- --dry-run

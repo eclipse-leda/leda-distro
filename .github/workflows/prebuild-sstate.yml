@@ -49,7 +49,7 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        KAS_MACHINE=qemux86-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
+        timeout --signal=SIGINT 4h kas build --update kas/leda-qemux86-64.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
@@ -82,7 +82,7 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        KAS_MACHINE=qemuarm64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
+        timeout --signal=SIGINT 4h kas build --update kas/leda-qemuarm64.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
@@ -115,7 +115,7 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        KAS_MACHINE=raspberrypi4-64 timeout --signal=SIGINT 4h kas build --update kas/leda-kirkstone.yaml:kas/spdx.yaml:kas/mirrors.yaml
+        timeout --signal=SIGINT 4h kas build --update kas/leda-raspberrypi4-64.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
