@@ -70,3 +70,10 @@ hashserv.db
 
 # During testing of workflow
 eclipse-leda-sbom-*.tar.gz
+
+# OSS Review Toolkit
+.ort/cache
+.ort/ort-config
+.ort/tools
+.pnpm-store
+ort/analyzer/analyzer-result.json
