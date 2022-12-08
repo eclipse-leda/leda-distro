@@ -13,63 +13,55 @@
 # Every file needs to contain a header, that provides kas with information
 # about the context of this file.
 header:
-  # The `version` entry in the header describes for which configuration
-  # format version this file was created for. It is used by kas to figure
-  # out if it is compatible with this file. The version is an integer that
-  # is increased on every format change.
   version: 12
-# The machine as it is written into the `local.conf` of bitbake.
-machine: qemux86-64
-# The distro name as it is written into the `local.conf` of bitbake.
+  includes:
+  - kas/mirrors.yaml
+  - kas/spdx.yaml
 distro: leda
 target: sdv-image-all
 local_conf_header:
   meta-leda: |
-    INHERIT:append = " rm_work"
+    INHERIT += "rm_work"
     INHERIT:remove = " archiver"
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
-  sign_conf: |
+  rauc-sign-conf: |
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
     RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+  buils-stats: |
+    USER_CLASSES += "buildstats buildstats-summary"
 repos:
-  # This entry includes the repository where the config file is located
-  # to the bblayers.conf:
-  # Here we include a list of layers from the poky repository to the
-  # bblayers.conf:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
-    refspec: master
+    refspec: kirkstone
     layers:
       meta:
       meta-poky:
       meta-yocto-bsp:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: master
-    layers:
-      meta-rauc-qemux86:
+    refspec: kirkstone
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
-    refspec: master
+    refspec: kirkstone
   meta-kanto:
     url: "https://github.com/eclipse-kanto/meta-kanto.git"
-    refspec: main
+    refspec: kirkstone
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
-    refspec: master
+    refspec: kirkstone
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    refspec: master
+    refspec: kirkstone
     layers:
       meta-oe:
       meta-filesystems:
       meta-python:
       meta-networking:
-  meta-raspberrypi:
-    url: "https://git.yoctoproject.org/meta-raspberrypi"
-    refspec: master
+  meta-spdxscanner:
+    url: https://git.yoctoproject.org/meta-spdxscanner
+    refspec: kirkstone
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     refspec: main

@@ -12,13 +12,8 @@ Please see the [Leda Documentation](https://eclipse-leda.github.io/leda/docs/bui
 
 3. Start the build for qemux86_64:
 
-        kas build kas/leda-kirkstone.yaml
+        kas build kas/leda-qemux86-64.yaml
 
-4. To build for another target machine, set the `KAS_MACHINE` environment variable:
+4. To build for another target machine, is the other kas config files:
 
-        KAS_MACHINE=raspberrypi4-64 kas build kas/leda-kirkstone.yaml
-
-
-5. To build using mirrors which greatly improves build time:
-
-        kas build kas/leda-kirkstone.yaml:kas/mirrors.yaml
+        kas build kas/leda-raspberrypi4-64.yaml

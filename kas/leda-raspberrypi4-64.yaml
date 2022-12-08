@@ -1,4 +1,3 @@
-#!/bin/bash
 # /********************************************************************************
 # * Copyright (c) 2022 Contributors to the Eclipse Foundation
 # *
@@ -11,9 +10,19 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-#
-# Starter script for developers who are building the project
-# and testing on qemu
-#
-
-kas shell kas/leda-qemux86-64.yaml -c 'runqemu ovmf kvm nographic sdv-image-all'
+# Every file needs to contain a header, that provides kas with information
+# about the context of this file.
+header:
+  version: 12
+  includes:
+  - kas/common-kirkstone.yaml
+machine: raspberrypi4-64
+repos:
+  meta-rauc-community:
+    url: "https://github.com/rauc/meta-rauc-community.git"
+    refspec: kirkstone
+    layers:
+      meta-rauc-raspberrypi:
+  meta-raspberrypi:
+    url: "https://git.yoctoproject.org/meta-raspberrypi"
+    refspec: kirkstone
