@@ -11,15 +11,9 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
-# The build process of the full images takes a lot of time (e.g. 4-5 hours without cache on a 16 CPI machine).
-# Running with a cache, it can be cut down to 30 minutes (16 CPUs) and still involves a lot of I/O, networking and CPU.
-# As the GitHub Runners are limited to 6 hours of job execution time, the build process needs to be split
-# into smalle packages (as we're trying to make it run on GitHub Managed Runners for now)
-#
-# The idea is now that each machine build is granted 4 hours of build time, and then has some remaining time
-# to uploading it's already built packages into a remote sstate-cache. The next time a build runs,
-# it should be able to reuse more of the cache, thus have less remaining work to do, eventually succeeding building within 4 hours.
-#
+# Some sources are hosted in slow repositories (ex. yocto linux kernel) which leads to increased build times.
+# This workflow pre-downloads and caches the sources required for all current Leda targets.
+
 name: Pre-download sources
 on:
   workflow_dispatch:
@@ -39,12 +33,6 @@ jobs:
         sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
     - name: Install kas
       run: sudo pip3 install kas
-    - name: Cache Downloads
-      id: cache-sstate
-      uses: pat-s/always-upload-cache@v3.0.11
-      with:
-        path: build/downloads
-        key: bb-downloads-cache
     - name: Pre-downloads sources
       if: always()
       continue-on-error: true
@@ -56,6 +44,12 @@ jobs:
         rm -rf build/downloads/git2
         rm -rf build/downloads/svn
         find build/downloads -name "*.done" -exec rm -f {} \;
+    - name: Cache Downloads
+      id: cache-downloads
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/downloads
+        key: bb-downloads-cache
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
