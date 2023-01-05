@@ -20,7 +20,7 @@
 # to uploading it's already built packages into a remote sstate-cache. The next time a build runs,
 # it should be able to reuse more of the cache, thus have less remaining work to do, eventually succeeding building within 4 hours.
 #
-name: Prebuild sstate
+name: Pre-download sources
 on:
   workflow_dispatch:
   workflow_call:
