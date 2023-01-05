@@ -37,9 +37,9 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        kas shell kas/leda-qemux86-64.yaml:kas/pre-download.yaml -c 'bitbake sdv-image-all --runall=fetch'
-        kas shell kas/leda-qemuarm64.yaml:kas/pre-download.yaml -c 'bitbake sdv-image-all --runall=fetch'
-        kas shell kas/leda-raspberrypi4-64.yaml:kas/pre-download.yaml -c 'bitbake sdv-image-all --runall=fetch'
+        kas shell kas/leda-qemux86-64.yaml:kas/generate-mirror.yaml -c 'bitbake sdv-image-all --runall=fetch'
+        kas shell kas/leda-qemuarm64.yaml:kas/generate-mirror.yaml -c 'bitbake sdv-image-all --runall=fetch'
+        kas shell kas/leda-raspberrypi4-64.yaml:kas/generate-mirror.yaml -c 'bitbake sdv-image-all --runall=fetch'
         find build/downloads -name "*bad-checksum*" -exec rm -f {} \;
         rm -rf build/downloads/git2
         rm -rf build/downloads/svn
