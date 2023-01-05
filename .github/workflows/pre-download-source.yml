@@ -44,12 +44,6 @@ jobs:
         rm -rf build/downloads/git2
         rm -rf build/downloads/svn
         find build/downloads -name "*.done" -exec rm -f {} \;
-    - name: Cache Downloads
-      id: cache-downloads
-      uses: pat-s/always-upload-cache@v3.0.11
-      with:
-        path: build/downloads
-        key: bb-downloads-cache
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
