@@ -1,0 +1,93 @@
+# syntax=docker/dockerfile:1
+#
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+#
+# Build with:
+#   DOCKER_BUILDKIT=1 docker build --progress=plain --tag leda-quickstart-arm64 --file Dockerfile.leda-quickstart-arm64 .
+#
+# Run with:
+#   docker run -it --rm --device=/dev/kvm --device=/dev/net/tun --cap-add=NET_ADMIN --net leda-network --ip 192.168.7.3 -p 31822:22 -p 31883:31883 leda-quickstart-arm64
+#   docker run -it --rm --privileged --net leda-network --ip 192.168.7.3 -p 31822:22 -p 31883:31883 leda-quickstart-arm64
+#   docker run -it --rm --privileged --net leda-network --ip 192.168.8.2 -p 31822:22 -p 31883:31883 leda-quickstart-arm64
+#
+# Debug:
+#   docker compose run --entrypoint bash leda-arm64
+#
+#
+# Network Setup within the container:
+#    192.168.7.1 - Qemu Host
+#    192.168.7.2 - Qemu Guest (Eclipse Leda)
+#    Port forwarding for all incoming :22 and :31883 to 192.168.7.2
+#
+# Ports:
+#   ssh -p 31822 root@localhost
+#   mosquitto_sub -h localhost -p 31883 
+#
+# Qemu is the Entrypoint, so it will directly boot into a login prompt
+# Login with 'root' and no password.
+# To exit the system, you need to do a "shutdown now" on the shell. 
+# Exiting the qemu system will also exit the docker container, as the qemu-runner wrapper script
+# exits once qemu exits and it's the pid1 for the container.
+# 
+
+FROM debian:bullseye
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TZ=Etc/UTC
+ARG GITHUB_REPOSITORY
+
+LABEL name="leda-quickstart-arm64"
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils
+
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends gh
+
+WORKDIR /root
+
+# Download latest release, or if that fails, fall back to latest build artifact
+RUN --mount=type=secret,id=githubtoken gh auth login --with-token < /run/secrets/githubtoken
+RUN gh release download --repo "${GITHUB_REPOSITORY}" --pattern 'eclipse-leda-qemu-arm64.tar.xz' \
+    || gh run download --name eclipse-leda-qemu-arm64.tar.xz --repo "${GITHUB_REPOSITORY}"
+
+RUN apt-get install -y --no-install-recommends xz-utils
+RUN tar xf eclipse-leda-qemu-arm64.tar.xz && rm eclipse-leda-qemu-arm64.tar.xz
+
+RUN apt-get install -y --no-install-recommends qemu-system-arm uml-utilities iptables iproute2 isc-dhcp-server
+
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends iputils-ping dnsutils bind9-utils ssh
+
+# Configure DHCP Server
+COPY ./dockerfiles/dhcpd.conf /etc/dhcp/dhcpd.conf
+COPY ./dockerfiles/isc-dhcp-server /etc/default/isc-dhcp-server
+RUN touch /var/lib/dhcp/dhcpd.leases
+
+# Original runner and a temporary modified one ("...-arm64.sh")
+RUN mkdir -p /docker
+COPY ./dockerfiles/leda-quickstart-docker-entrypoint.sh /docker/
+COPY ./dockerfiles/leda-quickstart-docker-entrypoint-arm64.sh /docker/
+RUN chmod a+x /docker/leda-quickstart-docker-entrypoint.sh
+RUN chmod a+x /docker/leda-quickstart-docker-entrypoint-arm64.sh
+ENTRYPOINT [ "/docker/leda-quickstart-docker-entrypoint-arm64.sh" ]
+
+# Expose SSH access
+EXPOSE 22
+
+# Expose MQTT broker: Eclipse Mosquitto
+EXPOSE 31883

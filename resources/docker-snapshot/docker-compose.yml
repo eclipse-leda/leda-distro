@@ -1,0 +1,264 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+# Pre-Requisites:
+# $ sudo modprobe vcan
+# $ sudo modprobe vxcan
+# $ sudo modprobe can-gw
+# docker plugin install wsovalle/vxcan
+#
+# Start up an SDV Environment:
+# - SDV.EDGE -> Eclipse Leda Quickstart Image
+# - Device Identity / Connection String to Azure IoT Hub
+# - Mocked backend / Azure IoT Hub
+#
+# Handy commands:
+# docker run -it --rm --device=/dev/kvm --device=/dev/net/tun --cap-add=NET_ADMIN --net leda-network --ip 192.168.7.3 -p 31822:22 -p 31883:31883 leda-quickstart
+# docker run -it --rm --privileged --net leda-network --ip 192.168.7.3 -p 31822:22 -p 31883:31883 leda-quickstart
+#
+# docker compose up --detach
+# docker compose down
+#
+# New shell into the Leda Quickstart container:
+# docker-compose exec leda bash
+# docker-compose run devshell bash
+
+# See https://compose-spec.io/
+version: "3.8"
+
+services:
+  # mqtt-broker: A convenience MQTT Broker working as a bridge to both MQTT brokers on the QEMU Leda instances
+  # By subscribing to this MQTT broker, you can monitor all messages from both devices at once.
+  mqtt-broker:
+    image: eclipse-mosquitto:2
+    container_name: leda-mqtt-broker
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.2
+      leda-bridge:
+    volumes:
+      - ./dockerfiles/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - 1883:1883
+    healthcheck:
+      test: "mosquitto_pub -h localhost -p 1883 -t '/broker/health' -n"
+      interval: 10s
+      timeout: 5s
+      retries: 100
+      start_period: 10s
+  # leda-bundle-server is a webserver with both RAUC Update Bundles pre-installed
+  # for easy show case of the SelfUpdate mechanisms.
+  leda-bundle-server:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-bundle-server
+    build:
+      context: ../..
+      dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-bundle-server
+    container_name: leda-bundle-server
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.3
+      leda-bridge:
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: "curl http://localhost:80"
+      interval: 10s
+      timeout: 5s
+      retries: 100
+      start_period: 30s
+  # Leda on QEMU X86_64
+  leda-x86:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86
+    build:
+      context: ../..
+      dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-x86
+    container_name: leda-x86
+    depends_on:
+      - dns-proxy
+      - mqtt-broker
+      - leda-bundle-server
+    privileged: true
+    stdin_open: true
+    tty: true
+    devices:
+    - "/dev/kvm:/dev/kvm"
+    - "/dev/net/tun:/dev/net/tun"
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.4
+      leda-bridge:
+    volumes:
+      - leda-x86:/root
+    ports:
+      - "1443:6443"
+    healthcheck:
+      test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
+      interval: 10s
+      timeout: 5s
+      retries: 100
+      start_period: 30s
+  # Leda on QEMU ARM64
+  # leda-arm64:
+  #   build:
+  #     context: ../..
+  #     dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-arm64
+  #   container_name: leda-arm64
+  #   depends_on:
+  #     - dns-proxy
+  #     - mqtt-broker
+  #     - leda-bundle-server
+  #   privileged: true
+  #   stdin_open: true
+  #   tty: true
+  #   devices:
+  #   - "/dev/kvm:/dev/kvm"
+  #   - "/dev/net/tun:/dev/net/tun"
+  #   networks:
+  #     leda-network:
+  #       ipv4_address: 192.168.8.5
+  #     leda-bridge:
+  #   volumes:
+  #     - leda-arm64:/root
+  #   ports:
+  #     - "2443:6443"
+  #   healthcheck:
+  #     test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 100
+  #     start_period: 30s
+  # Ping and Initialize the Leda DNS Network configuration
+  leda-initializer:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-initializer
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.leda-initializer
+    container_name: leda-initializer
+    depends_on:
+      - leda-x86
+#      - leda-arm64
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.7
+      leda-bridge:
+  # Optional developer shell within the custom Docker network
+  devshell:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-devshell
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.leda-devshell
+    container_name: leda-devshell
+    privileged: true
+    stdin_open: true
+    tty: true
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.8
+      leda-bridge:   
+  # A DNS proxy which forwards DNS requests to the Docker built-in
+  # DNS service. This way, the QEMU instances can access the Docker DNS
+  # and resolve internal docker services, such as "mqtt-broker" or "leda-arm64"
+  dns-proxy:
+    restart: always
+    image: strm/dnsmasq
+    container_name: leda-dns-proxy
+    volumes:
+      - ./dockerfiles/dnsmasq.conf:/etc/dnsmasq.conf
+    ports:
+      - "5353:53/udp"
+    cap_add:
+      - NET_ADMIN
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.14
+      leda-bridge:
+  prometheus:
+    restart: always
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./dockerfiles/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+#      - ./dockerfiles/prometheus/prometheus.rules:/etc/prometheus/prometheus.rules"
+    ports:
+      - "9090:9090"
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.15
+      leda-bridge:
+  grafana:
+    image: "grafana/grafana-oss"
+    container_name: grafana
+    volumes:
+#      - "./dockerfiles/grafana/provisioning:/etc/grafana/provisioning"
+#      - "./dockerfiles/grafana/custom.ini:/etc/grafana/custom.ini"
+#      - "./dockerfiles/grafana/dashboards:/var/lib/grafana/dashboards"
+       - "grafana-storage:/var/lib/grafana"
+       - "./dockerfiles/grafana:/etc/grafana"
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f localhost:3000/api/health && echo 'ready'"]
+      interval: 10s
+      retries: 30
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.16
+      leda-bridge:
+  procexporter:
+    image: ncabatoff/process-exporter:latest
+    container_name: procexporter
+    privileged: true
+    command: "-procfs /host/proc -config.path /config/procexporter.yml"
+    ports:
+      - "9256:9256"
+    volumes:
+      - /proc:/host/proc
+      - ./dockerfiles/procexporter:/config
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.17
+      leda-bridge:
+volumes:
+  leda-x86:
+    name: leda-x86
+#  leda-arm64:
+#    name: leda-arm64
+  node-red-data:
+    name: leda-node-red-data
+  grafana-storage:
+    name: leda-grafana-data
+
+networks:
+  # All Leda components are in this network
+  leda-network:
+    name: leda-network
+    driver: ipvlan
+    driver_opts:
+      parent: eth0
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.enable_icc: "true"
+    ipam:
+      config:
+      - subnet: 192.168.8.0/24
+        ip_range: 192.168.8.0/24
+        gateway: 192.168.8.1
+  leda-bridge:
+    name: leda-bridge
+    driver: bridge
+    driver_opts:
+      com.docker.network.brudge.default_bridge: "true"
+      com.docker.network.bridge.enable_icc: "true"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.host_binding_ipv4: "0.0.0.0"
+      com.docker.network.bridge.name: "leda0"
+      com.docker.network.driver.mtu: "1500"
