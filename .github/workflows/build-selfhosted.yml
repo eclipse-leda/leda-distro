@@ -99,7 +99,6 @@ jobs:
 
   leda-qemuarm64:
     name: "qemuarm64"
-    needs: leda-qemux86_64
     runs-on: self-hosted
     continue-on-error: true
     steps:
