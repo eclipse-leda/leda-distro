@@ -24,12 +24,16 @@ name: Prebuild sstate
 on:
   workflow_dispatch:
   workflow_call:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 3 * * *'
 
 jobs:
   prebuild-qemux86-64:
     name: "Prebuild qemux86-64"
     runs-on: ubuntu-22.04
     continue-on-error: true
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -62,7 +66,7 @@ jobs:
   prebuild-qemuarm64:
     name: "Prebuild qemuarm64"
     runs-on: ubuntu-22.04
-    needs: prebuild-qemux86-64
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -95,6 +99,7 @@ jobs:
   prebuild-raspberrypi4-64:
     name: "Prebuild raspberrypi4-64"
     runs-on: ubuntu-22.04
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     needs: prebuild-qemuarm64
     steps:
     - name: Checkout
