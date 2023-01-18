@@ -22,5 +22,4 @@ then
     exit
 fi
 
-docker compose build --no-cache leda-bundle-server
-docker compose build --no-cache leda-x86
+docker compose build

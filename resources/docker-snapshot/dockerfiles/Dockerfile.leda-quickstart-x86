@@ -67,9 +67,7 @@ RUN touch /var/lib/dhcp/dhcpd.leases
 
 # Original runner and a temporary modified one ("...-x86.sh")
 RUN mkdir -p /docker
-#COPY resources/docker-snapshot/dockerfiles/leda-quickstart-docker-entrypoint.sh /docker/
 COPY resources/docker-snapshot/dockerfiles/leda-quickstart-docker-entrypoint-x86.sh /docker/
-#RUN chmod a+x /docker/leda-quickstart-docker-entrypoint.sh
 RUN chmod a+x /docker/leda-quickstart-docker-entrypoint-x86.sh
 ENTRYPOINT [ "/docker/leda-quickstart-docker-entrypoint-x86.sh" ]
 

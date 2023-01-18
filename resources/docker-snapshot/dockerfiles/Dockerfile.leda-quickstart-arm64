@@ -46,48 +46,32 @@ FROM debian:bullseye
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC
-ARG GITHUB_REPOSITORY
 
 LABEL name="leda-quickstart-arm64"
 
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils
-
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends gh
+RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils qemu-system-arm uml-utilities iptables iproute2 isc-dhcp-server iputils-ping dnsutils bind9-utils ssh
 
 WORKDIR /root
 
-# Download latest release, or if that fails, fall back to latest build artifact
-RUN --mount=type=secret,id=githubtoken gh auth login --with-token < /run/secrets/githubtoken
-RUN gh release download --repo "${GITHUB_REPOSITORY}" --pattern 'eclipse-leda-qemu-arm64.tar.xz' \
-    || gh run download --name eclipse-leda-qemu-arm64.tar.xz --repo "${GITHUB_REPOSITORY}"
-
-RUN apt-get install -y --no-install-recommends xz-utils
-RUN tar xf eclipse-leda-qemu-arm64.tar.xz && rm eclipse-leda-qemu-arm64.tar.xz
-
-RUN apt-get install -y --no-install-recommends qemu-system-arm uml-utilities iptables iproute2 isc-dhcp-server
-
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get install -y --no-install-recommends iputils-ping dnsutils bind9-utils ssh
+COPY build/tmp/deploy/images/qemuarm64/sdv-image-all-qemuarm64.wic.qcow2 /root/sdv-image-all-qemuarm64.wic.qcow2
+COPY build/tmp/deploy/images/qemuarm64/u-boot.bin /root/u-boot.bin
+COPY resources/runners/qemuarm64/run-leda.sh /root/run-leda.sh
 
 # Configure DHCP Server
-COPY ./dockerfiles/dhcpd.conf /etc/dhcp/dhcpd.conf
-COPY ./dockerfiles/isc-dhcp-server /etc/default/isc-dhcp-server
+COPY resources/docker-snapshot/dockerfiles/dhcpd.conf /etc/dhcp/dhcpd.conf
+COPY resources/docker-snapshot/dockerfiles/isc-dhcp-server /etc/default/isc-dhcp-server
+COPY resources/docker-snapshot/dockerfiles/dnsmasq.conf /etc/dnsmasq.conf
 RUN touch /var/lib/dhcp/dhcpd.leases
 
 # Original runner and a temporary modified one ("...-arm64.sh")
 RUN mkdir -p /docker
-COPY ./dockerfiles/leda-quickstart-docker-entrypoint.sh /docker/
-COPY ./dockerfiles/leda-quickstart-docker-entrypoint-arm64.sh /docker/
-RUN chmod a+x /docker/leda-quickstart-docker-entrypoint.sh
+COPY resources/docker-snapshot/dockerfiles/leda-quickstart-docker-entrypoint-arm64.sh /docker/
 RUN chmod a+x /docker/leda-quickstart-docker-entrypoint-arm64.sh
 ENTRYPOINT [ "/docker/leda-quickstart-docker-entrypoint-arm64.sh" ]
 
 # Expose SSH access
-EXPOSE 22
+EXPOSE 2222
 
 # Expose MQTT broker: Eclipse Mosquitto
-EXPOSE 31883
+EXPOSE 1883
