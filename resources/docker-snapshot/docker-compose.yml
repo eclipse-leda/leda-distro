@@ -159,6 +159,8 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-devshell
     container_name: leda-devshell
+    profiles:
+    - tools
     privileged: true
     stdin_open: true
     tty: true
@@ -170,6 +172,8 @@ services:
   # DNS service. This way, the QEMU instances can access the Docker DNS
   # and resolve internal docker services, such as "mqtt-broker" or "leda-arm64"
   dns-proxy:
+    profiles:
+    - disabled
     restart: always
     image: strm/dnsmasq
     container_name: leda-dns-proxy
@@ -234,8 +238,6 @@ volumes:
     name: leda-x86
   leda-arm64:
     name: leda-arm64
-  node-red-data:
-    name: leda-node-red-data
   grafana-storage:
     name: leda-grafana-data
 

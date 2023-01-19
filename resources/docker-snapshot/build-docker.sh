@@ -22,4 +22,4 @@ then
     exit
 fi
 
-docker compose build
+docker compose --profile tools --profile disabled build 

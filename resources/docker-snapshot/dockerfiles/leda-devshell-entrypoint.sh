@@ -14,8 +14,8 @@
 #
 echo "Welcome to Eclipse Leda Docker DevShell"
 echo ""
-echo "  ssh leda-x86"
-echo "  ssh leda-arm64"
+echo "  ssh -p 2222 leda-x86"
+echo "  ssh -p 2222 leda-arm64"
 echo ""
 
 bash

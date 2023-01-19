@@ -13,35 +13,6 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
-# Build with:
-#   DOCKER_BUILDKIT=1 docker build --progress=plain --tag leda-quickstart-x86 --file Dockerfile.leda-quickstart-x86 .
-#
-# Runtime: Pre-Requisites
-#   docker network create --subnet=192.168.7.0/24 leda-network
-#   docker network rm leda-network
-#   docker network create -d macvlan --subnet=192.168.8.0/24 --ip-range=192.168.8.128/25 --gateway=192.168.8.254 -o parent=eth0 leda-network
-#
-# Run with:
-#   docker run -it --rm --device=/dev/kvm --device=/dev/net/tun --cap-add=NET_ADMIN --net leda-network --ip 192.168.7.3 -p 31822:22 -p 31883:31883 leda-quickstart-x86
-#   docker run -it --rm --privileged --net leda-network --ip 192.168.7.3 -p 31822:22 -p 31883:31883 leda-quickstart-x86
-#   docker run -it --rm --privileged --net leda-network --ip 192.168.8.2 -p 31822:22 -p 31883:31883 leda-quickstart-x86
-#
-# Network Setup:
-#    192.168.7.1 - Qemu Host
-#    192.168.7.2 - Qemu Guest (Eclipse Leda)
-#    192.168.7.3 - Docker Container == Qemu Host 192.168.7.1
-#
-# Ports:
-#   ssh -p 31822 root@localhost
-#   mosquitto_sub -h localhost -p 31883 
-#
-#
-# Qemu is the Entrypoint, so it will directly boot into a login prompt
-# Login with 'root' and no password.
-# To exit the system, you need to do a "shutdown now" on the shell. 
-# Exiting the qemu system will also exit the docker container, as the qemu-runner wrapper script
-# exits once qemu exits and it's the pid1 for the container.
-# 
 
 FROM debian:bullseye
 
@@ -51,7 +22,23 @@ ARG TZ=Etc/UTC
 LABEL name="leda-quickstart-x86"
 
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils qemu-system-x86 uml-utilities iptables iproute2 isc-dhcp-server iputils-ping dnsutils bind9-utils ssh dnsmasq net-tools
+RUN apt-get install -y --no-install-recommends \
+    bind9-utils \
+    ca-certificates \
+    curl \
+    dnsmasq \
+    dnsutils \
+    iproute2 \
+    iptables \
+    iputils-ping \
+    isc-dhcp-server \
+    net-tools \
+    ssh \
+    sudo \
+    uml-utilities \
+    xz-utils
+
+RUN apt-get install -y --no-install-recommends qemu-system-x86
 
 WORKDIR /root
 
@@ -63,6 +50,7 @@ COPY resources/runners/qemux86_64/run-leda.sh /root/run-leda.sh
 COPY resources/docker-snapshot/dockerfiles/dhcpd.conf /etc/dhcp/dhcpd.conf
 COPY resources/docker-snapshot/dockerfiles/isc-dhcp-server /etc/default/isc-dhcp-server
 COPY resources/docker-snapshot/dockerfiles/dnsmasq.conf /etc/dnsmasq.conf
+COPY resources/docker-snapshot/dockerfiles/dns-hosts.txt /root/dns-hosts.txt
 RUN touch /var/lib/dhcp/dhcpd.leases
 
 # Original runner and a temporary modified one ("...-x86.sh")

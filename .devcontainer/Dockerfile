@@ -28,7 +28,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -y install --no-install-recommends so
         iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint3 xterm python3-subunit \ 
         mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq \
         libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm \
-        squashfs-tools rauc python3-newt mosquitto-clients sshfs
+        squashfs-tools rauc python3-newt mosquitto-clients sshfs mosquitto-clients
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates \
     curl \

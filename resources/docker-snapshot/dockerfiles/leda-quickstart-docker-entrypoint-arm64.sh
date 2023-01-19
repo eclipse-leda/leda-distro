@@ -90,7 +90,7 @@ startQemuPrivileged() {
     mkdir -p /var/lib/dhcp/
     touch /var/lib/dhcp/dhcpd.leases
     /usr/sbin/dhcpd
-    /usr/sbin/dnsmasq
+    sudo /usr/sbin/dnsmasq
 
     printf -v macaddr "52:54:%02x:%02x:%02x:%02x" $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff )) $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff ))
 

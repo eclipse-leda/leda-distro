@@ -1,0 +1,3 @@
+# Overriding a specific Azure IoT Hub name for testing purposes
+
+127.0.0.99 leda-test.azure-devices.net
