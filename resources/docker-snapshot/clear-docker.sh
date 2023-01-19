@@ -14,5 +14,6 @@
 #
 
 docker compose down
+docker compose rm
 docker compose down --remove-orphans --volumes
 docker volume prune --force

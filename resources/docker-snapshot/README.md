@@ -32,3 +32,27 @@ Starting up Docker Compose:
 Shutting down Docker Compose:
 
     ./stop-docker.sh
+
+## Guest Commands
+
+### Installing RAUC Update
+
+1. Run Leda Docker Devshell
+
+    docker compose run devshell
+
+2. SSH into the Leda guest
+
+    ssh leda-x86
+
+3. Switch to the data directory
+
+    cd /data/selfupdates
+
+4. Download the update bundle
+
+    wget http://leda-bundle-server/sdv-rauc-bundle-qemux86-64.raucb
+
+4. Run the RAUC install
+
+    rauc install sdv-rauc-bundle-qemux86-64.raucb

@@ -18,8 +18,18 @@
 
 if ! command -v docker &> /dev/null
 then
-    echo "Docker could not be found, please install Docker."
+    echo "Error: Docker could not be found, please install Docker."
     exit
+fi
+
+if [ ! -d build/tmp/deploy/images/qemux86-64 ];
+then
+    echo "Error: build/tmp/deploy/images/qemux86-64 is missing. Did you run the full build?"
+fi
+
+if [ ! -d build/tmp/deploy/images/qemuarm64 ];
+then
+    echo "Error: build/tmp/deploy/images/qemuarm64 is missing. Did you run the full build?"
 fi
 
 docker compose --profile tools --profile disabled build 

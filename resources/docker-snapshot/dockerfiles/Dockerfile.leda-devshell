@@ -19,4 +19,6 @@ RUN echo "Welcome to Eclipse Leda Docker DevShell" > /etc/profile.d/02-welcome-l
 RUN chmod a+x /etc/profile.d/02-welcome-leda.sh
 WORKDIR /root
 COPY ./dockerfiles/leda-devshell-entrypoint.sh ./
+COPY ./dockerfiles/leda-devshell-ssh-config.txt /root/.ssh/config
+RUN chmod 600 /root/.ssh/config
 ENTRYPOINT /root/leda-devshell-entrypoint.sh

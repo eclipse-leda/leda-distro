@@ -49,7 +49,7 @@ function teardownTap() {
 startQemuUnprivileged() {
     qemu-system-aarch64 \
         -device virtio-net-device,netdev=net0 \
-        -netdev user,hostfwd=tcp::2222-:22,hostfwd=tcp::1883-:1883,hostfwd=tcp::8888-:8888\
+        -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::1883-:1883,hostfwd=tcp::8888-:8888\
         -object rng-random,filename=/dev/urandom,id=rng0 \
         -device virtio-rng-pci,rng=rng0 \
         -drive id=disk0,file=sdv-image-all-qemuarm64.wic.qcow2,if=none,format=qcow2 \
