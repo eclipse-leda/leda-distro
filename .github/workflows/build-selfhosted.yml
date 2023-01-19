@@ -15,7 +15,7 @@
 #   runs-on: self-hosted
 #   container: debian:bullseye
 #
-name: BitBake Build
+name: BitBake Build (Self-Hosted)
 on:
   workflow_dispatch:
   workflow_call:
@@ -24,9 +24,7 @@ jobs:
 
   leda-qemux86_64:
     name: "qemux86_64"
-    runs-on: ubuntu-22.04
-#    runs-on: self-hosted
-#    container: debian:bullseye
+    runs-on: self-hosted
     continue-on-error: true
     steps:
     - name: Checkout
@@ -101,10 +99,7 @@ jobs:
 
   leda-qemuarm64:
     name: "qemuarm64"
-    needs: leda-qemux86_64
-    runs-on: ubuntu-22.04
-#    runs-on: self-hosted
-#    container: debian:bullseye
+    runs-on: self-hosted
     continue-on-error: true
     steps:
     - name: Checkout
@@ -179,10 +174,8 @@ jobs:
 
   leda-raspberrypi4-64:
     name: "raspberrypi4-64"
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     needs: leda-qemuarm64
-#    runs-on: self-hosted
-#    container: debian:bullseye
     continue-on-error: true
     steps:
     - name: Checkout
