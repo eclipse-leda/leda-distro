@@ -84,7 +84,6 @@ services:
       dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-x86
     container_name: leda-x86
     depends_on:
-      - dns-proxy
       - mqtt-broker
       - leda-bundle-server
     privileged: true
@@ -100,7 +99,7 @@ services:
     volumes:
       - leda-x86:/root
     ports:
-      - "1443:6443"
+      - "9101:8888"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -115,7 +114,6 @@ services:
       dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-arm64
     container_name: leda-arm64
     depends_on:
-      - dns-proxy
       - mqtt-broker
       - leda-bundle-server
     privileged: true
@@ -131,7 +129,7 @@ services:
     volumes:
       - leda-arm64:/root
     ports:
-      - "2443:6443"
+      - "9102:8888"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s

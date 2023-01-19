@@ -43,11 +43,11 @@ scrape_configs:
     scrape_interval: 5s
 
     static_configs:
-      - targets: [ 'leda-x86:30100' ]
+      - targets: [ 'leda-x86:8888' ]
   - job_name: 'leda-arm64'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
 
     static_configs:
-      - targets: [ 'leda-arm64:30100' ]
+      - targets: [ 'leda-arm64:8888' ]

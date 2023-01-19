@@ -27,7 +27,7 @@ if [ -z "${GITHUB_TOKEN}" ]; then
     exit 2
 fi
 
-echo "${GITHUB_TOKEN}" | docker login --username "mikehaller" --password-stdin ghcr.io
+echo "${GITHUB_TOKEN}" | docker login --username "github" --password-stdin ghcr.io
 
 # Manually testing:
 # docker build --tag "ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest" --file dockerfiles/Dockerfile.leda-quickstart-x86 ../..

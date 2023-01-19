@@ -14,29 +14,8 @@
 # ********************************************************************************/
 #
 
-
-FROM debian:bullseye AS builder
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG TZ=Etc/UTC
-ARG GITHUB_REPOSITORY
-
+FROM nginx AS runtime 
 LABEL name="leda-bundle-server"
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils
-
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends gh
-
-WORKDIR /root
-
-COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-qemux86-64.raucb /root/sdv-rauc-bundle-qemux86-64.raucb
-#COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-qemuarm64.raucb /root/sdv-rauc-bundle-qemuarm64.raucb
-
-FROM nginx AS runtime 
-COPY --from=builder /root/sdv-rauc-bundle-qemux86-64.raucb /usr/share/nginx/html/
-#COPY --from=builder /root/sdv-rauc-bundle-qemuarm64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-qemux86-64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-qemuarm64.raucb /usr/share/nginx/html/
