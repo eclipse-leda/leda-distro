@@ -106,9 +106,8 @@ Each Eclipse Leda instance (ARM64, x86_64) is running within a QEMU emulated net
 in a containerized network called `leda-network` (192.168.8.x).
 
 The containers wrapping the QEMU instances will forward the following ports to the respective QEMU process:
-- SSH on port 22
+- SSH on port 2222
 - Mosquitto on port 1883
-- Kubernetes API on port 6433
 
 ## DHCP and DNS setup
 
