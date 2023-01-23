@@ -20,16 +20,20 @@
 # to uploading it's already built packages into a remote sstate-cache. The next time a build runs,
 # it should be able to reuse more of the cache, thus have less remaining work to do, eventually succeeding building within 4 hours.
 #
-name: Prebuild sstate
+name: Prebuild sstate (Self-Hosted)
 on:
   workflow_dispatch:
   workflow_call:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 3 * * *'
 
 jobs:
   prebuild-qemux86-64:
     name: "Prebuild qemux86-64"
-    runs-on: ubuntu-22.04
+    runs-on: self-hosted
     continue-on-error: true
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -49,7 +53,7 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        timeout --signal=SIGINT 4h kas build --update kas/leda-qemux86-64.yaml
+        timeout --signal=SIGINT 4h kas build --update kas/leda-qemux86-64.yaml:kas/mirrors.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
@@ -61,8 +65,8 @@ jobs:
 
   prebuild-qemuarm64:
     name: "Prebuild qemuarm64"
-    runs-on: ubuntu-22.04
-    needs: prebuild-qemux86-64
+    runs-on: self-hosted
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -82,7 +86,7 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        timeout --signal=SIGINT 4h kas build --update kas/leda-qemuarm64.yaml
+        timeout --signal=SIGINT 4h kas build --update kas/leda-qemuarm64.yaml:kas/mirrors.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
@@ -94,8 +98,8 @@ jobs:
 
   prebuild-raspberrypi4-64:
     name: "Prebuild raspberrypi4-64"
-    runs-on: ubuntu-22.04
-    needs: prebuild-qemuarm64
+    runs-on: self-hosted
+    if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -115,7 +119,7 @@ jobs:
       if: always()
       continue-on-error: true
       run: |
-        timeout --signal=SIGINT 4h kas build --update kas/leda-raspberrypi4-64.yaml
+        timeout --signal=SIGINT 4h kas build --update kas/leda-raspberrypi4-64.yaml:kas/mirrors.yaml
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:

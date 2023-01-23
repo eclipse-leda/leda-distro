@@ -1,0 +1,53 @@
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+# Some sources are hosted in slow repositories (ex. yocto linux kernel) which leads to increased build times.
+# This workflow pre-downloads and caches the sources required for all current Leda targets.
+
+name: Pre-download sources
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  pre-download-all:
+    name: "Pre-download sources for all targets"
+    runs-on: ubuntu-22.04
+    continue-on-error: true
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Pre-downloads sources
+      if: always()
+      continue-on-error: true
+      run: |
+        kas shell kas/leda-qemux86-64.yaml:kas/generate-mirror.yaml -c 'bitbake sdv-image-all --runall=fetch'
+        kas shell kas/leda-qemuarm64.yaml:kas/generate-mirror.yaml -c 'bitbake sdv-image-all --runall=fetch'
+        kas shell kas/leda-raspberrypi4-64.yaml:kas/generate-mirror.yaml -c 'bitbake sdv-image-all --runall=fetch'
+        find build/downloads -name "*bad-checksum*" -exec rm -f {} \;
+        rm -rf build/downloads/git2
+        rm -rf build/downloads/svn
+        find build/downloads -name "*.done" -exec rm -f {} \;
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
+      with:
+        source_dir: 'build/downloads/'
+        container_name: 'downloads'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
