@@ -52,7 +52,19 @@ Shutting down Docker Compose:
 4. Download the update bundle
 
     wget http://leda-bundle-server/sdv-rauc-bundle-qemux86-64.raucb
+    wget http://leda-bundle-server/sdv-rauc-bundle-qemuarm64.raucb
 
-4. Run the RAUC install
+5. Run the RAUC install
 
     rauc install sdv-rauc-bundle-qemux86-64.raucb
+    rauc install sdv-rauc-bundle-qemuarm64.raucb
+
+6. Mark the other partition as active
+
+    rauc status mark-active other
+    reboot now
+
+7. You will return to devshell. Wait and reconnect to guest
+
+    ssh leda-x86
+    rauc status
