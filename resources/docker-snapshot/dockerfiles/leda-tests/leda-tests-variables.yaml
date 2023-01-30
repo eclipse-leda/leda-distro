@@ -1,0 +1,8 @@
+http.uri: 192.168.7.2
+broker.uri: leda-x86
+broker.port: 1883
+topic_pub: selfupdate/desiredstate
+topic_sub: selfupdate/#
+message_wait_timeout_seconds: 120
+log_messages: False
+start_update_filename: start-update-example.json

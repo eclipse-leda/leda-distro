@@ -231,6 +231,25 @@ services:
       leda-network:
         ipv4_address: 192.168.8.17
       leda-bridge:
+
+  leda-tests:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-tests
+    profiles:
+      - tests
+    build:
+      context: ../..
+      dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-tests
+    container_name: leda-tests
+    depends_on:
+      - leda-x86
+      - leda-arm64
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.33
+      leda-bridge:
+    volumes:
+      - ./leda-tests-reports:/root/robot-output
+
 volumes:
   leda-x86:
     name: leda-x86
