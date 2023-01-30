@@ -248,7 +248,6 @@ jobs:
     needs: 
     - leda-qemuarm64
     - leda-qemux86_64
-    - leda-raspberrypi4-64
     continue-on-error: true
     steps:
     - name: Checkout
