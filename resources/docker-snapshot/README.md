@@ -68,3 +68,12 @@ Shutting down Docker Compose:
 
     ssh leda-x86
     rauc status
+
+## Running Robot Tests
+
+To execute the Robot Framework tests, run the `leda-tests` docker compose service:
+
+    ./test-docker.sh
+
+This will rebuild the container (in case the tests have been changed) and run Robot.
+The test reports will be located on the host in `./leda-tests-reports` in the current working directory.
