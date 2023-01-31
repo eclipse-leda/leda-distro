@@ -18,13 +18,17 @@ echo "Executing Eclipse Leda tests..."
 echo "- Current working directory: $(pwd)"
 echo "- Robot Framework version: $(robot --version)"
 
+mkdir -p ~/.ssh/
+echo "- SSH Hosts Configuration in ~/.ssh/config"
+echo "- Adding SSH fingerprint of leda-x86"
+ssh-keyscan -p 2222 -H leda-x86.leda-network >> ~/.ssh/known_hosts 2> /dev/null
+echo "- Adding SSH fingerprint of leda-arm64"
+ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/null
+
 robot \
     --variablefile leda-tests-variables.yaml \
-    --loglevel ERROR \
+    --loglevel INFO \
     --debugfile leda-tests-debug.log \
     --xunit leda-tests-xunit.xml \
     --outputdir robot-output \
     *.robot
-
-# cat output.xml
-# cat debug.log

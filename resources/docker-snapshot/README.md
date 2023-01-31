@@ -77,3 +77,5 @@ To execute the Robot Framework tests, run the `leda-tests` docker compose servic
 
 This will rebuild the container (in case the tests have been changed) and run Robot.
 The test reports will be located on the host in `./leda-tests-reports` in the current working directory.
+
+The tests assume to be run inside of a container which is part of the `leda-network` environment.

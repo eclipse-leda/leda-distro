@@ -100,6 +100,7 @@ services:
       - leda-x86:/root
     ports:
       - "9101:8888"
+      - "2001:2222"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -130,6 +131,7 @@ services:
       - leda-arm64:/root
     ports:
       - "9102:8888"
+      - "2002:2222"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
