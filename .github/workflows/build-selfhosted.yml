@@ -284,6 +284,7 @@ jobs:
       if: always()
       uses: actions/upload-artifact@v3
       with: 
+        name: eclipse-leda-tests
         if-no-files-found: error
         path: resources/docker-snapshot/leda-tests-reports
     - name: Publish docker images
@@ -292,3 +293,9 @@ jobs:
       run: |
         cd resources/docker-snapshot
         ./publish-docker.sh
+    - name: Stop docker
+      if: always()
+      run: |
+        cd resources/docker-snapshot
+        ./stop-docker.sh
+        ./clear-docker.sh

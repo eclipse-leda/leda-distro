@@ -23,4 +23,6 @@ then
 fi
 
 docker compose --profile tests build leda-tests
+
+mkdir -m 777 -p leda-tests-reports
 docker compose --profile tests run --rm leda-tests
