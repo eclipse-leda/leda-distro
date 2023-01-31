@@ -278,6 +278,7 @@ jobs:
         ./build-docker.sh
     - name: Run docker tests
       run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
         cd resources/docker-snapshot
         ./test-docker.sh
     - name: Upload test reports
