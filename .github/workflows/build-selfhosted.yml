@@ -27,6 +27,9 @@ jobs:
     runs-on: self-hosted
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -102,6 +105,9 @@ jobs:
     runs-on: self-hosted
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -178,6 +184,9 @@ jobs:
     needs: leda-qemuarm64
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -250,6 +259,9 @@ jobs:
     - leda-qemux86_64
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -278,7 +290,6 @@ jobs:
         ./build-docker.sh
     - name: Run docker tests
       run: |
-        sudo rm -rf resources/docker-snapshot/leda-tests-reports
         cd resources/docker-snapshot
         ./test-docker.sh
     - name: Upload test reports
@@ -302,17 +313,20 @@ jobs:
         ./clear-docker.sh
 
   generate_report:
-        if: always()
-        needs: [ leda-docker ] 
-        runs-on: self-hosted
-        steps:
-        - uses: actions/checkout@v2
-        - name: Download reports
-          uses: actions/download-artifact@v1
-          with:
-            name: eclipse-leda-tests
-        - name: Send report to commit
-          uses: joonvena/robotframework-reporter-action@v2.1
-          with:
-            report_path: eclipse-leda-tests
-            gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+    if: always()
+    needs: [ leda-docker ] 
+    runs-on: self-hosted
+    steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
+    - uses: actions/checkout@v2
+    - name: Download reports
+      uses: actions/download-artifact@v1
+      with:
+        name: eclipse-leda-tests
+    - name: Send report to commit
+      uses: joonvena/robotframework-reporter-action@v2.1
+      with:
+        report_path: eclipse-leda-tests
+        gh_access_token: ${{ secrets.GITHUB_TOKEN }}
