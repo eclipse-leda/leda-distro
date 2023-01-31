@@ -280,12 +280,15 @@ jobs:
       run: |
         cd resources/docker-snapshot
         ./test-docker.sh
-    - name: Publish docker images
-      run: |
-        cd resources/docker-snapshot
-        ./publish-docker.sh
     - name: Upload test reports
+      if: always()
       uses: actions/upload-artifact@v3
       with: 
         if-no-files-found: error
         path: resources/docker-snapshot/leda-tests-reports
+    - name: Publish docker images
+      env:
+        GITHUB_TOKEN: ${{ secrets.ECLIPSE_LEDA_PUBLISH_DOCKER }}
+      run: |
+        cd resources/docker-snapshot
+        ./publish-docker.sh
