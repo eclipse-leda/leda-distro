@@ -29,15 +29,7 @@ Trigger to start update
 Connect and Subscribe to Listen
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${log_messages}
   Connect  ${broker.uri}  ${broker.port}
-  @{messages}  Subscribe  ${topic_sub}  qos=1  timeout=${message_wait_timeout_seconds}  limit=1000
-  FOR  ${message}  IN  @{messages}
-    IF  ${log_messages}
-      Log to console  ${message}
-    END
-    ${contains}=  Evaluate  "UPDATE_SUCCESS" in """${message}"""
-    Exit For Loop If  ${contains}  
-  END
-  Should Be True 	${contains} 	msg="Did not receive UPDATE_SUCCESS message"
+  Subscribe And Validate  ${topic_sub}    qos=1    payload=${update_success_regex}    timeout=${message_wait_timeout_seconds}
 
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
