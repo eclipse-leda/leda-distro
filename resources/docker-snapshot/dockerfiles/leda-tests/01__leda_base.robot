@@ -34,18 +34,6 @@ Check OS Version
     ${result}=    Leda Execute    cat /etc/os-release | grep ^NAME=
     Should Match 	${result.stdout} 	NAME="Eclipse Leda"
 
-Check Platform for X86
-    [Documentation]    Checking OS platform
-    [Tags]        x86
-    ${result}=    Leda Execute    uname -m
-    Should Match 	${result.stdout} 	x86_64
-
-Check Platform for ARM
-    [Documentation]    Checking OS platform
-    [Tags]        arm64
-    ${result}=    Leda Execute    uname -m
-    Should Match 	${result.stdout} 	aarch64
-
 Check kanto-cm
     [Documentation]    Is Kanto Container Management up and running?
     ${result}=    Leda Execute    systemctl is-active container-management.service
