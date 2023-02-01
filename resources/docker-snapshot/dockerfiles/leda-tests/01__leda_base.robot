@@ -25,8 +25,8 @@ ${leda.sshport}        2222
 
 *** Test Cases ***
 Execute Command In Leda Shell
-    [Documentation]    Execute a simple command in Leda
-    ${result}=    Leda Execute    echo Welcome Leda 
+    [Documentation]    Execute a simple command in Leda    
+    ${result}=    Leda Execute    echo Welcome Leda
     Should Match 	${result.stdout} 	Welcome Leda
 
 Check OS Version
@@ -34,10 +34,17 @@ Check OS Version
     ${result}=    Leda Execute    cat /etc/os-release | grep ^NAME=
     Should Match 	${result.stdout} 	NAME="Eclipse Leda"
 
-Check Platform
+Check Platform for X86
     [Documentation]    Checking OS platform
+    [Tags]        x86
     ${result}=    Leda Execute    uname -m
     Should Match 	${result.stdout} 	x86_64
+
+Check Platform for ARM
+    [Documentation]    Checking OS platform
+    [Tags]        arm64
+    ${result}=    Leda Execute    uname -m
+    Should Match 	${result.stdout} 	aarch64
 
 Check kanto-cm
     [Documentation]    Is Kanto Container Management up and running?
@@ -60,10 +67,3 @@ Check RAUC Status
     Should Match 	${rauc_booted_slot} 	SDV_A
     Should Match 	${rauc_compatible} 	Eclipse Leda
     Should Match 	${rauc_boot_primary} 	rootfs.0
-
-*** Keywords ***
-Leda Execute
-    [Arguments]    ${command}
-    ${expanded}= 	Format String 	ssh -p ${leda.sshport} ${leda.target} ${command}
-    ${result}=    Run Process    bash    -c    ${expanded}    shell=True
-    RETURN    ${result}

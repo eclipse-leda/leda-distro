@@ -12,10 +12,7 @@
 # ********************************************************************************/
 
 *** Settings ***
-Documentation     This is a test for Self Update Agent
-...               using mosquitto
-...
-...
+Documentation     Testing Self Update process
 Resource          leda_keywords.resource
 
 Library  OperatingSystem

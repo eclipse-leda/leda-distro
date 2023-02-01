@@ -38,3 +38,10 @@ Connect and Subscribe to Listen
     Exit For Loop If  ${contains}  
   END
   Should Be True 	${contains} 	msg="Did not receive UPDATE_SUCCESS message"
+
+Leda Execute
+    [Documentation]    Executing commands inside Docker via remote SSH
+    [Arguments]    ${command}
+    ${expanded}= 	Format String 	ssh -p ${leda.sshport} ${leda.target} ${command}
+    ${result}=    Run Process    bash    -c    ${expanded}    shell=True
+    RETURN    ${result}
