@@ -687,25 +687,16 @@ curations:
     reason: "INCORRECT"
     comment: "Dual licensing, selecting Artistic license"
     concluded_license: "Artistic-1.0"
-  - path: "resources/docker/dockerfiles/Dockerfile.leda-initializer"
+  - path: "resources/**"
     detected_license: "GPL-2.0-only"
     concluded_license: "Apache-2.0"
     reason: "INCORRECT"
     comment: "It's our standard Apache-2.0 license header."
-  - path: "**/*.yaml"
-    start_lines: "7"
-    line_count: 3
+  - path: "kas/**"
     detected_license: "GPL-2.0-only"
-    reason: "DOCUMENTATION_OF"
-    comment: "It's our standard Apache-2.0 license header."
     concluded_license: "Apache-2.0"
-  - path: "resources/**/*"
-    start_lines: "7"
-    line_count: 3
-    detected_license: "GPL-2.0-only"
-    reason: "DOCUMENTATION_OF"
+    reason: "INCORRECT"
     comment: "It's our standard Apache-2.0 license header."
-    concluded_license: "Apache-2.0"
 packages:
     - id: "Crate::ryu:1.0.10"
       curations:
