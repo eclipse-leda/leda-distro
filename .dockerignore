@@ -1,0 +1,10 @@
+# Ignoring files for Docker Build
+.devcontainer
+.github
+.ort
+.vscode
+.workers
+bitbake
+azure-sstate-cache
+azure-downloads-cache
+tmp
