@@ -24,13 +24,17 @@ ${broker.uri}               192.168.7.2
 ${broker.port}              31883
 ${topic_pub}                selfupdate/desiredstate
 ${topic_sub}                selfupdate/#
-${log_messages}             False
 ${start_update_filename}    start-update-example.yaml
+${get_state_filename}       get_state.json
+${update_success_regex}    ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
+${sua_alive_regex}         ([.\\s\\S]*)("timestamp")([\\s\\S.]*)
+${topic_currentstate}      selfupdate/currentstate/get	
 
 *** Test Cases ***
 Self Update Agent Test
+  Wait Until Keyword Succeeds    3x    100ms   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
   Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${log_messages}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}
 
 Stop processes
   Terminate All Processes  kill=True

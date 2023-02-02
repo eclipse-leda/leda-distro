@@ -21,15 +21,22 @@ Library  Collections
 
 *** Keywords ***
 
+Verify SUA is alive
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${get_current_state_filename}    ${payload_regex}
+  ${message}=  Get File  ${get_current_state_filename}
+  Connect  ${broker.uri}  ${broker.port}
+  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
+  Subscribe And Validate  selfupdate/#    qos=1    payload=${payload_regex}    timeout=10
+
 Trigger to start update
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
   ${message}=  Get File  ${start_update_filename}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
 
 Connect and Subscribe to Listen
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${log_messages}
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${payload_regex}
   Connect  ${broker.uri}  ${broker.port}
-  Subscribe And Validate  ${topic_sub}    qos=1    payload=${update_success_regex}    timeout=${message_wait_timeout_seconds}
+  Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=${message_wait_timeout_seconds}
 
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH

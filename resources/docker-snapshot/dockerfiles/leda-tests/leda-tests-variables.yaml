@@ -24,7 +24,8 @@ topic_sub: selfupdate/#
 message_wait_timeout_seconds: 60
 
 # Match the WHOLE message containing "UPDATE_SUCCESS"
-update_success_regex: ([\s\S]*)("UPDATE_SUCCESS")([\s\S]*)
+
+sua_alive_regex: ([.\s\S]*)("UPDATE_SUCCESS")([\s\S.]*)
 
 # Enable debug logging
 log_messages: False
