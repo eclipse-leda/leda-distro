@@ -14,8 +14,6 @@
 #
 
 echo "Executing Eclipse Leda tests..."
-
-echo "- Current working directory: $(pwd)"
 echo "- Robot Framework version: $(robot --version)"
 
 mkdir -p ~/.ssh/
@@ -25,10 +23,27 @@ ssh-keyscan -p 2222 -H leda-x86.leda-network >> ~/.ssh/known_hosts 2> /dev/null
 echo "- Adding SSH fingerprint of leda-arm64"
 ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/null
 
+echo "- Executing QEMU X86-64"
+
 robot \
-    --variablefile leda-tests-variables.yaml \
+    --name "Leda x86-64 Tests" \
+    --variablefile vars-x86.yaml \
     --loglevel INFO \
     --debugfile leda-tests-debug.log \
     --xunit leda-tests-xunit.xml \
-    --outputdir robot-output \
+    --outputdir robot-output/x86 \
     *.robot
+
+echo "- Executing QEMU ARM-64"
+
+robot \
+    --name "Leda ARM-64 Tests" \
+    --variablefile vars-arm64.yaml \
+    --loglevel INFO \
+    --debugfile leda-tests-debug.log \
+    --xunit leda-tests-xunit.xml \
+    --outputdir robot-output/arm64 \
+    *.robot
+
+echo "- Merging output reports"
+rebot --output robot-output/output.xml robot-output/x86/output.xml robot-output/arm64/output.xml 

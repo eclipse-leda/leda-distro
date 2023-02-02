@@ -1,9 +1,0 @@
-apiVersion: "sdv.eclipse.org/v1"
-kind: SelfUpdateBundle
-metadata:
-  name: self-update-bundle-example
-spec:
-  bundleName: swdv-qemux86-64-build42
-  bundleVersion: ${VERSION_ID}
-  bundleDownloadUrl: http://leda-bundle-server/sdv-rauc-bundle-qemux86-64.raucb
-  bundleTarget: base

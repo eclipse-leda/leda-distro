@@ -11,20 +11,13 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 
+# General
+leda.target: Leda QEMU X86-64
+leda.target.hostname: leda-x86.leda-network
+
 # The MQTT broker hostname and port number (target device)
 broker.uri: leda-x86
 broker.port: 1883
 
-# The Self Update Agent topics to publish update requests to
-# and the topic to listen for status messages
-topic_pub: selfupdate/desiredstate
-topic_sub: selfupdate/#
-
-# How long to wait for messages
-message_wait_timeout_seconds: 60
-
-# Enable debug logging
-log_messages: False
-
 # File which contains the update request message
-start_update_filename: start-update-example.json
+start_update_filename: start-update-example-x86.json

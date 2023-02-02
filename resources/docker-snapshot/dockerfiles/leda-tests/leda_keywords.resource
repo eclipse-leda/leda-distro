@@ -19,6 +19,9 @@ Library  MQTTLibrary
 Library  yaml
 Library  Collections
 
+*** Variables ***
+${message_wait_timeout_seconds}    120
+
 *** Keywords ***
 
 Verify SUA is alive
@@ -42,6 +45,6 @@ Connect and Subscribe to Listen
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
     [Arguments]    ${command}
-    ${expanded}= 	Format String 	ssh -p ${leda.sshport} ${leda.target} ${command}
+    ${expanded}= 	Format String 	ssh -p ${leda.sshport} ${leda.target.hostname} ${command}
     ${result}=    Run Process    bash    -c    ${expanded}    shell=True
     RETURN    ${result}

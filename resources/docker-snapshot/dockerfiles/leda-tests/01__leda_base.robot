@@ -12,40 +12,42 @@
 # ********************************************************************************/
 
 *** Settings ***
-Documentation     This is a test for basic operating system status
+Documentation     Basic OS ${leda.target}
 Resource          leda_keywords.resource
 
 Library  OperatingSystem
 Library  Process
 Library  String
 
+Test Timeout       2 minutes
+
 *** Variables ***
-${leda.target}        leda-x86.leda-network
+${leda.target.hostname}        leda-x86.leda-network
 ${leda.sshport}        2222
 
 *** Test Cases ***
-Execute Command In Leda Shell
-    [Documentation]    Execute a simple command in Leda    
+Execute Shell Command
+    [Documentation]    Simple shell command
     ${result}=    Leda Execute    echo Welcome Leda
     Should Match 	${result.stdout} 	Welcome Leda
 
 Check OS Version
-    [Documentation]    Checking the Leda version name
+    [Documentation]    Leda distro name
     ${result}=    Leda Execute    cat /etc/os-release | grep ^NAME=
     Should Match 	${result.stdout} 	NAME="Eclipse Leda"
 
 Check kanto-cm
-    [Documentation]    Is Kanto Container Management up and running?
+    [Documentation]    Container Management service running?
     ${result}=    Leda Execute    systemctl is-active container-management.service
     Should Match 	${result.stdout} 	active
 
 Check sdv-health
-    [Documentation]    SDV Health working
+    [Documentation]    Scripts returns no error
     ${result}=    Leda Execute    sdv-health
     Should Be Equal As Integers 	${result.rc} 	${0}
 
 Check RAUC Status
-    [Documentation]    Is current booted partition SDV_A
+    [Documentation]    Current booted partition
     ${result}=    Leda Execute    rauc status --output-format=json
     ${json}=    Evaluate    json.loads("""${result.stdout}""")
     ${rauc_booted_slot}=    Set variable  ${json['booted']}
