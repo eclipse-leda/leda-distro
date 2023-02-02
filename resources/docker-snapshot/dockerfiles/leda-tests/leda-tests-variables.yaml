@@ -23,10 +23,6 @@ topic_sub: selfupdate/#
 # How long to wait for messages
 message_wait_timeout_seconds: 60
 
-# Match the WHOLE message containing "UPDATE_SUCCESS"
-
-sua_alive_regex: ([.\s\S]*)("UPDATE_SUCCESS")([\s\S.]*)
-
 # Enable debug logging
 log_messages: False
 

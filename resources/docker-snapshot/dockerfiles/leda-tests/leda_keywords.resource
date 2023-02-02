@@ -26,7 +26,8 @@ Verify SUA is alive
   ${message}=  Get File  ${get_current_state_filename}
   Connect  ${broker.uri}  ${broker.port}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
-  Subscribe And Validate  selfupdate/#    qos=1    payload=${payload_regex}    timeout=10
+  Log    ${payload_regex}
+  Subscribe And Validate  selfupdate/currentstate    qos=1    payload=${payload_regex}    timeout=10
 
 Trigger to start update
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}

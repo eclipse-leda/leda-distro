@@ -27,7 +27,7 @@ ${topic_sub}                selfupdate/#
 ${start_update_filename}    start-update-example.yaml
 ${get_state_filename}       get_state.json
 ${update_success_regex}    ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
-${sua_alive_regex}         ([.\\s\\S]*)("timestamp")([\\s\\S.]*)
+${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)
 ${topic_currentstate}      selfupdate/currentstate/get	
 
 *** Test Cases ***
