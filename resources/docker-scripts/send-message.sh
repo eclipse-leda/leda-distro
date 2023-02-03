@@ -12,15 +12,18 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
+#set -x
 
-if [ $# -eq 0 ]
+if [ $# -ne 3 ]
 then
     echo "Eclipse Leda - C2D Message Helper"
     echo ""
-    echo "Usage: $0 <Azure-IoT-Hub-Name>"
+    echo "Usage: $0 <DeviceId> <Azure-IoT-Hub-Name> <Update-Bundle-File>"
     echo ""
     echo "Arguments:"
-    echo "  <Azure-IoT-Hub-Name> - Name of the Azure IoT Hub (without *.azure-devices.net)"
+    echo "  <DeviceId>            - Device Id"
+    echo "  <Azure-IoT-Hub-Name>  - Name of the Azure IoT Hub (without *.azure-devices.net)"
+    echo "  <Update-Bundle-File>  - Filename of the RAUC Update Bundle (eg sdv-rauc-bundle-qemux86-64.raucb)"
     echo ""
     exit 1
 fi
@@ -31,16 +34,18 @@ then
     exit
 fi
 
-DEVICE_OWNER=$GITHUB_USER
+DEVICE_ID=$1
+IOT_HUB=$2
+FILENAME=$3
 
 function sendMessage() {
-  local DEVICE_ID="$1"
-  local FILENAME="$2"
   CORRELATION_ID=$(cat /proc/sys/kernel/random/uuid)
 
-  echo "Sending Self Update Message to device ${DEVICE_ID}"
-  echo "via IoT Hub: ${IOT_HUB}"
-  echo "using Correlation ID: ${CORRELATION_ID}"
+  echo "Sending Self Update Message"
+  echo "- to device ${DEVICE_ID}"
+  echo "- via IoT Hub: ${IOT_HUB}"
+  echo "- with update bundle: ${FILENAME}"
+  echo "- using Correlation ID: ${CORRELATION_ID}"
 
   DESIRED_STATE=$(jq --raw-input --slurp <<EOF
   apiVersion: "sdv.eclipse.org/v1"
@@ -68,10 +73,9 @@ EOF
 EOF
   )
 
-  echo "Sending message to ${DEVICE_ID}..."
+  echo "Sending message..."
   az iot device c2d-message send -n ${IOT_HUB} -d ${DEVICE_ID} --content-type "application/json" --data "${MSG_DATA_1}"
 
 }
 
-sendMessage "leda-docker-${DEVICE_OWNER}-x86" "sdv-rauc-bundle-qemux86-64.raucb"
-sendMessage "leda-docker-${DEVICE_OWNER}-arm64" "sdv-rauc-bundle-qemuarm64.raucb"
+sendMessage

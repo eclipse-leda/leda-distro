@@ -1,0 +1,27 @@
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+FROM python
+LABEL name="leda-tests"
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
+    apt-get install -y --no-install-recommends iputils-ping netcat
+WORKDIR /root
+
+RUN pip install robotframework robotframework-mqttlibrary robotframework-ymllib robotframework-metrics
+
+COPY resources/docker-snapshot/dockerfiles/leda-tests/* /root
+
+COPY resources/docker-snapshot/dockerfiles/leda-tests-entrypoint.sh ./
+RUN chmod a+x leda-tests-entrypoint.sh
+ENTRYPOINT [ "/root/leda-tests-entrypoint.sh" ]
+CMD [ "--help" ]

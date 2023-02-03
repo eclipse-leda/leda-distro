@@ -16,9 +16,16 @@
 #   container: debian:bullseye
 #
 name: BitBake Build (Self-Hosted)
+
 on:
   workflow_dispatch:
   workflow_call:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
 
@@ -27,6 +34,9 @@ jobs:
     runs-on: self-hosted
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -102,6 +112,9 @@ jobs:
     runs-on: self-hosted
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -178,6 +191,9 @@ jobs:
     needs: leda-qemuarm64
     continue-on-error: true
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -241,3 +257,107 @@ jobs:
         container_name: 'yocto-sstate-cache'
         overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+
+  leda-docker:
+    name: "docker"
+    runs-on: self-hosted
+    needs: 
+    - leda-qemuarm64
+    - leda-qemux86_64
+    continue-on-error: true
+    steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install tools
+      run: sudo apt-get install -y --no-install-recommends socat file gawk wget git diffstat unzip texinfo gcc build-essential chrpath socat cpio python3 python3-pip python3-pexpect xz-utils debianutils iputils-ping python3-git python3-jinja2 libegl1-mesa libsdl1.2-dev pylint xterm python3-subunit mesa-common-dev zstd liblz4-tool tmux mc skopeo fdisk ruby-full jq libvirt-clients libvirt-daemon-system qemu-system-x86 qemu-system-arm qemu-kvm squashfs-tools rauc python3-newt ca-certificates curl gnupg lsb-release
+    - name: Install kas
+      run: sudo pip3 install kas
+    - name: Cache SState
+      id: cache-sstate
+      uses: pat-s/always-upload-cache@v3.0.11
+      with:
+        path: build/sstate-cache
+        key: bb-sstate-cache-raspberrypi4-64
+    - name: Build qemux86-64
+      env:
+        KAS_MACHINE: qemux86-64
+      run: |
+        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+    - name: Build qemuarm64
+      env:
+        KAS_MACHINE: qemuarm64
+      run: |
+        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+    - name: Stop docker
+      if: always()
+      run: |
+        cd resources/docker-snapshot
+        ./stop-docker.sh
+        ./clear-docker.sh
+    - name: Build docker images
+      run: |
+        cd resources/docker-snapshot
+        ./build-docker.sh
+    - name: Startup docker
+      run: |
+        cd resources/docker-snapshot
+        ./run-docker.sh
+    - name: Run docker tests
+      timeout-minutes: 60
+      run: |
+        cd resources/docker-snapshot
+        ./test-docker.sh
+    - name: Upload test reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-tests
+        if-no-files-found: error
+        path: resources/docker-snapshot/leda-tests-reports
+    - name: Publish docker images
+      env:
+        GITHUB_TOKEN: ${{ secrets.ECLIPSE_LEDA_PUBLISH_DOCKER }}
+      run: |
+        cd resources/docker-snapshot
+        ./publish-docker.sh
+    - name: Stop docker
+      if: always()
+      run: |
+        cd resources/docker-snapshot
+        ./stop-docker.sh
+        ./clear-docker.sh
+
+  generate_report:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: always()
+    needs: [ leda-docker ] 
+    runs-on: self-hosted
+    steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
+    - uses: actions/checkout@v2
+    - name: Download reports
+      uses: actions/download-artifact@v1
+      with:
+        name: eclipse-leda-tests
+    - name: Send report to commit
+      uses: joonvena/robotframework-reporter-action@v2.1
+      with:
+        report_path: eclipse-leda-tests
+        gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        # Upload entire repository
+        path: eclipse-leda-tests
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1
