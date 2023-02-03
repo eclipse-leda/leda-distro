@@ -1,0 +1,23 @@
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+
+# General
+leda.target: Leda QEMU ARM-64
+leda.target.hostname: leda-arm64.leda-network
+
+# The MQTT broker hostname and port number (target device)
+broker.uri: leda-arm64
+broker.port: 1883
+
+# File which contains the update request message
+start_update_filename: start-update-example-arm64.json

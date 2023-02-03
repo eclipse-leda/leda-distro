@@ -1,0 +1,2 @@
+DHCPDv4_CONF=/etc/dhcp/dhcpd.conf
+INTERFACESv4="tap0"

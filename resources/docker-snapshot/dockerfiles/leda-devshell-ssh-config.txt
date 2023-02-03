@@ -1,0 +1,9 @@
+Host leda-x86
+    HostName leda-x86.leda-network
+    User root
+    Port 2222
+
+Host leda-arm64
+    HostName leda-arm64.leda-network
+    User root
+    Port 2222

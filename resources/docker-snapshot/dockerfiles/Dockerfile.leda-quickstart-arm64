@@ -1,0 +1,66 @@
+# syntax=docker/dockerfile:1
+#
+# /********************************************************************************
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+
+FROM debian:bullseye
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TZ=Etc/UTC
+
+LABEL name="leda-quickstart-arm64"
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+    bind9-utils \
+    ca-certificates \
+    curl \
+    dnsmasq \
+    dnsutils \
+    iproute2 \
+    iptables \
+    iputils-ping \
+    isc-dhcp-server \
+    net-tools \
+    ssh \
+    sudo \
+    uml-utilities \
+    xz-utils
+
+RUN apt-get install -y --no-install-recommends qemu-system-arm
+
+WORKDIR /root
+
+COPY build/tmp/deploy/images/qemuarm64/sdv-image-all-qemuarm64.wic.qcow2 /root/sdv-image-all-qemuarm64.wic.qcow2
+COPY build/tmp/deploy/images/qemuarm64/u-boot.bin /root/u-boot.bin
+COPY resources/runners/qemuarm64/run-leda.sh /root/run-leda.sh
+
+# Configure DHCP Server
+COPY resources/docker-snapshot/dockerfiles/dhcpd.conf /etc/dhcp/dhcpd.conf
+COPY resources/docker-snapshot/dockerfiles/isc-dhcp-server /etc/default/isc-dhcp-server
+COPY resources/docker-snapshot/dockerfiles/dnsmasq.conf /etc/dnsmasq.conf
+COPY resources/docker-snapshot/dockerfiles/dns-hosts.txt /root/dns-hosts.txt
+RUN touch /var/lib/dhcp/dhcpd.leases
+
+# Original runner and a temporary modified one ("...-arm64.sh")
+RUN mkdir -p /docker
+COPY resources/docker-snapshot/dockerfiles/leda-quickstart-docker-entrypoint-arm64.sh /docker/
+RUN chmod a+x /docker/leda-quickstart-docker-entrypoint-arm64.sh
+ENTRYPOINT [ "/docker/leda-quickstart-docker-entrypoint-arm64.sh" ]
+
+# Expose SSH access
+EXPOSE 2222
+
+# Expose MQTT broker: Eclipse Mosquitto
+EXPOSE 1883

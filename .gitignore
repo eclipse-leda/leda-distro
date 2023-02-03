@@ -70,3 +70,6 @@ hashserv.db
 
 # During testing of workflow
 eclipse-leda-sbom-*.tar.gz
+
+# Docker based tests for Robot Framework
+resources/docker-snapshot/leda-tests-reports/
