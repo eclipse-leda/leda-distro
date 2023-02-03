@@ -14,6 +14,30 @@
 #
 
 echo "Executing Eclipse Leda tests..."
+
+TESTSUITE=$1
+
+if [ "${TESTSUITE}" == "--help" ]; then
+    echo "Please specifiy test suite (.robot file) as first command line argument"
+    echo "Use --mergeall to merge all"
+    exit 0
+fi
+
+if [ "${TESTSUITE}" == "--mergeall" ]; then
+    ALL_REPORTS=$(find robot-output -wholename "robot-output/*/output.xml" -printf "%p ")
+    echo "Merging output reports: ${ALL_REPORTS}"
+    rebot --xunit robot-output/leda-tests-xunit.xml --report robot-output/report.html --log robot-output/log.html --output robot-output/output.xml ${ALL_REPORTS}
+    exit 0
+fi
+
+if [ -z ${TESTSUITE} ]; then
+    echo "ERROR: Please provide name of .robot file to execute"
+    echo "Available test suites:"
+    find -name "*.robot"
+    exit 1
+fi
+
+echo "- Test Suite: ${TESTSUITE}"
 echo "- Robot Framework version: $(robot --version)"
 
 mkdir -p ~/.ssh/
@@ -26,24 +50,29 @@ ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/nul
 echo "- Executing QEMU X86-64"
 
 robot \
-    --name "Leda x86-64 Tests" \
+    --name "x86-64" \
     --variablefile vars-x86.yaml \
+    --metadata Leda-Target:X86-64 \
     --loglevel INFO \
     --debugfile leda-tests-debug.log \
     --xunit leda-tests-xunit.xml \
-    --outputdir robot-output/x86 \
-    *.robot
+    --outputdir robot-output/${TESTSUITE}/x86 \
+    ${TESTSUITE}
 
 echo "- Executing QEMU ARM-64"
 
 robot \
-    --name "Leda ARM-64 Tests" \
+    --name "ARM-64" \
     --variablefile vars-arm64.yaml \
+    --metadata Leda-Target:ARM-64 \
     --loglevel INFO \
     --debugfile leda-tests-debug.log \
     --xunit leda-tests-xunit.xml \
-    --outputdir robot-output/arm64 \
-    *.robot
+    --outputdir robot-output/${TESTSUITE}/arm64 \
+    ${TESTSUITE}
 
 echo "- Merging output reports"
-rebot --output robot-output/output.xml robot-output/x86/output.xml robot-output/arm64/output.xml 
+rebot --ReportTitle "Smoke Tests" --output robot-output/${TESTSUITE}/output.xml robot-output/${TESTSUITE}/x86/output.xml robot-output/${TESTSUITE}/arm64/output.xml 
+rebot --log robot-output/${TESTSUITE}/log.html robot-output/${TESTSUITE}/output.xml
+rebot --report robot-output/${TESTSUITE}/report.html robot-output/${TESTSUITE}/output.xml
+rebot --xunit robot-output/${TESTSUITE}/leda-tests-xunit.xml robot-output/${TESTSUITE}/output.xml

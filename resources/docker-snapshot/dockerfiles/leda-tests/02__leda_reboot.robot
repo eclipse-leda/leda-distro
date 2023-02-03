@@ -10,18 +10,18 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-#
-FROM python
-LABEL name="leda-tests"
-RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
-    apt-get install -y --no-install-recommends iputils-ping
-WORKDIR /root
 
-RUN pip install robotframework robotframework-mqttlibrary robotframework-ymllib robotframework-metrics
+*** Settings ***
+Documentation     Rebooting ${leda.target}
+Resource          leda_keywords.resource
 
-COPY resources/docker-snapshot/dockerfiles/leda-tests/* /root
+Test Timeout      20 minutes
 
-COPY resources/docker-snapshot/dockerfiles/leda-tests-entrypoint.sh ./
-RUN chmod a+x leda-tests-entrypoint.sh
-ENTRYPOINT [ "/root/leda-tests-entrypoint.sh" ]
-CMD [ "--help" ]
+*** Test Cases ***
+Simple Reboot
+    [Documentation]    Execute a reboot
+    ${before}          Get RAUC Boot Primary
+    Should Match       ${before}    rootfs.0
+    Leda Reboot
+    ${after}           Get RAUC Boot Primary
+    Should Match       ${after}     rootfs.0

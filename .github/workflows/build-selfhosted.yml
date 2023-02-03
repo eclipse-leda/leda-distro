@@ -16,9 +16,16 @@
 #   container: debian:bullseye
 #
 name: BitBake Build (Self-Hosted)
+
 on:
   workflow_dispatch:
   workflow_call:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
 
@@ -294,8 +301,12 @@ jobs:
       run: |
         cd resources/docker-snapshot
         ./build-docker.sh
+    - name: Startup docker
+      run: |
+        cd resources/docker-snapshot
+        ./run-docker.sh
     - name: Run docker tests
-      timeout-minutes: 30
+      timeout-minutes: 60
       run: |
         cd resources/docker-snapshot
         ./test-docker.sh
@@ -320,6 +331,9 @@ jobs:
         ./clear-docker.sh
 
   generate_report:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     if: always()
     needs: [ leda-docker ] 
     runs-on: self-hosted
@@ -337,3 +351,13 @@ jobs:
       with:
         report_path: eclipse-leda-tests
         gh_access_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v1
+      with:
+        # Upload entire repository
+        path: eclipse-leda-tests
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v1

@@ -18,9 +18,13 @@ Documentation     This is a resource file, that can contain variables and keywor
 Library  MQTTLibrary
 Library  yaml
 Library  Collections
+Library  OperatingSystem
+Library  Process
+Library  String
 
 *** Variables ***
 ${message_wait_timeout_seconds}    120
+${leda.sshport}                    2222
 
 *** Keywords ***
 
@@ -42,9 +46,49 @@ Connect and Subscribe to Listen
   Connect  ${broker.uri}  ${broker.port}
   Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=${message_wait_timeout_seconds}
 
+Get RAUC Boot Primary
+    [Documentation]    Get current booted RAUC primary (rootfs.0, rootfs.1)
+    ${result}=    Leda Execute    rauc status --output-format=json
+    Log    RAUC RC: ${result.rc}
+    Log    RAUC Output: ${result.stdout}
+    Log    RAUC Error: ${result.stderr}
+    ${json}=    Evaluate    json.loads("""${result.stdout}""")
+    ${rauc_boot_primary}=    Set variable  ${json['boot_primary']}
+    RETURN    ${rauc_boot_primary}
+
+Get RAUC Boot Slot
+    [Documentation]    Get current booted RAUC slot (SDV_A, SDV_B)
+    ${result}=    Leda Execute    rauc status --output-format=json
+    ${json}=    Evaluate    json.loads("""${result.stdout}""")
+    ${rauc_booted_slot}=    Set variable  ${json['booted']}
+    RETURN    ${rauc_booted_slot}
+
+Leda Reboot
+    [Documentation]    Blocks until reboot is finished
+    Leda Execute       reboot now
+    Wait Until Keyword Succeeds    10 min    1 sec    SSH Port Should Be Closed
+    Wait Until Keyword Succeeds    10 min    1 sec    SSH Port Should Be Open
+
+SSH Port Should Be Closed
+    [Documentation]    Tests if SSH port is closed
+    ${result}=    Run Process    nc -z ${leda.target.hostname} ${leda.sshport}
+    Should Match By Integer    ${result}    ${0}
+
+SSH Port Should Be Open
+    [Documentation]    Tests if SSH port is open
+    ${result}=    Run Process    nc -z ${leda.target.hostname} ${leda.sshport}
+    Should Match By Integer    ${result}    ${1}
+
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
-    [Arguments]    ${command}
-    ${expanded}= 	Format String 	ssh -p ${leda.sshport} ${leda.target.hostname} ${command}
+    [Arguments]        ${command}
+    ${expanded}=       Format String    ssh {sshopts} -p {port} {hostname} "{command}"
+    ...    sshopts=-o StrictHostKeyChecking=no -o ConnectionAttempts=30
+    ...    port=${leda.sshport}
+    ...    hostname=${leda.target.hostname}
+    ...    command=${command}
     ${result}=    Run Process    bash    -c    ${expanded}    shell=True
+    Log    ${result.rc}
+    Log    ${result.stdout}
+    Log    ${result.stderr}
     RETURN    ${result}
