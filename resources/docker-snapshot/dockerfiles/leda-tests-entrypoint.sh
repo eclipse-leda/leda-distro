@@ -50,7 +50,6 @@ ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/nul
 echo "- Executing QEMU X86-64"
 
 robot \
-    --name "x86-64" \
     --variablefile vars-x86.yaml \
     --metadata Leda-Target:X86-64 \
     --loglevel INFO \
@@ -62,7 +61,6 @@ robot \
 echo "- Executing QEMU ARM-64"
 
 robot \
-    --name "ARM-64" \
     --variablefile vars-arm64.yaml \
     --metadata Leda-Target:ARM-64 \
     --loglevel INFO \
@@ -70,9 +68,3 @@ robot \
     --xunit leda-tests-xunit.xml \
     --outputdir robot-output/${TESTSUITE}/arm64 \
     ${TESTSUITE}
-
-echo "- Merging output reports"
-rebot --ReportTitle "Smoke Tests" --output robot-output/${TESTSUITE}/output.xml robot-output/${TESTSUITE}/x86/output.xml robot-output/${TESTSUITE}/arm64/output.xml 
-rebot --log robot-output/${TESTSUITE}/log.html robot-output/${TESTSUITE}/output.xml
-rebot --report robot-output/${TESTSUITE}/report.html robot-output/${TESTSUITE}/output.xml
-rebot --xunit robot-output/${TESTSUITE}/leda-tests-xunit.xml robot-output/${TESTSUITE}/output.xml
