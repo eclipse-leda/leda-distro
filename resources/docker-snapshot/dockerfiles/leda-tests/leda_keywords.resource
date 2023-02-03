@@ -66,18 +66,13 @@ Get RAUC Boot Slot
 Leda Reboot
     [Documentation]    Blocks until reboot is finished
     Leda Execute       reboot now
-    Wait Until Keyword Succeeds    10 min    1 sec    SSH Port Should Be Closed
-    Wait Until Keyword Succeeds    10 min    1 sec    SSH Port Should Be Open
-
-SSH Port Should Be Closed
-    [Documentation]    Tests if SSH port is closed
-    ${result}=    Run Process    nc -z ${leda.target.hostname} ${leda.sshport}
-    Should Match By Integer    ${result}    ${0}
+    Sleep    1m
+    Wait Until Keyword Succeeds    3 min    5 sec    SSH Port Should Be Open
 
 SSH Port Should Be Open
     [Documentation]    Tests if SSH port is open
-    ${result}=    Run Process    nc -z ${leda.target.hostname} ${leda.sshport}
-    Should Match By Integer    ${result}    ${1}
+    ${result}=    Leda Execute    echo Welcome back
+    Should Match    ${result.stdout}    Welcome back
 
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH

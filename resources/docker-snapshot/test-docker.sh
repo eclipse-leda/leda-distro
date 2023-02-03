@@ -36,7 +36,7 @@ then
 fi
 
 SEARCHPATH="dockerfiles/leda-tests"
-TESTSUITES=$(find ${SEARCHPATH} -name "*.robot" -printf "%f\n")
+TESTSUITES=$(find ${SEARCHPATH} -name "*.robot" -printf "%f\n" | sort -n)
 if [ ! -z ${CMD} ]; then
     TESTSUITES=$(find ${SEARCHPATH} -name "${CMD}" -printf "%f\n")
 fi
@@ -59,11 +59,20 @@ mkdir -m 777 -p leda-tests-reports
 
 echo "Executing test suites..."
 while IFS= read -r TESTSUITE; do
-    echo "Executing test suite ${TESTSUITE}"
+    echo "- Found test suite ${TESTSUITE}"
+done <<< "${TESTSUITES}"
+
+while IFS= read -r TESTSUITE; do
+    echo "Preparing test suite ${TESTSUITE}"
     echo "- Cleaning existing volumes of leda-x86 and leda-arm64"
-    docker compose rm --volumes --force --stop leda-x86 leda-arm64
-    echo "- Executing test cases (waiting for containers to become healthy)"
-    docker compose --profile tests run --no-TTY --rm leda-tests ${TESTSUITE}
+    docker compose --profile tests stop
+    docker compose --profile tests rm --force --volumes
+    docker volume rm --force leda-x86
+    docker volume rm --force leda-arm64
+    echo "- Starting up docker compose services to become healthy"
+    docker compose up -d --wait
+    echo "- Executing test suite ${TESTSUITE}"
+    docker compose --profile tests run --no-TTY --interactive=false --rm leda-tests ${TESTSUITE}
 done <<< "${TESTSUITES}"
 
 echo "Stopping containers..."

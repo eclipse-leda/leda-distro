@@ -40,4 +40,4 @@ qemu-system-aarch64 \
          -device virtio-net-device,netdev=net0 \
          -object can-bus,id=canbus0 \
          -device kvaser_pci,canbus=canbus0 \
-         -append "root=/dev/vda2 rw"
+         -bios u-boot.bin

@@ -79,3 +79,9 @@ This will rebuild the container (in case the tests have been changed) and run Ro
 The test reports will be located on the host in `./leda-tests-reports` in the current working directory.
 
 The tests assume to be run inside of a container which is part of the `leda-network` environment.
+
+Each test suite (e.g. each separate `*.robot` file) is executed in a new, clean docker container.
+
+To execute only a single test suite, run the script with the test suite filename:
+
+    ./test-docker.sh 01__base.robot
