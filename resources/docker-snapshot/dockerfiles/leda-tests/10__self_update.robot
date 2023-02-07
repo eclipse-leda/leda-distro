@@ -33,7 +33,7 @@ ${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)
 ${topic_currentstate}      selfupdate/currentstate/get	
 
 *** Test Cases ***
-Verify SUA is alive
+Wait for SUA alive
     Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
 
 Self Update Agent Test
