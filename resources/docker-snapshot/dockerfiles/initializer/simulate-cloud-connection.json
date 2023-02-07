@@ -1,0 +1,4 @@
+{
+    "deviceId":"dummy-namespace:dummy-gateway:dummy-device-id",
+    "tenantId":"dummy-tenant-id"
+}

@@ -26,6 +26,8 @@ echo " From here, you can continue to log in to one of the guests:"
 echo "  ssh leda-x86"
 echo "  ssh leda-arm64"
 echo ""
-
+echo " Or monitor MQTT messages:"
+echo "  mosquitto_sub -h leda-mqtt-broker.leda-network -t '#' -v"
+echo ""
 
 bash

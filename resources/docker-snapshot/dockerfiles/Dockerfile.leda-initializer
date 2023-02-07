@@ -14,8 +14,12 @@
 FROM debian:bullseye
 LABEL name="leda-initializer"
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
-    apt-get install -y --no-install-recommends iputils-ping ssh dnsutils
+    apt-get install -y --no-install-recommends iputils-ping ssh dnsutils mosquitto-clients curl wget
+
 WORKDIR /root
+
+COPY ./dockerfiles/initializer/simulate-cloud-connection.json ./
+COPY ./dockerfiles/initializer/enable-container-metrics.json ./
 
 COPY ./dockerfiles/leda-initializer-entrypoint.sh ./
 RUN chmod a+x leda-initializer-entrypoint.sh

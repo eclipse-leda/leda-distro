@@ -146,8 +146,12 @@ services:
       dockerfile: dockerfiles/Dockerfile.leda-initializer
     container_name: leda-initializer
     depends_on:
-      - leda-x86
-      - leda-arm64
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_healthy
+      mqtt-broker:
+        condition: service_healthy
     networks:
       leda-network:
         ipv4_address: 192.168.8.7
@@ -203,11 +207,17 @@ services:
   grafana:
     image: "grafana/grafana-oss"
     container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=leda
+      - GF_SECURITY_ADMIN_PASSWORD=leda
+      - GF_INSTALL_PLUGINS=grafana-mqtt-datasource
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=grafana-mqtt-datasource
     volumes:
 #      - "./dockerfiles/grafana/provisioning:/etc/grafana/provisioning"
 #      - "./dockerfiles/grafana/custom.ini:/etc/grafana/custom.ini"
 #      - "./dockerfiles/grafana/dashboards:/var/lib/grafana/dashboards"
        - "grafana-storage:/var/lib/grafana"
+       - "grafana-plugins:/var/lib/grafana/plugins"
        - "./dockerfiles/grafana:/etc/grafana"
     ports:
       - "8300:3000"
@@ -229,6 +239,24 @@ services:
       leda-network:
         ipv4_address: 192.168.8.17
       leda-bridge:
+
+  leda-container-metrics:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-container-metrics
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.leda-container-metrics
+    container_name: leda-container-metrics
+    ports:
+      - "7355:7355"
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.18
+      leda-bridge:
+    depends_on:
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_healthy
 
   leda-tests:
     image: ghcr.io/eclipse-leda/leda-distro/leda-tests
@@ -257,6 +285,9 @@ volumes:
     name: leda-arm64
   grafana-storage:
     name: leda-grafana-data
+
+  grafana-plugins:
+    name: leda-grafana-plugins
 
 networks:
   # All Leda components are in this network

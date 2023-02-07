@@ -37,17 +37,10 @@ scrape_configs:
 
     static_configs:
       - targets: [ 'procexporter:9256' ]
-  - job_name: 'leda-x86'
+  - job_name: 'container-metrics'
 
     # Override the global default and scrape targets from this job every 5 seconds.
     scrape_interval: 5s
 
     static_configs:
-      - targets: [ 'leda-x86:8888' ]
-  - job_name: 'leda-arm64'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
-
-    static_configs:
-      - targets: [ 'leda-arm64:8888' ]
+      - targets: [ 'leda-container-metrics.leda-network:7355' ]

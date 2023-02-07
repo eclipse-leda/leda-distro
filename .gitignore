@@ -73,3 +73,5 @@ eclipse-leda-sbom-*.tar.gz
 
 # Docker based tests for Robot Framework
 resources/docker-snapshot/leda-tests-reports/
+resources/docker-snapshot/dockerfiles/container-metrics/.venv
+resources/docker-snapshot/dockerfiles/container-metrics/__pycache__
