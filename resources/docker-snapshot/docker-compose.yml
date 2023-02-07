@@ -246,6 +246,8 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-container-metrics
     container_name: leda-container-metrics
+    environment:
+      - MQTT_BROKER_URL=leda-mqtt-broker.leda-network
     ports:
       - "7355:7355"
     networks:
@@ -253,9 +255,7 @@ services:
         ipv4_address: 192.168.8.18
       leda-bridge:
     depends_on:
-      leda-x86:
-        condition: service_healthy
-      leda-arm64:
+      mqtt-broker:
         condition: service_healthy
 
   leda-tests:

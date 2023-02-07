@@ -17,10 +17,11 @@ from flask_mqtt import Mqtt
 import json 
 import re
 import logging
+import sys
 
 appname = "kanto2prometheus"
 
-logging.basicConfig(encoding='utf-8', level=logging.INFO, format='%(asctime)s %(message)s')
+logging.basicConfig(stream=sys.stdout, encoding='utf-8', level=logging.INFO, format='%(asctime)s %(message)s')
 flask_logger = logging.getLogger('werkzeug')
 flask_logger.setLevel(logging.ERROR)
 
@@ -28,8 +29,8 @@ log = logging.getLogger(appname)
 log.setLevel(logging.INFO)
 app = Flask(appname)
 
-#app.config['MQTT_BROKER_URL'] = 'leda-mqtt-broker.leda-network'
-app.config['MQTT_BROKER_URL'] = 'localhost'
+app.config['MQTT_BROKER_URL'] = 'leda-mqtt-broker.leda-network'
+#app.config['MQTT_BROKER_URL'] = 'localhost'
 app.config['MQTT_BROKER_PORT'] = 1883
 app.config['MQTT_USERNAME'] = ''
 app.config['MQTT_PASSWORD'] = ''
@@ -166,7 +167,7 @@ def hello_world():
 
 if __name__ == '__main__':
     log.info("Convert kanto container metrics messages and publish them as prometheus metrics")
-    log.info("Startup of MQTT Client")
+    log.info("Startup of MQTT Client, connecting to %s",app.config['MQTT_BROKER_URL'])
     mqtt_client.init_app(app)
     log.info("Startup of Flask web app")
-    app.run(debug=False,port=7355)
+    app.run(debug=False,port=7355,host='0.0.0.0') 

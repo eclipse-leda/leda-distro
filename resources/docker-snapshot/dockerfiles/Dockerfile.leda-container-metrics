@@ -15,6 +15,11 @@
 FROM python
 
 WORKDIR /app
-COPY dockerfiles/container-metrics/ .
+
+COPY dockerfiles/container-metrics/requirements.txt .
 RUN pip3 install -r requirements.txt
-CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
+
+COPY dockerfiles/container-metrics/ .
+
+EXPOSE 7355
+CMD [ "python3", "app.py" ]
