@@ -35,6 +35,9 @@ jobs:
     continue-on-error: true
     if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -68,6 +71,9 @@ jobs:
     runs-on: self-hosted
     if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
@@ -101,6 +107,9 @@ jobs:
     runs-on: self-hosted
     if: github.repository_owner == 'SoftwareDefinedVehicle'
     steps:
+    - name: Cleanup test reports
+      run: |
+        sudo rm -rf resources/docker-snapshot/leda-tests-reports
     - name: Checkout
       uses: actions/checkout@v3
     - name: Install tools
