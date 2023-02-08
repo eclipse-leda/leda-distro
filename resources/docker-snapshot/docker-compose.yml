@@ -225,6 +225,18 @@ services:
       leda-network:
         ipv4_address: 192.168.8.16
       leda-bridge:
+  
+  loki:
+    image: grafana/loki:2.7.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.19
+      leda-bridge:
+
   procexporter:
     image: ncabatoff/process-exporter:latest
     container_name: procexporter
@@ -246,6 +258,7 @@ services:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-container-metrics
     container_name: leda-container-metrics
+    stop_signal: SIGINT
     environment:
       - MQTT_BROKER_URL=leda-mqtt-broker.leda-network
     ports:
@@ -257,6 +270,8 @@ services:
     depends_on:
       mqtt-broker:
         condition: service_healthy
+      loki:
+        condition: service_started
 
   leda-tests:
     image: ghcr.io/eclipse-leda/leda-distro/leda-tests

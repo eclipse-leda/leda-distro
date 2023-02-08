@@ -7,3 +7,4 @@ MarkupSafe==2.1.2
 Werkzeug==2.2.2
 zipp==3.12.1
 Flask-MQTT==1.1.1
+requests==2.28.2
