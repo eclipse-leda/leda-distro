@@ -147,8 +147,6 @@ def parseMetrics(topic,data):
     deviceIds=topic_full_device_identifier.split(":")
     deviceId=deviceIds[0] + ":" + deviceIds[1]
 
-    log.info("Received metrics for device: %s", deviceId)
-
     snapshots = data['value']['snapshot']
     for snapshot in snapshots:
             originator = snapshot['originator']
@@ -174,9 +172,6 @@ def parseMetrics(topic,data):
                 value_timestamp = int(time.time()) * 1000
                 value_with_timestamp = "{} {}".format(mValue,value_timestamp)
                 prometheus_metrics[fullname]=value_with_timestamp
-
-                lokiSend(deviceId, containerId, "Received metrics for device " + deviceId )
-
 
 @mqtt_client.on_message()
 def on_message(client, userdata, message):
