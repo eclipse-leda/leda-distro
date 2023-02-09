@@ -272,6 +272,21 @@ services:
         condition: service_healthy
       loki:
         condition: service_started
+  leda-container-logs:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-container-logs
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.leda-container-logs
+    container_name: leda-container-logs
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.20
+      leda-bridge:
+    depends_on:
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_started
 
   leda-tests:
     image: ghcr.io/eclipse-leda/leda-distro/leda-tests
