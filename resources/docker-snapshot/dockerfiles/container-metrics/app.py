@@ -118,23 +118,26 @@ def parseContainerState(topic,data):
     splitted2 = container_with_prefix.split(":")
     containerId=splitted2[1]
     
-    if 'definition' in data['value']:
-        if "com.bosch.iot.suite.edge.containers:Container:1.5.0" in data['value']['definition']:
-            containerName=data['value']['properties']['status']['name']
-            containerNames[containerId]=containerName
-            log.info("Received container name: %s = %s", containerId, containerName)
-            lokiSend(deviceId, containerId,"Received container name " + containerName)
-        elif "com.bosch.iot.suite.edge.containers:ContainerFactory:1.3.0" in data['value']['definition']:
-            # Skippable
-            return
+    if 'value' in data:
+        if 'definition' in data['value']:
+            if "com.bosch.iot.suite.edge.containers:Container:1.5.0" in data['value']['definition']:
+                containerName=data['value']['properties']['status']['name']
+                containerNames[containerId]=containerName
+                log.info("Received container name: %s = %s", containerId, containerName)
+                lokiSend(deviceId, containerId,"Received container name " + containerName)
+            elif "com.bosch.iot.suite.edge.containers:ContainerFactory:1.3.0" in data['value']['definition']:
+                # Skippable
+                return
+            else:
+                log.warning("Ignoring unknown container message: %s",data['value']['definition'])
+                lokiSend(deviceId, containerId,"Ignoring unknown message")
+        elif data['topic'].endswith("edge:containers/things/twin/commands/modify"):
+            log.info("Container %s status changed to %s", containerId, data['value']['status'])
+            lokiSend(deviceId, containerId,"Container changed status to " + data['value']['status'])
         else:
-            log.warning("Ignoring unknown container message: %s",data['value']['definition'])
-            lokiSend(deviceId, containerId,"Ignoring unknown message")
-    elif data['topic'].endswith("edge:containers/things/twin/commands/modify"):
-        log.info("Container %s status changed to %s", containerId, data['value']['status'])
-        lokiSend(deviceId, containerId,"Container changed status to " + data['value']['status'])
+            log.warning("Message does not have a definition: %s",data['value'])
     else:
-        log.warning("Message does not have a definition: %s",data['value'])
+        log.warning("Message does not have a value: %s",data)
 
 def parseMetrics(topic,data):
     tenantId=topic.split("/")[2]
