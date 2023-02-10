@@ -21,3 +21,8 @@ broker.port: 1883
 
 # File which contains the update request message
 start_update_filename: start-update-example-arm64.json
+
+# Kuksa Databroker: How the Robot can reach the databroker
+# The port mapping is done by docker-compose, hence localhost
+kuksa_hostname: localhost
+kuksa_port: 30556

@@ -98,15 +98,28 @@ Check sdv-health
 Check RAUC Status
     [Documentation]        Current booted partition
     ${result}=             Leda Execute    rauc status --output-format=json
+    Should Be Equal As Integers 	${result.rc} 	${0}
+    Should Be Empty    ${result.stderr}
+    Should Not Be Empty    ${result.stdout}
+
     ${json}=               Evaluate    json.loads("""${result.stdout}""")
     ${rauc_booted_slot}=   Set variable  ${json['booted']}
     ${rauc_compatible}=    Set variable  ${json['compatible']}
     ${rauc_boot_primary}=  Set variable  ${json['boot_primary']}
     Set Test Message       Boot primary is ${rauc_boot_primary}
-    Should Be Equal As Integers 	${result.rc} 	${0}
     Should Match 	${rauc_booted_slot} 	SDV_A
     Should Match 	${rauc_compatible} 	    Eclipse Leda
     Should Match 	${rauc_boot_primary} 	rootfs.0
+
+    Should Match 	${json['slots'][0]['rootfs.0']['bootname']} 	SDV_A
+    Should Match 	${json['slots'][0]['rootfs.0']['boot_status']} 	good
+    Should Match 	${json['slots'][0]['rootfs.0']['class']} 	rootfs
+    Should Match 	${json['slots'][0]['rootfs.0']['type']} 	ext4
+
+    Should Match 	${json['slots'][0]['rootfs.1']['bootname']} 	SDV_B
+    Should Match 	${json['slots'][0]['rootfs.1']['boot_status']} 	good
+    Should Match 	${json['slots'][0]['rootfs.1']['class']} 	rootfs
+    Should Match 	${json['slots'][0]['rootfs.1']['type']} 	ext4
 
 Check containers
     [Documentation]          SDV Core containers installed

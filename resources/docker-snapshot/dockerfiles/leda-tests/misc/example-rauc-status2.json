@@ -1,0 +1,76 @@
+{
+    "compatible": "Eclipse Leda",
+    "variant": "",
+    "booted": "SDV_A",
+    "boot_primary": "rootfs.0",
+    "slots": [
+        {
+            "rootfs.1": {
+                "class": "rootfs",
+                "device": "/dev/vda5",
+                "type": "ext4",
+                "bootname": "SDV_B",
+                "state": "inactive",
+                "parent": null,
+                "mountpoint": null,
+                "boot_status": "good",
+                "slot_status": {
+                    "bundle": {
+                        "compatible": null
+                    }
+                }
+            }
+        },
+        {
+            "efi.0": {
+                "class": "efi",
+                "device": "/dev/vda",
+                "type": "boot-gpt-switch",
+                "bootname": null,
+                "state": "inactive",
+                "parent": null,
+                "mountpoint": null,
+                "boot_status": null,
+                "slot_status": {
+                    "bundle": {
+                        "compatible": null
+                    }
+                }
+            }
+        },
+        {
+            "rescue.0": {
+                "class": "rescue",
+                "device": "/dev/vda3",
+                "type": "ext4",
+                "bootname": null,
+                "state": "inactive",
+                "parent": null,
+                "mountpoint": null,
+                "boot_status": null,
+                "slot_status": {
+                    "bundle": {
+                        "compatible": null
+                    }
+                }
+            }
+        },
+        {
+            "rootfs.0": {
+                "class": "rootfs",
+                "device": "/dev/vda4",
+                "type": "ext4",
+                "bootname": "SDV_A",
+                "state": "booted",
+                "parent": null,
+                "mountpoint": "/",
+                "boot_status": "good",
+                "slot_status": {
+                    "bundle": {
+                        "compatible": null
+                    }
+                }
+            }
+        }
+    ]
+}

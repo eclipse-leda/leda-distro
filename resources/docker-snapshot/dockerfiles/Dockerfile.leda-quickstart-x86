@@ -64,3 +64,6 @@ EXPOSE 2222
 
 # Expose MQTT broker: Eclipse Mosquitto
 EXPOSE 1883
+
+# Expose Eclipse Kuksa Databroker
+EXPOSE 30555

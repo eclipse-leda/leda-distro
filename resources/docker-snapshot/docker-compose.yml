@@ -101,6 +101,7 @@ services:
     ports:
       - "9101:8888"
       - "2001:2222"
+      - "30555:30555"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -132,6 +133,7 @@ services:
     ports:
       - "9102:8888"
       - "2002:2222"
+      - "30556:30555"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -171,7 +173,14 @@ services:
     networks:
       leda-network:
         ipv4_address: 192.168.8.8
-      leda-bridge:   
+      leda-bridge:
+    depends_on:
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_started
+
+
   # A DNS proxy which forwards DNS requests to the Docker built-in
   # DNS service. This way, the QEMU instances can access the Docker DNS
   # and resolve internal docker services, such as "mqtt-broker" or "leda-arm64"

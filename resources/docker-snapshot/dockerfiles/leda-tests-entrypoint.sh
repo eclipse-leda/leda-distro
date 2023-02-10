@@ -44,8 +44,10 @@ mkdir -p ~/.ssh/
 echo "- SSH Hosts Configuration in ~/.ssh/config"
 echo "- Adding SSH fingerprint of leda-x86"
 ssh-keyscan -p 2222 -H leda-x86.leda-network >> ~/.ssh/known_hosts 2> /dev/null
+ssh-keyscan -t ecdsa -p 2222 -H 192.168.8.4 >> ~/.ssh/known_hosts 2> /dev/null
 echo "- Adding SSH fingerprint of leda-arm64"
 ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/null
+ssh-keyscan -t ecdsa -p 2222 -H 192.168.8.5 >> ~/.ssh/known_hosts 2> /dev/null
 
 echo "- Executing QEMU X86-64"
 

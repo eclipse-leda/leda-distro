@@ -1,3 +1,4 @@
+#!/bin/bash
 # /********************************************************************************
 # * Copyright (c) 2023 Contributors to the Eclipse Foundation
 # *
@@ -10,19 +11,9 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
+#
+# Run test cases against the docker containers
+#
+#set -e
 
-# General
-leda.target: Leda QEMU X86-64
-leda.target.hostname: leda-x86.leda-network
-
-# The MQTT broker hostname and port number (target device)
-broker.uri: leda-x86
-broker.port: 1883
-
-# File which contains the update request message
-start_update_filename: start-update-example-x86.json
-
-# Kuksa Databroker: How the Robot can reach the databroker
-# The port mapping is done by docker-compose, hence localhost
-kuksa_hostname: localhost
-kuksa_port: 30555
+docker compose run --rm devshell "$@"
