@@ -63,13 +63,6 @@ Get Current RAUC Boot Name
     ${rauc_booted_slot}=    Set variable  ${json['booted']}
     RETURN    ${rauc_booted_slot}
 
-Get Next RAUC Boot Name
-    [Documentation]    Get current booted RAUC slot (SDV_A, SDV_B)
-    ${result}=    Leda Execute    rauc status --output-format=json
-    ${json}=    Evaluate    json.loads("""${result.stdout}""")
-    ${rauc_booted_slot}=    Set variable  ${json['booted']}
-    RETURN    ${rauc_booted_slot}
-
 Set Next RAUC Boot Slot
     [Documentation]    Set next slot to boot (rootfs.0, rootfs.1)
     [Arguments]    ${nextslot}
@@ -79,7 +72,7 @@ Set Next RAUC Boot Slot
 Leda Reboot
     [Documentation]    Blocks until reboot is finished
     Leda Execute       reboot now
-    Sleep    1m
+    Sleep    15s
     Wait Until Keyword Succeeds    3 min    5 sec    SSH Port Should Be Open
 
 SSH Port Should Be Open
@@ -90,8 +83,8 @@ SSH Port Should Be Open
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
     [Arguments]        ${command}
-    ${expanded}=       Format String    ssh {sshopts} -p {port} {hostname} "{command}"
-    ...    sshopts=-o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q
+    ${expanded}=       Format String    ssh {sshopts} -p {port} root\@{hostname} "{command}"
+    ...    sshopts=-o ConnectTimeout=2 -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q
     ...    port=${leda.sshport}
     ...    hostname=${leda.target.hostname}
     ...    command=${command}

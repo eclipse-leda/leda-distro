@@ -17,36 +17,38 @@ Resource          leda_keywords.resource
 
 Test Timeout      20 minutes
 
+*** Variables ***
+${leda.target}                 local
+${leda.target.hostname}        localhost
+${leda.sshport}                2001
+
 *** Test Cases ***
+Before Reboot
+    [Documentation]        Expect current partition to be clean
+    ${before_slot}         Get RAUC Boot Primary Slot
+    ${before_name}         Get Current RAUC Boot Name
+    Should Match           ${before_slot}        rootfs.0
+    Should Match           ${before_name}        SDV_A
+
 Simple Reboot
     [Documentation]        Expect simple reboot to boot into same slot
     ${before_slot}         Get RAUC Boot Primary Slot
     ${before_name}         Get Current RAUC Boot Name
-    ${before_next_name}    Get Next RAUC Boot Name
-    Should Match           ${before_slot}        rootfs.0
-    Should Match           ${before_name}        SDV_A
-    Should Match           ${before_next_name}   SDV_A
-
     Leda Reboot
-
     ${after_slot}          Get RAUC Boot Primary Slot
     ${after_name}          Get Current RAUC Boot Name
-    ${after_next_name}     Get Next RAUC Boot Name
-    Should Match           ${after_slot}         rootfs.0
-    Should Match           ${after_name}         SDV_A
-    Should Match           ${after_next_name}    SDV_A
+    Should Match           ${after_slot}         ${before_slot}
+    Should Match           ${after_name}         ${before_name}
+    Set Test Message    Reboot from and into ${after_slot}
 
-Boot Into Second Slot
-    [Documentation]    Boot into the second SDV_B slot
-    ${before}          Get Current RAUC Boot Name
-    Should Match       ${before}    SDV_A
-    ${next}            Get Next RAUC Boot Name
-    Should Match       ${next}    SDV_A
-    Set Next RAUC Boot Slot     rootfs.1
-    ${next2}           Get Next RAUC Boot Name
-    Should Match       ${next2}    SDV_B
+Boot Into Other Slot
+    [Documentation]    Boot into the other slot
+    ${before_slot}         Get RAUC Boot Primary Slot
+    ${before_name}         Get Current RAUC Boot Name
+    Set Next RAUC Boot Slot     other
     Leda Reboot
-    ${after}           Get RAUC Boot Primary Slot
-    Should Match       ${after}     rootfs.1
-    ${next3}           Get Next RAUC Boot Name
-    Should Match       ${next3}    SDV_B
+    ${after_slot}          Get RAUC Boot Primary Slot
+    ${after_name}          Get Current RAUC Boot Name
+    Should Not Match           ${after_slot}         ${before_slot}
+    Should Not Match           ${after_name}         ${before_name}
+    Set Test Message    Reboot from ${before_slot} into ${after_slot}

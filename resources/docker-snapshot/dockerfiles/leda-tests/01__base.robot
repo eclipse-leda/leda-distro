@@ -22,8 +22,9 @@ Library  String
 Test Timeout       2 minutes
 
 *** Variables ***
-${leda.target.hostname}        leda-x86.leda-network
-${leda.sshport}        2222
+${leda.target}                 local
+${leda.target.hostname}        localhost
+${leda.sshport}                2001
 
 *** Test Cases ***
 Execute Shell Command
@@ -111,6 +112,7 @@ Check RAUC Status
     Should Match 	${rauc_compatible} 	    Eclipse Leda
     Should Match 	${rauc_boot_primary} 	rootfs.0
 
+    # TODO: The index "0" may be different, need to parse dynamically
     Should Match 	${json['slots'][0]['rootfs.0']['bootname']} 	SDV_A
     Should Match 	${json['slots'][0]['rootfs.0']['boot_status']} 	good
     Should Match 	${json['slots'][0]['rootfs.0']['class']} 	rootfs
