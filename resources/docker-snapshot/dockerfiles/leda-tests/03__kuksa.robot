@@ -22,7 +22,7 @@ Library  String
 Test Timeout       2 minutes
 
 *** Variables ***
-${leda.target}           x86-64
+${leda.target}           local
 ${kuksa_hostname}        localhost
 ${kuksa_port}            30555
 
@@ -71,6 +71,14 @@ Update A Datapoint
 #     # ${json} = {'datapoints': {'Vehicle.Powertrain.TractionBattery.CurrentVoltage': {'timestamp': '2023-02-10T08:49:41.224895342Z', 'failureValue': 'NOT_AVAILABLE'}}}
 #     Should Match       ${json['failureValue']}    NOT_AVAILABLE
 
+Get All Metadata
+    ${json}=    Kuksa Get All Metadata
+    ${length}=     Get length          ${json['list']}
+    Set Test Message    Found metadata for ${length} VSS datapoints
+    IF  ${length} < 100
+        FAIL    Did not receive at least 100 datapoints metadata from Kuksa Databroker
+    END
+
 *** Keywords ***
 Kuksa Register Datapoint
     [Arguments]        ${name}  ${datatype}  ${description}  ${changetype}=CONTINUOUS
@@ -110,6 +118,13 @@ Kuksa Set Value
     ...                payload={"datapoints": { "${name}" : { "float_value" : ${value} } } }
     RETURN  ${json}
 
+Kuksa Get All Metadata
+    [Documentation]    Get metadata for all VSS datapoints
+    ${json}=    Kuksa Invoke Without Payload
+    ...                service=sdv.databroker.v1.Broker
+    ...                method=GetMetadata
+    RETURN  ${json}
+
 Kuksa Get Metadata
     [Documentation]    Get metadata for single VSS Entry
     [Arguments]        ${name}
@@ -137,4 +152,21 @@ Kuksa Invoke
     Should Be Empty 	${result.stderr}    msg=grpc call returned: ${result.stderr}
     ${json}=    Evaluate    json.loads("""${result.stdout}""")
     Log    ${json}
+    RETURN    ${json}
+
+Kuksa Invoke Without Payload
+    [Documentation]    Call a Kuksa DataBroker service operation without a request body payload
+    [Arguments]        ${service}  ${method}
+    ${expanded}=       Format String    {import} {proto} -plaintext {address} {grpc_service}
+    ...    import=-import-path ./kuksa.val/kuksa_databroker/proto
+    ...    proto=-proto sdv/databroker/v1/broker.proto -proto sdv/databroker/v1/collector.proto
+    ...    address=${kuksa_hostname}:${kuksa_port}
+    ...    grpc_service=${service}/${method}
+    ${result}=    Run Process    timeout 1s grpcurl ${expanded}
+    ...    shell=True
+    ...    stdout=${TEMPDIR}${/}stdout.txt
+    Should Be Empty 	${result.stderr}    msg=grpc call returned: ${result.stderr}
+    ${file}=    Get File    ${TEMPDIR}${/}stdout.txt
+    Remove File    ${TEMPDIR}${/}stdout.txt
+    ${json}=    Evaluate    json.loads("""${file}""")
     RETURN    ${json}
