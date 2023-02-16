@@ -68,7 +68,7 @@ trap ctrl_c INT
 
 function generateMergedReports() {
     echo "Merging all test suites reports into a single aggregated report..."
-    docker compose --profile tests run --no-deps --rm leda-tests --mergeall
+    docker compose -T --profile tests run --no-deps --rm leda-tests --mergeall
 }
 
 function shutdownContainers() {
