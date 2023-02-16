@@ -295,7 +295,7 @@ services:
       leda-x86:
         condition: service_healthy
       leda-arm64:
-        condition: service_started
+        condition: service_healthy
 
   leda-tests:
     image: ghcr.io/eclipse-leda/leda-distro/leda-tests

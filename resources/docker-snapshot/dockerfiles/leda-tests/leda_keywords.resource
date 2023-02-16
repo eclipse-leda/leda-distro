@@ -80,11 +80,20 @@ SSH Port Should Be Open
     ${result}=    Leda Execute    echo Welcome back
     Should Match    ${result.stdout}    Welcome back
 
+Leda Execute OK
+    [Documentation]    Execute a command via SSH and expect success
+    [Arguments]        ${command}
+    ${result}=         Leda Execute    ${command}
+    IF  ${result.rc} > 0
+        FAIL    Command failed with rc ${result.rc}: ${result.stderr} ${result.stdout}
+    END
+    RETURN    ${result}
+
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
     [Arguments]        ${command}
     ${expanded}=       Format String    ssh {sshopts} -p {port} root\@{hostname} "{command}"
-    ...    sshopts=-o ConnectTimeout=2 -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q
+    ...    sshopts=-o ConnectTimeout=2 -o StrictHostKeyChecking=no -o ConnectionAttempts=15
     ...    port=${leda.sshport}
     ...    hostname=${leda.target.hostname}
     ...    command=${command}

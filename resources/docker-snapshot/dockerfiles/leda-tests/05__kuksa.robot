@@ -26,6 +26,7 @@ ${leda.target}           local
 ${kuksa_hostname}        localhost
 ${kuksa_port}            30555
 
+# This is a cache for DataPoint ID (numeric) mapping to VSS key names (string)
 &{datapoints_map}
 
 *** Test Cases ***
@@ -73,7 +74,7 @@ Update A Datapoint
 
 Get All Metadata
     ${json}=    Kuksa Get All Metadata
-    ${length}=     Get length          ${json['list']}
+    ${length}=     Get length         ${json['list']}
     Set Test Message    Found metadata for ${length} VSS datapoints
     IF  ${length} < 100
         FAIL    Did not receive at least 100 datapoints metadata from Kuksa Databroker

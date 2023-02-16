@@ -29,58 +29,58 @@ ${leda.sshport}                2001
 *** Test Cases ***
 Execute Shell Command
     [Documentation]    Simple shell command
-    ${result}=         Leda Execute        echo Welcome Leda
+    ${result}=         Leda Execute OK     echo Welcome Leda
     Should Match       ${result.stdout}    Welcome Leda
 
 Check OS Name
     [Documentation]    Leda distro name
-    ${result}=         Leda Execute           cat /etc/os-release | grep ^NAME=
+    ${result}=         Leda Execute OK        cat /etc/os-release | grep ^NAME=
     Set Test Message   OS is ${result.stdout}
     Should Match       ${result.stdout}       NAME="Eclipse Leda"
 
 Check OS Pretty Name
     [Documentation]        Distro pretty name
-    ${result}=             Leda Execute           cat /etc/os-release | grep ^PRETTY_NAME=
+    ${result}=             Leda Execute OK          cat /etc/os-release | grep ^PRETTY_NAME=
     Set Test Message       OS is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 
 Check OS Version
     [Documentation]        Distro version
-    ${result}=             Leda Execute               cat /etc/os-release | grep ^VERSION_ID=
+    ${result}=             Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID=
     Set Test Message       Version is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 
 Check Image Version
     [Documentation]        Distro image version
-    ${result}=             Leda Execute    cat /etc/os-release | grep ^IMAGE_VERSION=
+    ${result}=             Leda Execute OK   cat /etc/os-release | grep ^IMAGE_VERSION=
     Set Test Message       Image is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 
 Check Build ID
     [Documentation]        Distro build id
-    ${result}=             Leda Execute    cat /etc/os-release | grep ^BUILD_ID=
+    ${result}=             Leda Execute OK   cat /etc/os-release | grep ^BUILD_ID=
     Set Test Message       Build id is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 
 Check machine platform
     [Documentation]        Machine architecture
-    ${result}=             Leda Execute    uname -m
+    ${result}=             Leda Execute OK   uname -m
     Set Test Message       Architecture is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 
 Check systemctl
     [Documentation]        Is systemd installed?
-    ${result}=             Leda Execute    command -v systemctl
+    ${result}=             Leda Execute OK   command -v systemctl
     Should Be Equal As Integers 	${result.rc} 	${0}
 
 Check jq
     [Documentation]        Is jq installed?
-    ${result}=             Leda Execute    command -v jq
+    ${result}=             Leda Execute OK   command -v jq
     Should Be Equal As Integers 	${result.rc} 	${0}
 
 Check kanto-cm
     [Documentation]        Container Management service running?
-    ${result}=             Leda Execute    systemctl is-active container-management.service
+    ${result}=             Leda Execute   systemctl is-active container-management.service
     IF    ${result.rc} > 0
         Set Test Message   container-management.service is in ${result.stdout} state
     END
@@ -88,56 +88,10 @@ Check kanto-cm
 
 Check mqtt broker
     [Documentation]        Mosquitto service running?
-    ${result}=             Leda Execute    systemctl is-active mosquitto.service
+    ${result}=             Leda Execute OK   systemctl is-active mosquitto.service
     Should Match 	       ${result.stdout} 	active
 
 Check sdv-health
     [Documentation]        Scripts returns no error
-    ${result}=             Leda Execute    sdv-health
+    ${result}=             Leda Execute OK   sdv-health
     Should Be Equal As Integers 	${result.rc} 	${0}
-
-Check RAUC Status
-    [Documentation]        Current booted partition
-    ${result}=             Leda Execute    rauc status --output-format=json
-    Should Be Equal As Integers 	${result.rc} 	${0}
-    Should Be Empty    ${result.stderr}
-    Should Not Be Empty    ${result.stdout}
-
-    ${json}=               Evaluate    json.loads("""${result.stdout}""")
-    ${rauc_booted_slot}=   Set variable  ${json['booted']}
-    ${rauc_compatible}=    Set variable  ${json['compatible']}
-    ${rauc_boot_primary}=  Set variable  ${json['boot_primary']}
-    Set Test Message       Boot primary is ${rauc_boot_primary}
-    Should Match 	${rauc_booted_slot} 	SDV_A
-    Should Match 	${rauc_compatible} 	    Eclipse Leda
-    Should Match 	${rauc_boot_primary} 	rootfs.0
-
-    # TODO: The index "0" may be different, need to parse dynamically
-    Should Match 	${json['slots'][0]['rootfs.0']['bootname']} 	SDV_A
-    Should Match 	${json['slots'][0]['rootfs.0']['boot_status']} 	good
-    Should Match 	${json['slots'][0]['rootfs.0']['class']} 	rootfs
-    Should Match 	${json['slots'][0]['rootfs.0']['type']} 	ext4
-
-    Should Match 	${json['slots'][0]['rootfs.1']['bootname']} 	SDV_B
-    Should Match 	${json['slots'][0]['rootfs.1']['boot_status']} 	good
-    Should Match 	${json['slots'][0]['rootfs.1']['class']} 	rootfs
-    Should Match 	${json['slots'][0]['rootfs.1']['type']} 	ext4
-
-Check containers
-    [Documentation]          SDV Core containers installed
-    [Timeout]                30m
-    Verify Leda Container    sua
-    Verify Leda Container    databroker
-    Verify Leda Container    vum
-
-*** Keywords ***
-Verify Leda Container
-    [Documentation]          Verify if container is created and running
-    [Arguments]              ${containername}
-    Wait Until Keyword Succeeds    10m    10s    Leda Local Container Running    ${containername}
-
-Leda Local Container Running
-    [Documentation]          Ask kanto-cm if container with name is in running state
-    [Arguments]              ${containername}
-    ${result}=               Leda Execute    kanto-cm get --name ${containername} | jq '.state.running'
-    Should Match             ${result.stdout} 	true

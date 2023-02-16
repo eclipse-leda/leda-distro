@@ -16,14 +16,21 @@
 #
 #set -e
 
+echo "Eclipse Leda - Robot-based Smoke Tests"
+echo "Start with --help to get see options."
+
 CMD=$1
 
 if [ "${CMD}" == "--help" ]; then
-    echo "$0 <command | test suite filename>"
+    echo "Usage:"
+    echo "    $0 <command | test suite filename>"
+    echo ""
+    echo "Purpose: Executes smoke tests (system and integration tests) in a Dockerized environment."
+    echo "Requires to be run in Leda docker-compose setup."
     echo ""
     echo "Commands:"
-    echo " --help: this help text"
-    echo " test suite filename: the filename of a .robot test (without the path)"
+    echo "    --help                   this help text"
+    echo "    <test suite filename>    the filename of a .robot test (without the path)"
     echo ""
     echo " Note: Without any arguments, will execute all test suites found in dockerfiles/leda-tests/*.robot"
     exit 0
@@ -46,7 +53,7 @@ while IFS= read -r TESTSUITE; do
     if [ ! -f "${ROBOTFILE}" ]; then
         echo "ERROR: Robot file ${CMD} not found in path ${SEARCHPATH}"
         echo "Available robot files:"
-        find ${SEARCHPATH} -name "*.robot" -printf "%f\n"
+        find ${SEARCHPATH} -name "*.robot" -printf "%f\n" | sort -n
         exit 2
     fi
 done <<< "${TESTSUITES}"
@@ -57,6 +64,30 @@ docker compose --profile tests build leda-tests
 echo "Creating report folder"
 mkdir -m 777 -p leda-tests-reports
 
+trap ctrl_c INT
+
+function generateMergedReports() {
+    echo "Merging all test suites reports into a single aggregated report..."
+    docker compose --profile tests run --no-deps --rm leda-tests --mergeall
+}
+
+function shutdownContainers() {
+    echo "Stopping containers..."
+    docker stop leda-tests
+    ./stop-docker.sh
+    ./clear-docker.sh
+}
+
+function ctrl_c() {
+        echo "************************************************"
+        echo "*** Trapped CTRL-C, gracefully shutting down ***"
+        echo "*** Please wait                              ***"
+        echo "************************************************"
+        shutdownContainers
+        generateMergedReports
+        exit 10
+}
+
 echo "Executing test suites..."
 while IFS= read -r TESTSUITE; do
     echo "- Found test suite ${TESTSUITE}"
@@ -65,18 +96,15 @@ done <<< "${TESTSUITES}"
 while IFS= read -r TESTSUITE; do
     echo "Preparing test suite ${TESTSUITE}"
     echo "- Cleaning existing volumes of leda-x86 and leda-arm64"
-    docker compose --profile tests stop
-    docker compose --profile tests rm --force --volumes
-    docker volume rm --force leda-x86
-    docker volume rm --force leda-arm64
+    docker compose --profile tests stop leda-x86 leda-arm64 leda-tests
+    docker compose rm --force --volumes leda-x86 leda-arm64
     echo "- Starting up docker compose services to become healthy"
     docker compose up -d --wait
     echo "- Executing test suite ${TESTSUITE}"
     docker compose --profile tests run --no-TTY --interactive=false --rm leda-tests ${TESTSUITE}
 done <<< "${TESTSUITES}"
 
-echo "Stopping containers..."
-docker compose rm --volumes --force --stop leda-x86 leda-arm64
+shutdownContainers
+generateMergedReports
 
-echo "Merging all test suites reports into a single aggregated report..."
-docker compose --profile tests run --no-deps --rm leda-tests --mergeall
+exit 0
