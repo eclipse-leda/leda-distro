@@ -21,7 +21,7 @@ header:
 # The machine as it is written into the `local.conf` of bitbake.
 local_conf_header:
   mirror: |
-    BB_HASHSERVE = "20.238.216.74:1234"
+    BB_HASHSERVE = "bitbake-hashserv.westeurope.azurecontainer.io:1234"
     MIRROR_SERVER = "https://sdvyocto.azureedge.net/downloads/"
     SSTATE_MIRRORS = "file://.* https://sdvyocto.azureedge.net/yocto-sstate-cache/sstate-cache/PATH"
     BB_FETCH_PREMIRRORONLY = "0"
