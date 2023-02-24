@@ -1,0 +1,85 @@
+{
+    "id": "otelcollector",
+    "name": "otelcollector",
+    "image": {
+        "name": "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib:0.70.0",
+        "decrypt_config": null
+    },
+    "host_name": "",
+    "domain_name": "",
+    "resolv_conf_path": "",
+    "hosts_path": "",
+    "hostname_path": "",
+    "mounts": [
+        {
+            "source": "/data/var/opentelemetry/config.yaml",
+            "destination": "/etc/otel/config.yaml",
+            "propagation_mode": "rprivate"
+        },
+        {
+            "source": "/var/lib/container-management",
+            "destination": "/var/lib/container-management",
+            "propagation_mode": "rprivate"
+        }
+    ],
+    "hooks": [],
+    "host_config": {
+        "devices": [],
+        "network_mode": "bridge",
+        "privileged": false,
+        "restart_policy": {
+            "maximum_retry_count": 0,
+            "retry_timeout": 0,
+            "type": "unless-stopped"
+        },
+        "runtime": "io.containerd.runc.v2",
+        "extra_hosts": [
+            "mosquitto:host_ip"
+        ],
+        "port_mappings": [],
+        "log_config": {
+            "driver_config": {
+                "type": "json-file",
+                "max_files": 2,
+                "max_size": "1M",
+                "root_dir": ""
+            },
+            "mode_config": {
+                "mode": "blocking",
+                "max_buffer_size": ""
+            }
+        },
+        "resources": null
+    },
+    "io_config": {
+        "attach_stderr": false,
+        "attach_stdin": false,
+        "attach_stdout": false,
+        "open_stdin": false,
+        "stdin_once": false,
+        "tty": false
+    },
+    "config": {
+        "env": [
+        ],
+        "cmd": [ "--config", "/etc/otel/config.yaml" ]
+    },
+    "network_settings": null,
+    "state": {
+        "pid": -1,
+        "started_at": "",
+        "error": "",
+        "exit_code": 0,
+        "finished_at": "",
+        "exited": false,
+        "dead": false,
+        "restarting": false,
+        "paused": false,
+        "running": false,
+        "status": "",
+        "oom_killed": false
+    },
+    "created": "",
+    "manually_stopped": false,
+    "restart_count": 0
+}

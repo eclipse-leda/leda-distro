@@ -26,6 +26,7 @@ local_conf_header:
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DIR = "/data/var/containers/manifests"
+    KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests_dev"
   rauc-sign-conf: |
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"

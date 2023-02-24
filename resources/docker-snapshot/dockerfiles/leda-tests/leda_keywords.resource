@@ -46,7 +46,7 @@ Connect and Subscribe to Listen
   Connect  ${broker.uri}  ${broker.port}
   Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=${message_wait_timeout_seconds}
 
-Get RAUC Boot Primary
+Get RAUC Boot Primary Slot
     [Documentation]    Get current booted RAUC primary (rootfs.0, rootfs.1)
     ${result}=    Leda Execute    rauc status --output-format=json
     Log    RAUC RC: ${result.rc}
@@ -56,17 +56,23 @@ Get RAUC Boot Primary
     ${rauc_boot_primary}=    Set variable  ${json['boot_primary']}
     RETURN    ${rauc_boot_primary}
 
-Get RAUC Boot Slot
+Get Current RAUC Boot Name
     [Documentation]    Get current booted RAUC slot (SDV_A, SDV_B)
     ${result}=    Leda Execute    rauc status --output-format=json
     ${json}=    Evaluate    json.loads("""${result.stdout}""")
     ${rauc_booted_slot}=    Set variable  ${json['booted']}
     RETURN    ${rauc_booted_slot}
 
+Set Next RAUC Boot Slot
+    [Documentation]    Set next slot to boot (rootfs.0, rootfs.1)
+    [Arguments]    ${nextslot}
+    ${result}=    Leda Execute    rauc status mark-active ${nextslot}
+    Should Be Equal As Integers 	${result.rc} 	${0}
+
 Leda Reboot
     [Documentation]    Blocks until reboot is finished
     Leda Execute       reboot now
-    Sleep    1m
+    Sleep    15s
     Wait Until Keyword Succeeds    3 min    5 sec    SSH Port Should Be Open
 
 SSH Port Should Be Open
@@ -74,11 +80,20 @@ SSH Port Should Be Open
     ${result}=    Leda Execute    echo Welcome back
     Should Match    ${result.stdout}    Welcome back
 
+Leda Execute OK
+    [Documentation]    Execute a command via SSH and expect success
+    [Arguments]        ${command}
+    ${result}=         Leda Execute    ${command}
+    IF  ${result.rc} > 0
+        FAIL    Command failed with rc ${result.rc}: ${result.stderr} ${result.stdout}
+    END
+    RETURN    ${result}
+
 Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
     [Arguments]        ${command}
-    ${expanded}=       Format String    ssh {sshopts} -p {port} {hostname} "{command}"
-    ...    sshopts=-o StrictHostKeyChecking=no -o ConnectionAttempts=30
+    ${expanded}=       Format String    ssh {sshopts} -p {port} root\@{hostname} "{command}"
+    ...    sshopts=-o ConnectTimeout=2 -o StrictHostKeyChecking=no -o ConnectionAttempts=15
     ...    port=${leda.sshport}
     ...    hostname=${leda.target.hostname}
     ...    command=${command}

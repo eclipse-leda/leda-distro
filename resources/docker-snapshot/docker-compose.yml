@@ -101,6 +101,7 @@ services:
     ports:
       - "9101:8888"
       - "2001:2222"
+      - "30555:30555"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -132,6 +133,7 @@ services:
     ports:
       - "9102:8888"
       - "2002:2222"
+      - "30556:30555"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -146,8 +148,12 @@ services:
       dockerfile: dockerfiles/Dockerfile.leda-initializer
     container_name: leda-initializer
     depends_on:
-      - leda-x86
-      - leda-arm64
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_healthy
+      mqtt-broker:
+        condition: service_healthy
     networks:
       leda-network:
         ipv4_address: 192.168.8.7
@@ -167,7 +173,14 @@ services:
     networks:
       leda-network:
         ipv4_address: 192.168.8.8
-      leda-bridge:   
+      leda-bridge:
+    depends_on:
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_started
+
+
   # A DNS proxy which forwards DNS requests to the Docker built-in
   # DNS service. This way, the QEMU instances can access the Docker DNS
   # and resolve internal docker services, such as "mqtt-broker" or "leda-arm64"
@@ -203,11 +216,17 @@ services:
   grafana:
     image: "grafana/grafana-oss"
     container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=leda
+      - GF_SECURITY_ADMIN_PASSWORD=leda
+      - GF_INSTALL_PLUGINS=grafana-mqtt-datasource
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=grafana-mqtt-datasource
     volumes:
 #      - "./dockerfiles/grafana/provisioning:/etc/grafana/provisioning"
 #      - "./dockerfiles/grafana/custom.ini:/etc/grafana/custom.ini"
 #      - "./dockerfiles/grafana/dashboards:/var/lib/grafana/dashboards"
        - "grafana-storage:/var/lib/grafana"
+       - "grafana-plugins:/var/lib/grafana/plugins"
        - "./dockerfiles/grafana:/etc/grafana"
     ports:
       - "8300:3000"
@@ -215,6 +234,18 @@ services:
       leda-network:
         ipv4_address: 192.168.8.16
       leda-bridge:
+  
+  loki:
+    image: grafana/loki:2.7.0
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.19
+      leda-bridge:
+
   procexporter:
     image: ncabatoff/process-exporter:latest
     container_name: procexporter
@@ -229,6 +260,42 @@ services:
       leda-network:
         ipv4_address: 192.168.8.17
       leda-bridge:
+
+  leda-container-metrics:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-container-metrics
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.leda-container-metrics
+    container_name: leda-container-metrics
+    stop_signal: SIGINT
+    environment:
+      - MQTT_BROKER_URL=leda-mqtt-broker.leda-network
+    ports:
+      - "7355:7355"
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.18
+      leda-bridge:
+    depends_on:
+      mqtt-broker:
+        condition: service_healthy
+      loki:
+        condition: service_started
+  leda-container-logs:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-container-logs
+    build:
+      context: .
+      dockerfile: dockerfiles/Dockerfile.leda-container-logs
+    container_name: leda-container-logs
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.20
+      leda-bridge:
+    depends_on:
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_healthy
 
   leda-tests:
     image: ghcr.io/eclipse-leda/leda-distro/leda-tests
@@ -257,6 +324,9 @@ volumes:
     name: leda-arm64
   grafana-storage:
     name: leda-grafana-data
+
+  grafana-plugins:
+    name: leda-grafana-plugins
 
 networks:
   # All Leda components are in this network

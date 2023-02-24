@@ -1,5 +1,5 @@
 # /********************************************************************************
-# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# * Copyright (c) 2022 Contributors to the Eclipse Foundation
 # *
 # * See the NOTICE file(s) distributed with this work for additional
 # * information regarding copyright ownership.
@@ -10,18 +10,16 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
+#
+FROM debian:bullseye
+LABEL name="leda-container-logs"
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
+    apt-get install -y --no-install-recommends iputils-ping ssh dnsutils mosquitto-clients curl wget
 
-*** Settings ***
-Documentation     Rebooting ${leda.target}
-Resource          leda_keywords.resource
+WORKDIR /root
 
-Test Timeout      20 minutes
+COPY ./dockerfiles/container-logs/* ./
 
-*** Test Cases ***
-Simple Reboot
-    [Documentation]    Execute a reboot
-    ${before}          Get RAUC Boot Primary
-    Should Match       ${before}    rootfs.0
-    Leda Reboot
-    ${after}           Get RAUC Boot Primary
-    Should Match       ${after}     rootfs.0
+COPY ./dockerfiles/leda-container-logs-entrypoint.sh ./
+RUN chmod a+x leda-container-logs-entrypoint.sh
+ENTRYPOINT /root/leda-container-logs-entrypoint.sh

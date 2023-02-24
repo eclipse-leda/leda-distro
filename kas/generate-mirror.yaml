@@ -23,5 +23,5 @@ header:
 #    BB_FETCH_PREMIRRORONLY = "1"
 local_conf_header:
   generate-mirror: |
-    BB_HASHSERVE = "20.238.216.74:1234"
+    BB_HASHSERVE = "bitbake-hashserv.westeurope.azurecontainer.io:1234"
     BB_GENERATE_MIRROR_TARBALLS = "1"

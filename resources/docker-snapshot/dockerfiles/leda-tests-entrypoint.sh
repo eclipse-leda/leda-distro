@@ -26,7 +26,13 @@ fi
 if [ "${TESTSUITE}" == "--mergeall" ]; then
     ALL_REPORTS=$(find robot-output -wholename "robot-output/*/output.xml" -printf "%p ")
     echo "Merging output reports: ${ALL_REPORTS}"
-    rebot --xunit robot-output/leda-tests-xunit.xml --report robot-output/report.html --log robot-output/log.html --output robot-output/output.xml ${ALL_REPORTS}
+    rebot \
+        --name "Leda" \
+        --xunit robot-output/leda-tests-xunit.xml \
+        --report robot-output/report.html \
+        --log robot-output/log.html \
+        --output robot-output/output.xml \
+        ${ALL_REPORTS}
     exit 0
 fi
 
@@ -43,15 +49,21 @@ echo "- Robot Framework version: $(robot --version)"
 mkdir -p ~/.ssh/
 echo "- SSH Hosts Configuration in ~/.ssh/config"
 echo "- Adding SSH fingerprint of leda-x86"
+ssh-keyscan -p 2222 -H leda-x86.leda-bridge >> ~/.ssh/known_hosts 2> /dev/null
 ssh-keyscan -p 2222 -H leda-x86.leda-network >> ~/.ssh/known_hosts 2> /dev/null
+ssh-keyscan -p 2222 -H 192.168.8.4 >> ~/.ssh/known_hosts 2> /dev/null
 echo "- Adding SSH fingerprint of leda-arm64"
+ssh-keyscan -p 2222 -H leda-arm64.leda-bridge >> ~/.ssh/known_hosts 2> /dev/null
 ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/null
+ssh-keyscan -p 2222 -H 192.168.8.5 >> ~/.ssh/known_hosts 2> /dev/null
 
 echo "- Executing QEMU X86-64"
 
 robot \
+    --name ${TESTSUITE}_X86 \
     --variablefile vars-x86.yaml \
     --metadata Leda-Target:X86-64 \
+    --settag x86 \
     --loglevel INFO \
     --debugfile leda-tests-debug.log \
     --xunit leda-tests-xunit.xml \
@@ -61,8 +73,10 @@ robot \
 echo "- Executing QEMU ARM-64"
 
 robot \
+    --name ${TESTSUITE}_ARM64 \
     --variablefile vars-arm64.yaml \
     --metadata Leda-Target:ARM-64 \
+    --settag arm64 \
     --loglevel INFO \
     --debugfile leda-tests-debug.log \
     --xunit leda-tests-xunit.xml \

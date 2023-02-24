@@ -1,0 +1,50 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+  filelog:
+    include: [ 
+      '/var/lib/container-management/containers/databroker/json.log',
+      '/var/lib/container-management/containers/sua/json.log',
+      '/var/lib/container-management/containers/vum/json.log',
+      '/var/lib/container-management/containers/cloudconnector/json.log'
+    ]
+    start_at: beginning
+    include_file_path: true
+    operators:
+      - type: json_parser
+      - type: regex_parser
+        regex: '^\/var\/lib\/container-management\/containers\/(?P<container_id>[^\._]+)\/json.log$'
+        parse_from: attributes["log.file.path"]
+
+processors:
+  attributes:
+    actions:
+      - action: insert
+        key: container_id
+        from_attribute: container_id
+      - action: insert
+        key: loki.attribute.labels
+        value: container_id
+      - action: insert
+        key: stream
+        from_attribute: stream
+      - action: insert
+        key: loki.attribute.labels
+        value: stream
+      - action: delete
+        key: log
+
+  batch:
+
+exporters:
+  loki:
+    endpoint: http://loki.leda-network:3100/loki/api/v1/push
+
+service:
+  pipelines:
+    logs:
+      receivers: [filelog]
+      processors: [attributes,batch]
+      exporters: [loki]
