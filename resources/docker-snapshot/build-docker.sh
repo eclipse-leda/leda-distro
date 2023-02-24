@@ -34,4 +34,4 @@ then
     exit 2
 fi
 
-docker compose --profile tools --profile disabled --profile tests build 
+docker compose --profile tools --profile disabled --profile tests --profile metrics build 
