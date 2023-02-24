@@ -1,0 +1,43 @@
+{
+    "Index" : 4,
+    "Name" : "can0",
+    "Kind" : "can",
+    "Type" : "can",
+    "Driver" : "kvaser_pci",
+    "Flags" : 327873,
+    "FlagsString" : "up,running,no-arp,lower-up,echo",
+    "KernelOperationalState" : 6,
+    "KernelOperationalStateString" : "up",
+    "MTU" : 16,
+    "MinimumMTU" : 0,
+    "MaximumMTU" : 4294967295,
+    "AdministrativeState" : "configured",
+    "OperationalState" : "carrier",
+    "CarrierState" : "carrier",
+    "AddressState" : "off",
+    "IPv4AddressState" : "off",
+    "IPv6AddressState" : "off",
+    "OnlineState" : "offline",
+    "NetworkFile" : "/lib/systemd/network/can0.network",
+    "RequiredForOnline" : true,
+    "RequiredOperationalStateForOnline" : [
+            "degraded",
+            "routable"
+    ],
+    "RequiredFamilyForOnline" : "any",
+    "ActivationPolicy" : "up",
+    "LinkFile" : "/lib/systemd/network/99-default.link",
+    "Path" : "pci-0000:00:04.0",
+    "Vendor" : "Applied Micro Circuits Corp.",
+    "Model" : "PCIcanx/PCIcan CAN interface [Kvaser AB]",
+    "DNSSettings" : [
+            {
+                    "LLMNR" : "yes",
+                    "ConfigSource" : "static"
+            },
+            {
+                    "MDNS" : "no",
+                    "ConfigSource" : "static"
+            }
+    ]
+}

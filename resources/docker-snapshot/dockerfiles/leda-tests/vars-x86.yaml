@@ -15,6 +15,7 @@
 leda.target: Leda QEMU X86-64
 leda.target.hostname: leda-x86.leda-network
 leda.sshport: 2222
+leda.ethernet.interface: enp0s2
 
 # The MQTT broker hostname and port number (target device)
 broker.uri: leda-x86

@@ -204,6 +204,8 @@ services:
     restart: always
     image: prom/prometheus
     container_name: prometheus
+    profiles:
+    - metrics
     volumes:
       - ./dockerfiles/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 #      - ./dockerfiles/prometheus/prometheus.rules:/etc/prometheus/prometheus.rules"
@@ -216,6 +218,8 @@ services:
   grafana:
     image: "grafana/grafana-oss"
     container_name: grafana
+    profiles:
+    - metrics
     environment:
       - GF_SECURITY_ADMIN_USER=leda
       - GF_SECURITY_ADMIN_PASSWORD=leda
@@ -238,6 +242,8 @@ services:
   loki:
     image: grafana/loki:2.7.0
     container_name: loki
+    profiles:
+    - metrics
     ports:
       - "3100:3100"
     command: -config.file=/etc/loki/local-config.yaml
@@ -249,6 +255,8 @@ services:
   procexporter:
     image: ncabatoff/process-exporter:latest
     container_name: procexporter
+    profiles:
+    - metrics
     privileged: true
     command: "-procfs /host/proc -config.path /config/procexporter.yml"
     ports:
@@ -263,6 +271,8 @@ services:
 
   leda-container-metrics:
     image: ghcr.io/eclipse-leda/leda-distro/leda-container-metrics
+    profiles:
+    - metrics
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-container-metrics
@@ -283,6 +293,8 @@ services:
         condition: service_started
   leda-container-logs:
     image: ghcr.io/eclipse-leda/leda-distro/leda-container-logs
+    profiles:
+    - metrics
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-container-logs

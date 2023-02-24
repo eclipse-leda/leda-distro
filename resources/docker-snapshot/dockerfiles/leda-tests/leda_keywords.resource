@@ -93,7 +93,7 @@ Leda Execute
     [Documentation]    Executing commands inside Docker via remote SSH
     [Arguments]        ${command}
     ${expanded}=       Format String    ssh {sshopts} -p {port} root\@{hostname} "{command}"
-    ...    sshopts=-o ConnectTimeout=2 -o StrictHostKeyChecking=no -o ConnectionAttempts=15
+    ...    sshopts=-o ConnectTimeout=5 -o StrictHostKeyChecking=no -o ConnectionAttempts=15
     ...    port=${leda.sshport}
     ...    hostname=${leda.target.hostname}
     ...    command=${command}
