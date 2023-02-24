@@ -1,0 +1,19 @@
+{
+    "compatible": "Eclipse Leda",
+    "version": "${VERSION_ID}",
+    "description": "sdv-rauc-bundle version 1.0-r0",
+    "build": "20230224095146",
+    "hooks": [],
+    "images": [
+      {
+        "rootfs": {
+          "variant": null,
+          "filename": "sdv-image-minimal-qemux86-64.ext4",
+          "checksum": "c03e4ebabf757f4e977e7ea0a4c969b1d7c3399ec5da1b264a020dc0adb7ae3f",
+          "size": 494108672,
+          "hooks": [],
+          "adaptive": []
+        }
+      }
+    ]
+  }
