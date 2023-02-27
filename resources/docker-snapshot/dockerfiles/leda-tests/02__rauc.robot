@@ -99,7 +99,7 @@ Direct RAUC Install
     Should Match 	${installed_json[0]['state']}            inactive
     Should Match 	${installed_json[0]['boot_status']}      good
 
-    Should Match                         ${installed_json[0]['slot_status']['bundle']['compatible']}       Eclipse Leda
+    Should Match                         ${installed_json[0]['slot_status']['bundle']['compatible']}       Eclipse Leda (*)
     Should Not be Empty                  ${installed_json[0]['slot_status']['bundle']['version']}
     Should Not Be Empty                  ${installed_json[0]['slot_status']['bundle']['build']}
     Should Match                         ${installed_json[0]['slot_status']['bundle']['description']}      sdv-rauc-bundle version 1.0-r0

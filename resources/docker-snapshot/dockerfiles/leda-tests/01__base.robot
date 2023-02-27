@@ -78,6 +78,11 @@ Check jq
     ${result}=             Leda Execute OK   command -v jq
     Should Be Equal As Integers 	${result.rc} 	${0}
 
+Check databroker-cli
+    [Documentation]        Is Kuksa Databroker CLI installed?
+    ${result}=             Leda Execute OK   command -v databroker-cli
+    Should Be Equal As Integers 	${result.rc} 	${0}
+
 Check kanto-cm
     [Documentation]        Container Management service running?
     ${result}=             Leda Execute   systemctl is-active container-management.service
