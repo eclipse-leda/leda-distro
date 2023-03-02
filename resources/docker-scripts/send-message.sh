@@ -23,7 +23,7 @@ then
     echo "Arguments:"
     echo "  <DeviceId>            - Device Id"
     echo "  <Azure-IoT-Hub-Name>  - Name of the Azure IoT Hub (without *.azure-devices.net)"
-    echo "  <Update-Bundle-File>  - Filename of the RAUC Update Bundle (eg sdv-rauc-bundle-qemux86-64.raucb)"
+    echo "  <Update-Bundle-File>  - Filename of the RAUC Update Bundle (eg sdv-rauc-bundle-minimal-qemux86-64.raucb)"
     echo ""
     exit 1
 fi

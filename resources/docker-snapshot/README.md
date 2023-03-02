@@ -51,13 +51,13 @@ Shutting down Docker Compose:
 
 4. Download the update bundle
 
-    wget http://leda-bundle-server/sdv-rauc-bundle-qemux86-64.raucb
-    wget http://leda-bundle-server/sdv-rauc-bundle-qemuarm64.raucb
+    wget http://leda-bundle-server/sdv-rauc-bundle-minimal-qemux86-64.raucb
+    wget http://leda-bundle-server/sdv-rauc-bundle-minimal-qemuarm64.raucb
 
 5. Run the RAUC install
 
-    rauc install sdv-rauc-bundle-qemux86-64.raucb
-    rauc install sdv-rauc-bundle-qemuarm64.raucb
+    rauc install sdv-rauc-bundle-minimal-qemux86-64.raucb
+    rauc install sdv-rauc-bundle-minimal-qemuarm64.raucb
 
 6. Mark the other partition as active
 
