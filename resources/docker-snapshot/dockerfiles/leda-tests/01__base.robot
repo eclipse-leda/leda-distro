@@ -46,7 +46,7 @@ Check OS Pretty Name
 
 Check OS Version
     [Documentation]        Distro version
-    ${result}=             Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID=
+    ${result}=             Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID= | cut -c12-
     Set Test Message       Version is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 

@@ -72,10 +72,11 @@ function generateMergedReports() {
 }
 
 function shutdownContainers() {
-    echo "Stopping containers..."
-    docker stop leda-tests
-    ./stop-docker.sh
-    ./clear-docker.sh
+    echo "Stopping containers and removing volumes..."
+    docker compose down
+    docker compose stop devshell leda-x86 leda-arm64
+    docker compose rm --stop --force --volumes leda-x86 leda-arm64
+    docker volume rm --force leda-x86 leda-arm64
 }
 
 function ctrl_c() {
@@ -95,11 +96,14 @@ done <<< "${TESTSUITES}"
 
 while IFS= read -r TESTSUITE; do
     echo "Preparing test suite ${TESTSUITE}"
-    echo "- Cleaning existing volumes of leda-x86 and leda-arm64"
-    docker compose --profile tests stop leda-x86 leda-arm64 leda-tests
-    docker compose rm --force --volumes leda-x86 leda-arm64
+    echo "- Stopping containers"
+    docker compose stop leda-x86 leda-arm64
+    echo "- Removing containers"
+    docker compose rm --stop --force --volumes leda-x86 leda-arm64
+    echo "- Removing volumes"
+    docker volume rm --force leda-x86 leda-arm64
     echo "- Starting up docker compose services to become healthy"
-    docker compose up -d --wait
+    docker compose up --detach --wait
     echo "- Executing test suite ${TESTSUITE}"
     docker compose --profile tests run --no-TTY --interactive=false --rm leda-tests ${TESTSUITE}
 done <<< "${TESTSUITES}"

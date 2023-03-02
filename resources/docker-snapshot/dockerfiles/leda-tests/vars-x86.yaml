@@ -23,7 +23,7 @@ broker.port: 1883
 
 # File which contains the update request message
 start_update_filename: robot-resources/start-update-example-x86.json
-rauc.update.bundle.filename: sdv-rauc-bundle-qemux86-64.raucb
+rauc.update.bundle.filename: sdv-rauc-bundle-minimal-qemux86-64.raucb
 
 # Kuksa Databroker: How the Robot can reach the databroker
 # The port mapping is done by docker-compose, hence localhost

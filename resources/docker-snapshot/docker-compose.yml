@@ -90,7 +90,8 @@ services:
     stdin_open: true
     tty: true
     devices:
-    - "/dev/kvm:/dev/kvm"
+# Disabling kvm to workaround the reboot issue
+#    - "/dev/kvm:/dev/kvm"
     - "/dev/net/tun:/dev/net/tun"
     networks:
       leda-network:
@@ -99,6 +100,7 @@ services:
     volumes:
       - leda-x86:/root
     ports:
+      - "1884:1883"
       - "9101:8888"
       - "2001:2222"
       - "30555:30555"
@@ -131,6 +133,7 @@ services:
     volumes:
       - leda-arm64:/root
     ports:
+      - "1885:1883"
       - "9102:8888"
       - "2002:2222"
       - "30556:30555"

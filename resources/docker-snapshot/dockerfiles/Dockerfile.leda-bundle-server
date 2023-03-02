@@ -17,5 +17,10 @@
 FROM nginx AS runtime 
 LABEL name="leda-bundle-server"
 
-COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-qemux86-64.raucb /usr/share/nginx/html/
-COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-qemuarm64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-full-qemux86-64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-minimal-qemux86-64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-rescue-qemux86-64.raucb /usr/share/nginx/html/
+
+COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-full-qemuarm64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-minimal-qemuarm64.raucb /usr/share/nginx/html/
+COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-rescue-qemuarm64.raucb /usr/share/nginx/html/

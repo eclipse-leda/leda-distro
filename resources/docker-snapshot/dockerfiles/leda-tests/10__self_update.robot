@@ -30,7 +30,7 @@ ${start_update_filename}    robot-resources/start-update-example-x86.yaml
 ${get_state_filename}       robot-resources/get_state.json
 ${update_success_regex}    ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
 ${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)
-${topic_currentstate}      selfupdate/currentstate/get	
+${topic_currentstate}      selfupdate/currentstate/get
 
 *** Test Cases ***
 Wait for SUA alive

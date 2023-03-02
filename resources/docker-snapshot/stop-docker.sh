@@ -13,5 +13,5 @@
 # ********************************************************************************/
 #
 
-docker compose --profile tests --profile tools down
+docker compose --profile tests --profile tools --profile metrics --profile disabled down
 docker compose --profile tests stop leda-tests

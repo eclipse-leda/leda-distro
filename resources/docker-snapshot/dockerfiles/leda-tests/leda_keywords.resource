@@ -38,7 +38,11 @@ Verify SUA is alive
 
 Trigger to start update
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
-  ${message}=  Get File  ${start_update_filename}
+  ${version_id_with_quotes}=    Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID= | cut -c12- | tr -d '"'
+  ${version_id}=    Strip String    ${version_id_with_quotes}   characters="
+  ${template}=      Get File  ${start_update_filename}
+  # Replace ${VERSION_ID} dynamically with the actual version on the device for easier testing
+  ${message}=       Replace String      ${template}      \${VERSION_ID}   ${version_id}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
 
 Connect and Subscribe to Listen
