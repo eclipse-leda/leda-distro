@@ -99,6 +99,7 @@ while IFS= read -r TESTSUITE; do
     echo "- Stopping containers"
     docker compose stop leda-x86 leda-arm64
     echo "- Removing containers"
+    docker rm --force leda-tests
     docker compose rm --stop --force --volumes leda-x86 leda-arm64
     echo "- Removing volumes"
     docker volume rm --force leda-x86 leda-arm64
