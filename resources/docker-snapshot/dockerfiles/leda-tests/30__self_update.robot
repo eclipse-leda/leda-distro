@@ -17,6 +17,7 @@ Resource          leda_keywords.resource
 
 Library  OperatingSystem
 Library  Process
+Library  JSONLibrary
 
 Test Timeout       5 minutes
 
@@ -43,5 +44,10 @@ Self Update Agent Test
   [Documentation]    Install update bundle
   # Wait for max five minutes until SUA is deployed and running
   Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
-  Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
+  ${expected_version}=      Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}
+  ${result}=    Leda Execute OK   echo VERSION_ID=${expected_version} > /etc/os-release
+  ${result_status}=      Leda Execute OK      rauc status --detailed --output-format=json
+  ${json}=               Evaluate             json.loads("""${result_status.stdout}""")
+  ${installed_json}=     Get Value From Json    ${json}    $..slots[*][?(@.slot_status.status=='ok')]     fail_on_empty=${True}
+  Should Match           ${installed_json[0]['slot_status']['bundle']['version']}   ${expected_version}

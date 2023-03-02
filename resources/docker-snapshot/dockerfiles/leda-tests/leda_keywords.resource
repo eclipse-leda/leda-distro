@@ -46,6 +46,7 @@ Trigger to start update
   ${fakeversion}=   Generate Random String  8
   ${result}=    Leda Execute OK   echo VERSION_ID=${fakeversion} > /etc/os-release
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
+  RETURN    ${version_id.stdout}
 
 Connect and Subscribe to Listen
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${payload_regex}
