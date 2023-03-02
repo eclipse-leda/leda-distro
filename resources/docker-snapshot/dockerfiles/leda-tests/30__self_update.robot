@@ -21,12 +21,15 @@ Library  Process
 Test Timeout       5 minutes
 
 *** Variables ***
-${http.uri}                 192.168.7.1
-${broker.uri}               192.168.7.2
-${broker.port}              31883
+${leda.target}                 local
+${leda.target.hostname}        localhost
+${leda.sshport}                2001
+
+${broker.uri}               127.0.0.1
+${broker.port}              1884
 ${topic_pub}                selfupdate/desiredstate
 ${topic_sub}                selfupdate/#
-${start_update_filename}    robot-resources/start-update-example-x86.yaml
+${start_update_filename}    robot-resources/start-update-example-x86.json
 ${get_state_filename}       robot-resources/get_state.json
 ${update_success_regex}    ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
 ${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)

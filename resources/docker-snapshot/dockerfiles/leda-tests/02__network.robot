@@ -104,16 +104,19 @@ NetworkCtl Status kanto-cm0
 
     # Kanto is managing this network interface, not networkctl.
     ${admin_state}=        Get Value From Json    ${json}    $..AdministrativeState     fail_on_empty=${True}
-    Should Match           ${admin_state[0]}      unmanaged
+    Should Match           ${admin_state[0]}      unmanaged         msg=AdministrativeState
 
     ${op_state}=           Get Value From Json    ${json}    $..OperationalState     fail_on_empty=${True}
-    Should Match           ${op_state[0]}         degraded-carrier
+    Should Match           ${op_state[0]}         degraded-carrier  msg=OperationalState
 
     ${addr_state}=         Get Value From Json    ${json}    $..AddressState     fail_on_empty=${True}
-    Should Match           ${addr_state[0]}       routable
+    Should Match           ${addr_state[0]}       routable          msg=AddressState
 
 Ping Gateway
     ${result}=             Leda Execute OK        ping -c 3 192.168.7.1
+
+# Ping External
+#    ${result}=             Leda Execute OK        ping -c 3 1.1.1.1
 
 Ping Leda Bundle Server
     ${result}=             Leda Execute OK        ping -c 3 leda-bundle-server.leda-network
@@ -132,4 +135,5 @@ DNS Lookup For Non-Existent Fails
     ${result}=             Leda Execute           nslookup foo.bar
     Should Be Equal As Integers    ${result.rc}    1
 
-
+Wget External
+    ${result}=             Leda Execute OK          wget --spider https://eclipse.org

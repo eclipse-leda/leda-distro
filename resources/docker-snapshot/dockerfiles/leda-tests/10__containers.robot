@@ -32,7 +32,6 @@ SDV Containers Exist
     [Documentation]          SDV containers up and running
     Verify Leda Containers
     ...     sua
-    ...     foobar
     ...     databroker
     ...     vum
     ...     feedercan
@@ -41,7 +40,7 @@ SDV Containers Exist
     ...     otelcollector
 
 SDV Unconfigured Containers
-    [Documentation]          Test containers are created but ignore state
+    [Documentation]          Created in any state
     Container Any State
     ...     cloudconnector
 
