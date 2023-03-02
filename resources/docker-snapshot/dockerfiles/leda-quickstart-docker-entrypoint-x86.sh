@@ -105,9 +105,7 @@ startQemuPrivileged() {
  -object rng-random,filename=/dev/urandom,id=rng0 \
  -device virtio-rng-pci,rng=rng0 \
  -drive id=hd,file=sdv-image-all-qemux86-64.wic.qcow2,if=virtio,format=qcow2 \
- -enable-kvm \
  -boot order=d,strict=on,menu=on \
- -no-reboot \
  -serial mon:stdio \
  -serial null \
  -serial mon:vc \
@@ -136,7 +134,6 @@ fi
 
 echo "Entry: Checking QEMU Version..."
 qemu-system-x86_64 -version
-sleep 2
 
 echo "Entry: Starting Qemu with Leda image..."
 if [ "$PRIVILEGED" == 0 ]; then

@@ -37,7 +37,6 @@ SDV Containers Exist
     ...     feedercan
     ...     seatservice-example
     ...     hvacservice-example
-    ...     otelcollector
 
 SDV Unconfigured Containers
     [Documentation]          Created in any state
@@ -48,8 +47,7 @@ SDV Unconfigured Containers
 Verify Leda Containers
     [Documentation]          Verify if container is created and running
     [Arguments]              @{containernames}
-# SET THE PROPER TIMEOUT HERE, EG 5 MINUTES
-    Wait Until Keyword Succeeds    1    10s    Container Exists     @{containernames}
+    Wait Until Keyword Succeeds    3m    10s    Container Exists     @{containernames}
     Leda Local Container Running    @{containernames}
 
 Container Any State

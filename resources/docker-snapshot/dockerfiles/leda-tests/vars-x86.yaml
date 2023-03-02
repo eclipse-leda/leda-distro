@@ -27,5 +27,5 @@ rauc.update.bundle.filename: sdv-rauc-bundle-minimal-qemux86-64.raucb
 
 # Kuksa Databroker: How the Robot can reach the databroker
 # The port mapping is done by docker-compose, hence localhost
-kuksa_hostname: localhost
+kuksa_hostname: leda-x86.leda-network
 kuksa_port: 30555
