@@ -67,6 +67,7 @@ RECORD_LOGS_FOR_SERVICE_UNITS=(
 )
 
 echo "- Starting MQTT listener for X86-64"
+mkdir -p robot-output/${TESTSUITE}/x86/
 MQTT_DEBUG_LOG="robot-output/${TESTSUITE}/x86/mqtt-debug.log"
 mosquitto_sub -t '#' -p 1883 -h leda-x86.leda-network -v -d > ${MQTT_DEBUG_LOG} 2>&1 &
 MQTT_LISTENER_PID=$!
@@ -97,7 +98,8 @@ done
 #ssh -p 2222 root@leda-x86.leda-network journalctl --boot --all --no-pager --output=short-monotonic
 #ssh -p 2222 root@leda-x86.leda-network journalctl --dmesg --all --no-pager --output=short-monotonic
 
-echo "- Starting MQTT listener for X86-64"
+echo "- Starting MQTT listener for ARM64"
+mkdir -p robot-output/${TESTSUITE}/arm64/
 MQTT_DEBUG_LOG="robot-output/${TESTSUITE}/arm64/mqtt-debug.log"
 mosquitto_sub -t '#' -p 1883 -h leda-arm64.leda-network -v -d > ${MQTT_DEBUG_LOG} 2>&1 &
 MQTT_LISTENER_PID=$!
