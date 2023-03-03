@@ -46,7 +46,7 @@ Check OS Pretty Name
 
 Check OS Version
     [Documentation]        Distro version
-    ${result}=             Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID=
+    ${result}=             Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID= | cut -c12-
     Set Test Message       Version is ${result.stdout}
     Should Not Be Empty    ${result.stdout}
 
@@ -76,6 +76,11 @@ Check systemctl
 Check jq
     [Documentation]        Is jq installed?
     ${result}=             Leda Execute OK   command -v jq
+    Should Be Equal As Integers 	${result.rc} 	${0}
+
+Check databroker-cli
+    [Documentation]        Is Kuksa Databroker CLI installed?
+    ${result}=             Leda Execute OK   command -v databroker-cli
     Should Be Equal As Integers 	${result.rc} 	${0}
 
 Check kanto-cm

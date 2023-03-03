@@ -28,7 +28,7 @@ Test Timeout       2 minutes
 ${leda.target}                  local
 ${leda.target.hostname}         localhost
 ${leda.sshport}                 2001
-${rauc.update.bundle.filename}  sdv-rauc-bundle-qemux86-64.raucb
+${rauc.update.bundle.filename}  sdv-rauc-bundle-minimal-qemux86-64.raucb
 
 *** Test Cases ***
 
@@ -45,7 +45,7 @@ Check RAUC Status
     ${rauc_boot_primary}=  Set variable  ${json['boot_primary']}
     Set Test Message       Boot primary is ${rauc_boot_primary}
     Should Match 	${rauc_booted_slot} 	SDV_A
-    Should Match 	${rauc_compatible} 	    Eclipse Leda
+    Should Match 	${rauc_compatible} 	    Eclipse Leda (*)
     Should Match 	${rauc_boot_primary} 	rootfs.0
 
     ${booted_json}=    Get Value From Json    ${json}    $..slots[*][?(@.state=='booted' & @.class=='rootfs')]       fail_on_empty=${True}
@@ -99,10 +99,10 @@ Direct RAUC Install
     Should Match 	${installed_json[0]['state']}            inactive
     Should Match 	${installed_json[0]['boot_status']}      good
 
-    Should Match                         ${installed_json[0]['slot_status']['bundle']['compatible']}       Eclipse Leda
+    Should Match                         ${installed_json[0]['slot_status']['bundle']['compatible']}       Eclipse Leda (*)
     Should Not be Empty                  ${installed_json[0]['slot_status']['bundle']['version']}
     Should Not Be Empty                  ${installed_json[0]['slot_status']['bundle']['build']}
-    Should Match                         ${installed_json[0]['slot_status']['bundle']['description']}      sdv-rauc-bundle version 1.0-r0
+    Should Match                         ${installed_json[0]['slot_status']['bundle']['description']}      sdv-rauc-bundle-minimal version 1.0-r0
 
     Should Not Be Empty                  ${installed_json[0]['slot_status']['checksum']['sha256']}
     Should Be True                       ${installed_json[0]['slot_status']['checksum']['size']}           > 100000000
@@ -134,7 +134,7 @@ Direct RAUC Install
     #                     "bundle": {
     #                         "compatible": "Eclipse Leda",
     #                         "version": "${VERSION_ID}",
-    #                         "description": "sdv-rauc-bundle version 1.0-r0",
+    #                         "description": "sdv-rauc-bundle-minimal version 1.0-r0",
     #                         "build": "20230216133252"
     #                     },
     #                     "checksum": {

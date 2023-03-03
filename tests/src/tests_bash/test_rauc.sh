@@ -51,7 +51,7 @@ create_file()
   echo 'spec:' >> start-update-example.yaml
   echo '  bundleName: swdv-qemux86-64-build42' >> start-update-example.yaml
   echo '  bundleVersion: v1beta3' >> start-update-example.yaml
-  echo '  bundleDownloadUrl: http://192.168.7.1:8000/sdv-rauc-bundle-qemux86-64.raucb' >> start-update-example.yaml
+  echo '  bundleDownloadUrl: http://192.168.7.1:8000/sdv-rauc-bundle-minimal-qemux86-64.raucb' >> start-update-example.yaml
   echo '  bundleTarget: base' >> start-update-example.yaml
 }
 

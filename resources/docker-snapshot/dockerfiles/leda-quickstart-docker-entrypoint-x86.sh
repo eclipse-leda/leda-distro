@@ -16,6 +16,8 @@
 #
 # set -x 
 
+echo "Entry: Setup..."
+
 USERID="-u $(id -u)"
 GROUP="-g $(id -g)"
 TUNCTL="sudo tunctl"
@@ -35,11 +37,11 @@ function setupTap() {
     sudo bash -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
     sudo bash -c "echo 1 > /proc/sys/net/ipv4/conf/$TAP/proxy_arp"
     $IPTABLES -P FORWARD ACCEPT
-    echo "Set up TAP network interface: $TAP"
+    echo "Entry: Set up TAP network interface: $TAP"
 }
 
 function teardownTap() {
-    echo "Tearing down TAP network interface: $TAP"
+    echo "Entry: Tearing down TAP network interface: $TAP"
     $TUNCTL -d $TAP
     $IFCONFIG link del $TAP
     $IPTABLES -D POSTROUTING -t nat -j MASQUERADE -s 192.168.7.1/32
@@ -47,9 +49,11 @@ function teardownTap() {
 }
 
 startQemuUnprivileged() {
+    echo "Entry: Starting QEMU in unprivileged mode"
+
     qemu-system-x86_64 \
         -net nic,model=virtio \
-        -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::1883-:1883,hostfwd=tcp::8888-:8888,hostfwd=tcp::30555-:30555 \
+        -net user,hostfwd=tcp::2222-:22,hostfwd=tcp::1880-:1880,hostfwd=tcp::1883-:1883,hostfwd=tcp::8888-:8888,hostfwd=tcp::30555-:30555 \
         -object rng-random,filename=/dev/urandom,id=rng0 \
         -device virtio-rng-pci,rng=rng0 \
         -drive id=hd,file=sdv-image-all-qemux86-64.wic.qcow2,if=virtio,format=qcow2 \
@@ -67,6 +71,7 @@ startQemuUnprivileged() {
 }
 
 startQemuPrivileged() {
+    echo "Entry: Starting QEMU in privileged mode"
 
     trap teardownTap EXIT
 
@@ -76,13 +81,10 @@ startQemuPrivileged() {
     iptables -t nat -A PREROUTING -p tcp --dport 2222 -j DNAT --to-destination 192.168.7.2:22
 
     # Forward network traffic for SSH to the QEMU Guest
-    iptables -t nat -A PREROUTING -p tcp --dport 1883 -j DNAT --to-destination 192.168.7.2:1883
-
-    # Forward network traffic for cAdvisor on the Leda Guest
-    iptables -t nat -A PREROUTING -p tcp --dport 8888 -j DNAT --to-destination 192.168.7.2:8888
-
-    # Forward network traffic for Kuksa Databroker on the Leda Guest
-    iptables -t nat -A PREROUTING -p tcp --dport 30555 -j DNAT --to-destination 192.168.7.2:30555
+    # eth0 -> docker-internal network (172.x.x.x)
+    iptables -t nat -A PREROUTING -j DNAT -i eth0 -p tcp --to-destination 192.168.7.2
+    # eth1 -> leda-network (192.168.8.x)
+    iptables -t nat -A PREROUTING -j DNAT -i eth1 -p tcp --to-destination 192.168.7.2
 
     # Masquerade the IP Address of the sender, so that the packet will go back to the gateway
     iptables -t nat -A POSTROUTING -j MASQUERADE
@@ -91,9 +93,11 @@ startQemuPrivileged() {
     mkdir -p /var/lib/dhcp/
     touch /var/lib/dhcp/dhcpd.leases
     /usr/sbin/dhcpd
-    /usr/sbin/dnsmasq
+    sudo /usr/sbin/dnsmasq
 
     printf -v macaddr "52:54:%02x:%02x:%02x:%02x" $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff )) $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff ))
+
+    echo "Entry: Randomized MAC Address: ${macaddr}"
 
     sudo qemu-system-x86_64 \
  -device virtio-net-pci,netdev=net0,mac=$macaddr \
@@ -101,14 +105,15 @@ startQemuPrivileged() {
  -object rng-random,filename=/dev/urandom,id=rng0 \
  -device virtio-rng-pci,rng=rng0 \
  -drive id=hd,file=sdv-image-all-qemux86-64.wic.qcow2,if=virtio,format=qcow2 \
- -enable-kvm \
+ -boot order=d,strict=on,menu=on \
  -serial mon:stdio \
  -serial null \
  -serial mon:vc \
  -nographic \
  -object can-bus,id=canbus0 \
  -device kvaser_pci,canbus=canbus0 \
- -drive if=pflash,format=qcow2,file=ovmf.qcow2 \
+ -drive if=pflash,readonly=on,format=qcow2,file=ovmf.code.qcow2 \
+ -drive if=pflash,format=qcow2,file=ovmf.vars.qcow2 \
  -cpu IvyBridge \
  -machine q35 \
  -smp 4 \
@@ -127,6 +132,10 @@ if [ ! -w /proc/sys/net/ipv4/ip_forward ]; then
     PRIVILEGED=0
 fi
 
+echo "Entry: Checking QEMU Version..."
+qemu-system-x86_64 -version
+
+echo "Entry: Starting Qemu with Leda image..."
 if [ "$PRIVILEGED" == 0 ]; then
     startQemuUnprivileged
 else

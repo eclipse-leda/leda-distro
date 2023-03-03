@@ -7,7 +7,7 @@ Building the images is not necessary.
 
 Starting the containers with:
 
-    docker compose up -d 
+    docker compose up --detach --wait
 
 Log in to a development shell inside of the docker network:
 
@@ -22,21 +22,20 @@ Stopping the containers:
 Checking all containers are running or exited successfully:
 
     $ docker compose ps
-    NAME                 COMMAND                  SERVICE              STATUS               PORTS
-    leda-bundle-server   "/docker-entrypoint.…"   leda-bundle-server   running (starting)   0.0.0.0:8080->80/tcp, :::8080->80/tcp
-    leda-devshell        "/bin/sh -c /root/le…"   devshell             running              
-    leda-dns-proxy       "dnsmasq -k"             dns-proxy            running              53/tcp, 0.0.0.0:5353->53/udp, :::5353->53/udp
-    leda-initializer     "/bin/sh -c /root/le…"   leda-initializer     exited (0)           
-    leda-mqtt-broker     "/docker-entrypoint.…"   mqtt-broker          running (starting)   0.0.0.0:1883->1883/tcp, :::1883->1883/tcp
-    leda-x86             "/docker/leda-quicks…"   leda-x86             running (starting)   22/tcp, 31883/tcp, 0.0.0.0:1443->6443/tcp, :::1443->6443/tcp
-
-## Network setup
+    NAME                 COMMAND                  SERVICE              STATUS              PORTS
+    leda-arm64           "/docker/leda-quicks…"   leda-arm64           running (healthy)   1883/tcp, 0.0.0.0:2002->2222/tcp, :::2002->2222/tcp, 0.0.0.0:9102->8888/tcp, :::9102->8888/tcp, 0.0.0.0:30556->30555/tcp, :::30556->30555/tcp
+    leda-bundle-server   "/docker-entrypoint.…"   leda-bundle-server   running (healthy)   0.0.0.0:8080->80/tcp, :::8080->80/tcp
+    leda-dns-proxy       "dnsmasq -k"             dns-proxy            running             53/tcp, 0.0.0.0:5353->53/udp, :::5353->53/udp
+    leda-initializer     "/bin/sh -c /root/le…"   leda-initializer     exited (0)          
+    leda-mqtt-broker     "/docker-entrypoint.…"   mqtt-broker          running (healthy)   0.0.0.0:1883->1883/tcp, :::1883->1883/tcp
+    leda-x86             "/docker/leda-quicks…"   leda-x86             running (healthy)   1883/tcp, 0.0.0.0:30555->30555/tcp, :::30555->30555/tcp, 0.0.0.0:2001->2222/tcp, :::2001->2222/tcp, 0.0.0.0:9101->8888/tcp, :::9101->8888/tcp## Network setup
 
 As the networking is complicated to set up with emulated network inside of qemu, forwarding it to the Docker network, the following explanation is helpful to understand networking better.
 
 - All docker compose containers are attached to a network called `leda-bridge` and can see each other
 - The qemu instances use a TAP network inside of each leda-quickstart-xxx container and do a NAT network translation to their own container
-- The Docker internal DNS server is being
+- The Docker internal DNS server is being used
+- Only the exposed ports are forwarded from the docker container into the qemu process: mosquitto `1883`, ssh `2222` and kuksa.val databroker `30555`.
 
 ## Developer Shell
 
@@ -48,6 +47,10 @@ From there, you can log in to either Leda on QEMU x86-64, or log in to Leda on Q
 
     ssh leda-x86
     ssh leda-arm64
+
+To run an additional terminal in the developer shell, execute this:
+
+    docker compose exec devshell /bin/bash
 
 ## Interacting with Eclipse Leda
 
@@ -71,10 +74,6 @@ From there, you can log in to either Leda on QEMU x86-64, or log in to Leda on Q
 
 6. Click Save
 
-### Sending C2D Messages to a connected device
-
-Use `send-message.sh` to send an Azure C2D Message via an IoT Hub to the device. This example script will trigger a Self Update bundle installation.
-
 ### MQTT Broker Bridge
 
 ```mermaid
@@ -90,7 +89,7 @@ This allows a user or developer to monitor messages sent by or received by both 
 
 Connect your MQTT client to `mqtt-broker.leda-network` by using the exposed port 1883 on the host:
 
-    mosquitto_sub -h localhost -p 1883 -t '#'
+    mosquitto_sub -h localhost -p 1883 -t '#' -v
 
 # Networking
 
@@ -129,25 +128,8 @@ To reset to the original state, delete the respective docker volumes and restart
     docker volume rm leda-arm64
     docker volume rm leda-x86
 
-# Troubleshooting
-
-If login to Leda Docker DevShell does not work, or if you want to attach directly into the container running QEMU, you need to execute a one-off command shell in the running container:
-
-    docker compose exec leda-x86 /bin/bash
-
-When the building of the Docker containers fails as there is no access to the latest release artifacts or build artifacts, you may want to set the current GITHUB_REPOSITORY variable to your own build repository, before running the run-docker.sh script:
-
-    export GITHUB_REPOSITORY="MyGithubOrg/my-leda-distro-fork"
-    ./run-docker.sh
-
 # Profiles
 
 Profiles can be used to determine which containers (services) docker compose should be starting by default.
 This is mostly used to have the `devshell` container not start up by default.
 - `tools`: Contains docker containers which are not essential at runtime, must useful for testing and development purposes
-
-# Metrics Dashboards
-
-- Prometheus is used to collect data from the containers
-- procexporter is used to monitor the QEMU instances (CPU + Memory)
-- Grafana is used to visualize. Open http://localhost:3000/ to see dashboard

@@ -59,6 +59,10 @@ ssh-keyscan -p 2222 -H 192.168.8.5 >> ~/.ssh/known_hosts 2> /dev/null
 
 echo "- Executing QEMU X86-64"
 
+MQTT_DEBUG_LOG="robot-output/${TESTSUITE}/x86/mqtt-debug.log"
+mosquitto_sub -t '#' -p 1883 -h leda-x86.leda-network > ${MQTT_DEBUG_LOG} 2>&1 &
+MQTT_LISTENER_PID=$!
+
 robot \
     --name ${TESTSUITE}_X86 \
     --variablefile vars-x86.yaml \
@@ -70,7 +74,13 @@ robot \
     --outputdir robot-output/${TESTSUITE}/x86 \
     ${TESTSUITE}
 
+kill ${MQTT_LISTENER_PID}
+
 echo "- Executing QEMU ARM-64"
+
+MQTT_DEBUG_LOG="robot-output/${TESTSUITE}/arm64/mqtt-debug.log"
+mosquitto_sub -t '#' -p 1883 -h leda-arm64.leda-network > ${MQTT_DEBUG_LOG} 2>&1 &
+MQTT_LISTENER_PID=$!
 
 robot \
     --name ${TESTSUITE}_ARM64 \
@@ -82,3 +92,5 @@ robot \
     --xunit leda-tests-xunit.xml \
     --outputdir robot-output/${TESTSUITE}/arm64 \
     ${TESTSUITE}
+
+kill ${MQTT_LISTENER_PID}

@@ -38,12 +38,20 @@ RUN apt-get install -y --no-install-recommends \
     uml-utilities \
     xz-utils
 
-RUN apt-get install -y --no-install-recommends qemu-system-x86
+# Debian Bullseye contains QEMU 5.2
+# RUN apt-get install -y --no-install-recommends qemu-system-x86
+
+# Debian Bullseye-Backports contains QEMU 7.2
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/debian-bullseye-backports.list
+RUN apt-get update
+RUN apt-get install -y -t bullseye-backports qemu-system-x86
 
 WORKDIR /root
 
 COPY build/tmp/deploy/images/qemux86-64/sdv-image-all-qemux86-64.wic.qcow2 /root/sdv-image-all-qemux86-64.wic.qcow2
 COPY build/tmp/deploy/images/qemux86-64/ovmf.qcow2 /root/ovmf.qcow2
+COPY build/tmp/deploy/images/qemux86-64/ovmf.vars.qcow2 /root/ovmf.vars.qcow2
+COPY build/tmp/deploy/images/qemux86-64/ovmf.code.qcow2 /root/ovmf.code.qcow2
 COPY resources/runners/qemux86_64/run-leda.sh /root/run-leda.sh
 
 # Configure DHCP Server

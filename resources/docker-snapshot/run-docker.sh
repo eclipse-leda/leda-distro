@@ -35,7 +35,7 @@ fi
 # else
 # fi
 
-if ! docker compose up --no-recreate --remove-orphans --detach
+if ! docker compose --profile metrics up --no-recreate --remove-orphans --detach
 then
     echo "Error starting containers, aborting."
     exit 1

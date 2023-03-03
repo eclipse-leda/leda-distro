@@ -41,11 +41,11 @@ RUN gh release download --repo "${GITHUB_REPOSITORY}" --pattern 'eclipse-leda-qe
     || gh run download --name eclipse-leda-qemu-x86_64.tar.xz --repo "${GITHUB_REPOSITORY}"
 
 # For extracting release artifacts (gh release download [release-tag])
-RUN tar xf eclipse-leda-qemu-x86_64.tar.xz sdv-rauc-bundle-qemux86-64.raucb \
+RUN tar xf eclipse-leda-qemu-x86_64.tar.xz sdv-rauc-bundle-minimal-qemux86-64.raucb \
   && rm -rf eclipse-leda-qemu-x86_64.tar.xz
-RUN tar xf eclipse-leda-qemu-arm64.tar.xz sdv-rauc-bundle-qemuarm64.raucb \
+RUN tar xf eclipse-leda-qemu-arm64.tar.xz sdv-rauc-bundle-minimal-qemuarm64.raucb \
   && rm -rf eclipse-leda-qemu-arm64.tar.xz
 
 FROM nginx AS runtime 
-COPY --from=builder /root/sdv-rauc-bundle-qemux86-64.raucb /usr/share/nginx/html/
-COPY --from=builder /root/sdv-rauc-bundle-qemuarm64.raucb /usr/share/nginx/html/
+COPY --from=builder /root/sdv-rauc-bundle-minimal-qemux86-64.raucb /usr/share/nginx/html/
+COPY --from=builder /root/sdv-rauc-bundle-minimal-qemuarm64.raucb /usr/share/nginx/html/

@@ -49,7 +49,7 @@ function teardownTap() {
 startQemuUnprivileged() {
     qemu-system-aarch64 \
         -device virtio-net-device,netdev=net0 \
-        -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::1883-:1883,hostfwd=tcp::8888-:8888,hostfwd=tcp::30555-:30555 \
+        -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::1880-:1880,hostfwd=tcp::1883-:1883,hostfwd=tcp::8888-:8888,hostfwd=tcp::30555-:30555 \
         -object rng-random,filename=/dev/urandom,id=rng0 \
         -device virtio-rng-pci,rng=rng0 \
         -drive id=disk0,file=sdv-image-all-qemuarm64.wic.qcow2,if=none,format=qcow2 \
@@ -81,13 +81,10 @@ startQemuPrivileged() {
     iptables -t nat -A PREROUTING -p tcp --dport 2222 -j DNAT --to-destination 192.168.7.2:22
 
     # Forward network traffic for SSH to the QEMU Guest
-    iptables -t nat -A PREROUTING -p tcp --dport 1883 -j DNAT --to-destination 192.168.7.2:1883
-
-    # Forward network traffic for cAdvisor on the Leda Guest
-    iptables -t nat -A PREROUTING -p tcp --dport 8888 -j DNAT --to-destination 192.168.7.2:8888
-
-    # Forward network traffic for Kuksa Databroker on the Leda Guest
-    iptables -t nat -A PREROUTING -p tcp --dport 30555 -j DNAT --to-destination 192.168.7.2:30555
+    # eth0 -> docker-internal network (172.x.x.x)
+    iptables -t nat -A PREROUTING -j DNAT -i eth0 -p tcp --to-destination 192.168.7.2
+    # eth1 -> leda-network (192.168.8.x)
+    iptables -t nat -A PREROUTING -j DNAT -i eth1 -p tcp --to-destination 192.168.7.2
 
     # Masquerade the IP Address of the sender, so that the packet will go back to the gateway
     iptables -t nat -A POSTROUTING -j MASQUERADE
@@ -100,7 +97,7 @@ startQemuPrivileged() {
 
     printf -v macaddr "52:54:%02x:%02x:%02x:%02x" $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff )) $(( $RANDOM & 0xff)) $(( $RANDOM & 0xff ))
 
-    qemu-system-aarch64 \
+    sudo qemu-system-aarch64 \
     -device virtio-net-device,netdev=net0,mac=$macaddr \
     -netdev tap,id=net0,ifname=$TAP,script=no,downscript=no \
     -object rng-random,filename=/dev/urandom,id=rng0 \

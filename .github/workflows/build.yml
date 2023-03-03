@@ -72,7 +72,9 @@ jobs:
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemux86-64/ \
           bzImage-qemux86-64.bin \
           sdv-image-all-qemux86-64.wic.qcow2 \
-          sdv-rauc-bundle-qemux86-64.raucb \
+          sdv-rauc-bundle-full-qemux86-64.raucb \
+          sdv-rauc-bundle-minimal-qemux86-64.raucb \
+          sdv-rauc-bundle-rescue-qemux86-64.raucb \
           ovmf.qcow2
         time xz -v -8 -T0 ${ARC}
     - name: Upload files
@@ -150,7 +152,9 @@ jobs:
         time tar --append --verbose --dereference --file ${ARC} -C ./build/tmp/deploy/images/qemuarm64/ \
           Image-qemuarm64.bin \
           sdv-image-all-qemuarm64.wic.qcow2 \
-          sdv-rauc-bundle-qemuarm64.raucb \
+          sdv-rauc-bundle-full-qemuarm64.raucb \
+          sdv-rauc-bundle-minimal-qemuarm64.raucb \
+          sdv-rauc-bundle-rescue-qemuarm64.raucb \
           u-boot.bin
         time xz -v -8 -T0 ${ARC}
     - name: Upload files
@@ -225,7 +229,9 @@ jobs:
           Image-raspberrypi4-64.bin \
           sdv-image-all-raspberrypi4-64.wic.bz2 \
           sdv-image-all-raspberrypi4-64.wic.bmap \
-          sdv-rauc-bundle-raspberrypi4-64.raucb
+          sdv-rauc-bundle-full-raspberrypi4-64.raucb \
+          sdv-rauc-bundle-minimal-raspberrypi4-64.raucb \
+          sdv-rauc-bundle-rescue-raspberrypi4-64.raucb
         time xz -v -1 -T0 ${ARC}
     - name: Upload files
       uses: actions/upload-artifact@v3

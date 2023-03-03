@@ -94,7 +94,9 @@ services:
     volumes:
       - leda-x86:/root
     ports:
-      - "1443:6443"
+      - "9101:8888"
+      - "2001:2222"
+      - "30555:30555"
     healthcheck:
       test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
       interval: 10s
@@ -102,42 +104,46 @@ services:
       retries: 100
       start_period: 30s
   # Leda on QEMU ARM64
-  # leda-arm64:
-  #   build:
-  #     context: ../..
-  #     dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-arm64
-  #   container_name: leda-arm64
-  #   depends_on:
-  #     - dns-proxy
-  #     - mqtt-broker
-  #     - leda-bundle-server
-  #   privileged: true
-  #   stdin_open: true
-  #   tty: true
-  #   devices:
-  #   - "/dev/kvm:/dev/kvm"
-  #   - "/dev/net/tun:/dev/net/tun"
-  #   networks:
-  #     leda-network:
-  #       ipv4_address: 192.168.8.5
-  #     leda-bridge:
-  #   volumes:
-  #     - leda-arm64:/root
-  #   ports:
-  #     - "2443:6443"
-  #   healthcheck:
-  #     test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 100
-  #     start_period: 30s
+  leda-arm64:
+    image: ghcr.io/eclipse-leda/leda-distro/leda-quickstart-arm64
+    container_name: leda-arm64
+    depends_on:
+      - dns-proxy
+      - mqtt-broker
+      - leda-bundle-server
+    privileged: true
+    stdin_open: true
+    tty: true
+    devices:
+    - "/dev/kvm:/dev/kvm"
+    - "/dev/net/tun:/dev/net/tun"
+    networks:
+      leda-network:
+        ipv4_address: 192.168.8.5
+      leda-bridge:
+    volumes:
+      - leda-arm64:/root
+    ports:
+      - "9102:8888"
+      - "2002:2222"
+      - "30556:30555"
+    healthcheck:
+      test: "ssh -o StrictHostKeyChecking=no -o ConnectionAttempts=30 -q root@192.168.7.2 systemctl is-active container-management"
+      interval: 10s
+      timeout: 5s
+      retries: 100
+      start_period: 30s
   # Ping and Initialize the Leda DNS Network configuration
   leda-initializer:
     image: ghcr.io/eclipse-leda/leda-distro/leda-initializer
     container_name: leda-initializer
     depends_on:
-      - leda-x86
-#      - leda-arm64
+      leda-x86:
+        condition: service_healthy
+      leda-arm64:
+        condition: service_healthy
+      mqtt-broker:
+        condition: service_healthy
     networks:
       leda-network:
         ipv4_address: 192.168.8.7
@@ -175,8 +181,8 @@ services:
 volumes:
   leda-x86:
     name: leda-x86
-#  leda-arm64:
-#    name: leda-arm64
+  leda-arm64:
+    name: leda-arm64
 
 networks:
   # All Leda components are in this network

@@ -34,7 +34,4 @@ echo "${GITHUB_TOKEN}" | docker login --username "github" --password-stdin ghcr.
 # docker run -it --privileged --device=/dev/kvm:/dev/kvm --device=/dev/net/tun:/dev/net/tun ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest
 # docker push ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest
 
-docker compose Build
-docker compose push
-
-
+docker compose --profile tools --profile disabled --profile tests --profile metrics push

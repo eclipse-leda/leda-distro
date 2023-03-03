@@ -14,14 +14,14 @@
 FROM python
 LABEL name="leda-tests"
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
-    apt-get install -y --no-install-recommends iputils-ping netcat
+    apt-get install -y --no-install-recommends iputils-ping netcat mosquitto-clients
 WORKDIR /root
 
 RUN pip install robotframework robotframework-mqttlibrary robotframework-ymllib robotframework-metrics robotframework-jsonlibrary
 RUN curl -sSL "https://github.com/fullstorydev/grpcurl/releases/download/v1.8.7/grpcurl_1.8.7_linux_x86_64.tar.gz" | tar -xz -C /usr/local/bin
 RUN git clone https://github.com/eclipse/kuksa.val
 
-COPY resources/docker-snapshot/dockerfiles/leda-tests/* /root
+COPY resources/docker-snapshot/dockerfiles/leda-tests/ /root/
 
 COPY resources/docker-snapshot/dockerfiles/leda-tests-entrypoint.sh ./
 RUN chmod a+x leda-tests-entrypoint.sh
