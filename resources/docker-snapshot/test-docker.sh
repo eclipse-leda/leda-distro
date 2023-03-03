@@ -68,9 +68,10 @@ mkdir -m 777 -p leda-tests-reports
 trap ctrl_c INT
 
 function showSummary() {
-    while IFS= read -r FINISHED_TESTSUITE; do
+    for FINISHED_TESTSUITE in "${FINISHED_TESTSUITES[@]}"
+    do
         echo "- Finished test suite: ${FINISHED_TESTSUITE}"
-    done <<< "${FINISHED_TESTSUITES}"
+    done
 }
 
 function generateMergedReports() {
@@ -112,21 +113,24 @@ while IFS= read -r TESTSUITE; do
 done <<< "${TESTSUITES}"
 
 while IFS= read -r TESTSUITE; do
-    echo "Preparing test suite ${TESTSUITE}"
-    echo "- Stopping containers"
+    echo "${TESTSUITE}: Preparing test suite (cleanup)"
+    echo "${TESTSUITE}: - Stopping containers leda-x86 and leda-arm64"
     docker compose stop leda-x86 leda-arm64
-    echo "- Removing containers"
-    docker rm --force leda-tests
+    echo "${TESTSUITE}: - Removing container leda-tests"
+    docker rm --force leda-tests > /dev/null 2>&1
+    echo "${TESTSUITE}: - Removing containers leda-x86 and leda-arm64"
     docker compose rm --stop --force --volumes leda-x86 leda-arm64
-    echo "- Removing volumes"
+    echo "${TESTSUITE}: - Removing volumes leda-x86 and leda-arm64"
     docker volume rm --force leda-x86 leda-arm64
-    echo "- Starting up docker compose services (minimal) to become healthy"
+    echo "${TESTSUITE}: Executing test suite"
+    echo "${TESTSUITE}: - Starting up docker compose services (minimal) to become healthy"
     docker compose up --detach --wait
-    echo "- Executing test suite ${TESTSUITE}"
+    echo "${TESTSUITE}: - Starting new test suite container"
     docker compose --profile tests run --detach --name leda-tests --no-TTY --interactive=false --rm leda-tests ${TESTSUITE}
-    docker logs leda-tests
+    echo "${TESTSUITE}: - Waiting for tests to finish"
+    docker logs -f leda-tests &
     docker wait leda-tests
-    FINISHED_TESTSUITES+=( "${TESTSUITE}") 
+    FINISHED_TESTSUITES+=("${TESTSUITE}")
 done <<< "${TESTSUITES}"
 
 generalShutdownTasks
