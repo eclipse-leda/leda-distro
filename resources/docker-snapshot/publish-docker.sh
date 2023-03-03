@@ -34,4 +34,10 @@ echo "${GITHUB_TOKEN}" | docker login --username "github" --password-stdin ghcr.
 # docker run -it --privileged --device=/dev/kvm:/dev/kvm --device=/dev/net/tun:/dev/net/tun ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest
 # docker push ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest
 
+export LEDA_VERSION_TAG="latest"
+docker compose --profile tools --profile disabled --profile tests --profile metrics build 
 docker compose --profile tools --profile disabled --profile tests --profile metrics push
+
+export LEDA_VERSION_TAG=$(git describe --tags)
+docker compose --profile tools --profile disabled --profile tests --profile metrics build 
+docker compose --profile tools --profile disabled --profile tests --profile metrics push 

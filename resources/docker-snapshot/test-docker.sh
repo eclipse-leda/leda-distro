@@ -20,6 +20,7 @@ echo "Eclipse Leda - Robot-based Smoke Tests"
 echo "Start with --help to get see options."
 
 CMD=$1
+FINISHED_TESTSUITES=()
 
 if [ "${CMD}" == "--help" ]; then
     echo "Usage:"
@@ -66,17 +67,34 @@ mkdir -m 777 -p leda-tests-reports
 
 trap ctrl_c INT
 
+function showSummary() {
+    while IFS= read -r FINISHED_TESTSUITE; do
+        echo "- Finished test suite: ${FINISHED_TESTSUITE}"
+    done <<< "${FINISHED_TESTSUITES}"
+}
+
 function generateMergedReports() {
     echo "Merging all test suites reports into a single aggregated report..."
     docker compose --profile tests run --no-TTY --interactive=false --no-deps --rm leda-tests --mergeall
 }
 
 function shutdownContainers() {
-    echo "Stopping containers and removing volumes..."
-    docker compose down
-    docker compose stop devshell leda-x86 leda-arm64 leda-tests
-    docker compose rm --stop --force --volumes leda-x86 leda-arm64
+    echo "Shutting down containers and removing volumes..."
+    echo "- Explicitly stopping devshell, leda-tests and leda containers"
+    docker compose --profile tests stop devshell leda-x86 leda-arm64 leda-tests
+    echo "- Killing potentially running left-over containers"
+    docker compose --profile tools --profile tests --profile metrics --profile disabled kill
+    echo ""
+    echo "- Removing containers leda-x86 and leda-arm64"
+    docker compose --profile tests rm --stop --force --volumes leda-x86 leda-arm64
+    echo "- Removing volumes leda-x86 and leda-arm64"
     docker volume rm --force leda-x86 leda-arm64
+}
+
+function generalShutdownTasks() {
+        shutdownContainers
+        generateMergedReports
+        showSummary
 }
 
 function ctrl_c() {
@@ -84,8 +102,7 @@ function ctrl_c() {
         echo "*** Trapped CTRL-C, gracefully shutting down ***"
         echo "*** Please wait                              ***"
         echo "************************************************"
-        shutdownContainers
-        generateMergedReports
+        generalShutdownTasks
         exit 10
 }
 
@@ -103,13 +120,15 @@ while IFS= read -r TESTSUITE; do
     docker compose rm --stop --force --volumes leda-x86 leda-arm64
     echo "- Removing volumes"
     docker volume rm --force leda-x86 leda-arm64
-    echo "- Starting up docker compose services to become healthy"
+    echo "- Starting up docker compose services (minimal) to become healthy"
     docker compose up --detach --wait
     echo "- Executing test suite ${TESTSUITE}"
-    docker compose --profile tests run --name leda-tests --no-TTY --interactive=false --rm leda-tests ${TESTSUITE}
+    docker compose --profile tests run --detach --name leda-tests --no-TTY --interactive=false --rm leda-tests ${TESTSUITE}
+    docker logs leda-tests
+    docker wait leda-tests
+    FINISHED_TESTSUITES+=( "${TESTSUITE}") 
 done <<< "${TESTSUITES}"
 
-shutdownContainers
-generateMergedReports
+generalShutdownTasks
 
 exit 0

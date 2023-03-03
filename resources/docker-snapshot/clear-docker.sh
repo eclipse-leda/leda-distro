@@ -13,7 +13,6 @@
 # ********************************************************************************/
 #
 
-docker compose down
-docker compose rm
-docker compose down --remove-orphans --volumes
+./stop-docker.sh
+docker volume rm --force leda-x86 leda-arm64
 docker volume prune --force

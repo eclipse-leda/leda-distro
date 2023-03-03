@@ -13,5 +13,18 @@
 # ********************************************************************************/
 #
 
+# Shut down all services
+echo "Shutting down all services..."
 docker compose --profile tests --profile tools --profile metrics --profile disabled down
-docker compose --profile tests stop leda-tests
+
+# Kill any other containers currently still running
+echo "Killing remaining containers..."
+docker compose --profile tools --profile tests --profile metrics --profile disabled kill
+echo ""
+
+# Remove all exited containers
+echo "Removing all containers and anonymous volumes..."
+docker compose --profile tools --profile tests --profile metrics --profile disabled rm --force --stop --volumes
+echo ""
+
+

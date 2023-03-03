@@ -76,7 +76,6 @@ To execute the Robot Framework tests, run the `leda-tests` docker compose servic
     ./test-docker.sh
 
 This will rebuild the container (in case the tests have been changed) and run Robot.
-The test reports will be located on the host in `./leda-tests-reports` in the current working directory.
 
 The tests assume to be run inside of a container which is part of the `leda-network` environment.
 
@@ -85,3 +84,29 @@ Each test suite (e.g. each separate `*.robot` file) is executed in a new, clean 
 To execute only a single test suite, run the script with the test suite filename:
 
     ./test-docker.sh 01__base.robot
+
+### Test Reports
+
+The test reports will be located on the host in `./leda-tests-reports` in the current working directory.
+The root contains merged overall reports (all test suites) in HTML and XML (Robot and xUnit) formats:
+
+- `/report.html` - Main test report
+- `/log.html` - Detailed robot test execution logs
+- `/output.xml` - In Robot XML format
+- `/leda-tests-xunit.xml` - In xUnit report format
+
+Each test suite subfolder contains the following detailed reports:
+
+- `/<TESTSUITE>/<MACHINE>/leda-tests-debug.log` - Robot Test Execution Steps Debug Output
+- `/<TESTSUITE>/<MACHINE>/leda-tests-xunit.xml` - xUnit Report
+- `/<TESTSUITE>/<MACHINE>/log.container-management.txt` - Syslog Journal of systemd service `container-management` (Eclipse Kanto)
+- `/<TESTSUITE>/<MACHINE>/log.containerd.txt` - Syslog Journal of service `containerd` (system)
+- `/<TESTSUITE>/<MACHINE>/log.dbus.txt` - Syslog Journal of service `dbus` (D-Bus system)
+- `/<TESTSUITE>/<MACHINE>/log.html` - Robot HTML log report of detailed test execution steps
+- `/<TESTSUITE>/<MACHINE>/log.kanto-auto-deployer.txt` - Syslog Journal of service `kanto-auto-deployer` (Eclipse Leda)
+- `/<TESTSUITE>/<MACHINE>/log.rauc-mark-good.txt` - Syslog Journal of service `rauc-mark-good` (RAUC Mark-Good Service)
+- `/<TESTSUITE>/<MACHINE>/log.rauc.txt` - Syslog Journal of service `rauc` (RAUC Update Service)
+- `/<TESTSUITE>/<MACHINE>/mqtt-debug.log` - All recorded MQTT messages on the local MQTT broker during the test suite execution
+- `/<TESTSUITE>/<MACHINE>/output.xml` - Robot Report in XML format of Test Suite
+- `/<TESTSUITE>/<MACHINE>/report.html` - Robot HTML Report of Test Suite
+
