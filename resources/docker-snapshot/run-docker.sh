@@ -35,6 +35,8 @@ fi
 # else
 # fi
 
+echo "Starting Eclipse Leda docker compose setup..."
+
 if ! docker compose --profile metrics up --no-recreate --remove-orphans --detach
 then
     echo "Error starting containers, aborting."
@@ -43,10 +45,10 @@ fi
 
 echo "Eclipse Leda Docker setup started."
 echo "You can now:"
-echo "- Log in to the devshell:         docker compose run devshell"
+echo "- Log in to the devshell:         ./devshell-docker.sh"
 echo "- or check status of containers:  docker compose ps"
-echo "- or send a message:              ./send-message.sh"
 echo "- or watch MQTT:                  mosquitto_sub -h localhost -p 1883 -t '#' -v"
 echo "- or stop the containers:         ./stop-docker.sh"
 echo "- access Grafana:                 http://127.0.0.1:8300/  (Login: leda/leda)"
 echo "- access Prometheus:              http://127.0.0.1:9090"
+echo "- run smoke tests:                ./test-docker.sh"

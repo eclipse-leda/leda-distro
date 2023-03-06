@@ -59,7 +59,7 @@ services:
   # leda-bundle-server is a webserver with both RAUC Update Bundles pre-installed
   # for easy show case of the SelfUpdate mechanisms.
   leda-bundle-server:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-bundle-server
+    image: ghcr.io/eclipse-leda/leda-distro/leda-bundle-server:${LEDA_VERSION_TAG:-latest}
     build:
       context: ../..
       dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-bundle-server
@@ -78,7 +78,7 @@ services:
       start_period: 30s
   # Leda on QEMU X86_64
   leda-x86:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86
+    image: ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:${LEDA_VERSION_TAG:-latest}
     build:
       context: ../..
       dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-x86
@@ -112,7 +112,7 @@ services:
       start_period: 30s
   # Leda on QEMU ARM64
   leda-arm64:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-quickstart-arm64
+    image: ghcr.io/eclipse-leda/leda-distro/leda-quickstart-arm64:${LEDA_VERSION_TAG:-latest}
     build:
       context: ../..
       dockerfile: resources/docker-snapshot/dockerfiles/Dockerfile.leda-quickstart-arm64
@@ -145,7 +145,7 @@ services:
       start_period: 30s
   # Ping and Initialize the Leda DNS Network configuration
   leda-initializer:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-initializer
+    image: ghcr.io/eclipse-leda/leda-distro/leda-initializer:${LEDA_VERSION_TAG:-latest}
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-initializer
@@ -163,7 +163,7 @@ services:
       leda-bridge:
   # Optional developer shell within the custom Docker network
   devshell:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-devshell
+    image: ghcr.io/eclipse-leda/leda-distro/leda-devshell:${LEDA_VERSION_TAG:-latest}
     build:
       context: .
       dockerfile: dockerfiles/Dockerfile.leda-devshell
@@ -175,7 +175,6 @@ services:
     tty: true
     networks:
       leda-network:
-        ipv4_address: 192.168.8.8
       leda-bridge:
     depends_on:
       leda-x86:
@@ -273,7 +272,7 @@ services:
       leda-bridge:
 
   leda-container-metrics:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-container-metrics
+    image: ghcr.io/eclipse-leda/leda-distro/leda-container-metrics:${LEDA_VERSION_TAG:-latest}
     profiles:
     - metrics
     build:
@@ -295,7 +294,7 @@ services:
       loki:
         condition: service_started
   leda-container-logs:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-container-logs
+    image: ghcr.io/eclipse-leda/leda-distro/leda-container-logs:${LEDA_VERSION_TAG:-latest}
     profiles:
     - metrics
     build:
@@ -313,7 +312,7 @@ services:
         condition: service_healthy
 
   leda-tests:
-    image: ghcr.io/eclipse-leda/leda-distro/leda-tests
+    image: ghcr.io/eclipse-leda/leda-distro/leda-tests:${LEDA_VERSION_TAG:-latest}
     profiles:
       - tests
     build:

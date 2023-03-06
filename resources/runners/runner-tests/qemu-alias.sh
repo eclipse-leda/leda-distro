@@ -1,6 +1,7 @@
 #!/bin/bash
+#
 # /********************************************************************************
-# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
 # *
 # * See the NOTICE file(s) distributed with this work for additional
 # * information regarding copyright ownership.
@@ -13,6 +14,10 @@
 # ********************************************************************************/
 #
 
-./stop-docker.sh
-docker volume rm --force leda-x86 leda-arm64
-docker volume prune --force
+echo "=============================================================="
+echo "QEMU Command Line Alias Catcher For Automated Testing Purposes"
+echo "This Script: ${0}"
+echo "Command args: ${@}"
+echo "=============================================================="
+
+exit 0

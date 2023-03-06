@@ -57,12 +57,22 @@ ssh-keyscan -p 2222 -H leda-arm64.leda-bridge >> ~/.ssh/known_hosts 2> /dev/null
 ssh-keyscan -p 2222 -H leda-arm64.leda-network >> ~/.ssh/known_hosts 2> /dev/null
 ssh-keyscan -p 2222 -H 192.168.8.5 >> ~/.ssh/known_hosts 2> /dev/null
 
-echo "- Executing QEMU X86-64"
+RECORD_LOGS_FOR_SERVICE_UNITS=(
+    "containerd"
+    "dbus"
+    "container-management"
+    "kanto-auto-deployer"
+    "rauc"
+    "rauc-mark-good"
+)
 
+echo "- Starting MQTT listener for X86-64"
+mkdir -p robot-output/${TESTSUITE}/x86/
 MQTT_DEBUG_LOG="robot-output/${TESTSUITE}/x86/mqtt-debug.log"
-mosquitto_sub -t '#' -p 1883 -h leda-x86.leda-network > ${MQTT_DEBUG_LOG} 2>&1 &
+mosquitto_sub -t '#' -p 1883 -h leda-x86.leda-network -v -d > ${MQTT_DEBUG_LOG} 2>&1 &
 MQTT_LISTENER_PID=$!
 
+echo "- Executing QEMU X86-64 tests"
 robot \
     --name ${TESTSUITE}_X86 \
     --variablefile vars-x86.yaml \
@@ -74,14 +84,27 @@ robot \
     --outputdir robot-output/${TESTSUITE}/x86 \
     ${TESTSUITE}
 
+echo "- Stopping MQTT listener for X86-64 on PID ${MQTT_LISTENER_PID}"
 kill ${MQTT_LISTENER_PID}
 
-echo "- Executing QEMU ARM-64"
+for i in "${RECORD_LOGS_FOR_SERVICE_UNITS[@]}"
+do
+   echo "- Collecting logs of service $i"
+   ssh -p 2222 root@leda-x86.leda-network journalctl --unit=$i > robot-output/${TESTSUITE}/x86/log.$i.txt
+done
 
+#ssh -p 2222 root@leda-x86.leda-network journalctl --help
+#ssh -p 2222 root@leda-x86.leda-network journalctl --system --all --no-pager --output=short-monotonic
+#ssh -p 2222 root@leda-x86.leda-network journalctl --boot --all --no-pager --output=short-monotonic
+#ssh -p 2222 root@leda-x86.leda-network journalctl --dmesg --all --no-pager --output=short-monotonic
+
+echo "- Starting MQTT listener for ARM64"
+mkdir -p robot-output/${TESTSUITE}/arm64/
 MQTT_DEBUG_LOG="robot-output/${TESTSUITE}/arm64/mqtt-debug.log"
-mosquitto_sub -t '#' -p 1883 -h leda-arm64.leda-network > ${MQTT_DEBUG_LOG} 2>&1 &
+mosquitto_sub -t '#' -p 1883 -h leda-arm64.leda-network -v -d > ${MQTT_DEBUG_LOG} 2>&1 &
 MQTT_LISTENER_PID=$!
 
+echo "- Executing QEMU ARM-64 tests"
 robot \
     --name ${TESTSUITE}_ARM64 \
     --variablefile vars-arm64.yaml \
@@ -93,4 +116,11 @@ robot \
     --outputdir robot-output/${TESTSUITE}/arm64 \
     ${TESTSUITE}
 
+echo "- Stopping MQTT listener for ARM64 on PID ${MQTT_LISTENER_PID}"
 kill ${MQTT_LISTENER_PID}
+
+for i in "${RECORD_LOGS_FOR_SERVICE_UNITS[@]}"
+do
+   echo "- Collecting logs of service $i"
+   ssh -p 2222 root@leda-arm64.leda-network journalctl --unit=$i > robot-output/${TESTSUITE}/arm64/log.$i.txt
+done

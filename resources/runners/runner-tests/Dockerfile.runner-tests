@@ -1,0 +1,67 @@
+# syntax=docker/dockerfile:1
+#
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+# docker build --file Dockerfile.runner-tests --secret id=githubtoken,env=GITHUB_TOKEN --build-arg GITHUB_REPOSITORY=${GITHUB_REPOSITORY} ..
+#
+FROM debian:bullseye
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TZ=Etc/UTC
+ARG GITHUB_REPOSITORY
+
+LABEL name="leda-runner-tests"
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends curl sudo ca-certificates xz-utils uml-utilities iptables iproute2 isc-dhcp-server iputils-ping dnsutils bind9-utils ssh
+
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends gh
+
+# Install a fake qemu binary
+COPY runner-tests/qemu-alias.sh /usr/bin/qemu-system-x86_64
+RUN chmod a+rwx /usr/bin/qemu-system-x86_64
+
+# Create a new user
+RUN useradd --create-home --shell /bin/bash --groups sudo newuser && echo "newuser:secret" | chpasswd
+RUN echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER newuser
+WORKDIR /home/newuser
+
+# Download latest release, or if that fails, fall back to latest build artifact
+RUN --mount=type=secret,id=githubtoken,uid=1000,required gh auth login --with-token < /run/secrets/githubtoken
+RUN gh run download --name eclipse-leda-qemu-x86_64.tar.xz --repo "${GITHUB_REPOSITORY}" \
+    || gh release download --repo "${GITHUB_REPOSITORY}" --pattern 'eclipse-leda-qemu-x86_64.tar.xz'
+
+RUN tar xf eclipse-leda-qemu-x86_64.tar.xz && rm eclipse-leda-qemu-x86_64.tar.xz
+
+# Install script from current repository
+COPY qemux86_64/run-leda.sh ./run-leda.sh
+
+# This is our Eclipse Leda Runner script, the test target.
+ENTRYPOINT [ "./run-leda.sh" ]
+
+# Expose SSH access
+EXPOSE 22
+EXPOSE 2222
+
+# Expose MQTT broker: Eclipse Mosquitto
+EXPOSE 1883
+
+# Expose Kuksa.VAL Databroker
+EXPOSE 30555
