@@ -1,9 +1,8 @@
-Quickstart Image for QEMU ARM-64 Bit
+Eclipse Leda - Quickstart Image for QEMU ARM-64 Bit
 
 Usage
-- Install qemu-system-aarch64
-- Set up TAP Networking, see https://en.wikibooks.org/wiki/QEMU/Networking
-- Start the image (requires sudo)
+- Install qemu-system-arm
+- Start the image by executing the script:
 
     ./run-leda.sh
 
