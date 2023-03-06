@@ -1,9 +1,8 @@
-Quickstart Image for QEMU x86_64 Bit
+Eclipse Leda - Quickstart Image for QEMU x86_64 Bit
 
 Usage
 - Install qemu-system-x86
-- Set up TAP Networking, see https://en.wikibooks.org/wiki/QEMU/Networking
-- Start the image (requires sudo)
+- Start the image by executing the script:
 
     ./run-leda.sh
 
