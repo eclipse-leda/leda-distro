@@ -62,7 +62,6 @@ startQemuUnprivileged() {
         -serial mon:stdio \
         -serial null \
         -serial mon:vc \
-        -serial tcp::12345,server \
         -nographic \
         -object can-bus,id=canbus0 \
         -device kvaser_pci,canbus=canbus0 \
@@ -112,7 +111,6 @@ startQemuPrivileged() {
  -serial mon:stdio \
  -serial null \
  -serial mon:vc \
- -serial tcp::12345,server
  -nographic \
  -object can-bus,id=canbus0 \
  -device kvaser_pci,canbus=canbus0 \

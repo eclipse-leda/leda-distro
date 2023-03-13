@@ -70,6 +70,7 @@ COPY resources/apertis/dockerfiles/leda-apertis-docker-entrypoint-x86.sh /docker
 COPY resources/apertis/dockerfiles/leda-apertis-bootstrapper.sh /docker/
 COPY resources/apertis/dockerfiles/leda-apertis-install-sdv.sh /docker/
 RUN chmod a+x /docker/leda-apertis-docker-entrypoint-x86.sh
+RUN chmod a+x /docker/leda-apertis-bootstrapper.sh
 RUN chmod a+x /docker/leda-apertis-install-sdv.sh
 ENTRYPOINT [ "/docker/leda-apertis-docker-entrypoint-x86.sh" ]
 
