@@ -24,7 +24,7 @@ fi
 # Add the `development` Apertis repository and install `containerd` Debian package
 echo "deb https://repositories.apertis.org/apertis/ v2023 development" >> /etc/apt/sources.list.d/apertis-development.list
 apt update
-apt-get install -y curl ca-certificates containerd
+apt-get install -y curl ca-certificates git mosquitto-clients jq containerd protobuf-compiler
 
 # Install Kanto 
 curl -fsSL -o kanto.deb https://github.com/eclipse-kanto/kanto/releases/download/v0.1.0-M2/kanto_0.1.0-M2_linux_x86_64.deb
@@ -34,6 +34,24 @@ apt -o Dpkg::Options::="--force-overwrite" install ./kanto.deb
 # so that virtual ethernet interfaces are not used for default routes
 echo "NetworkInterfaceBlacklist = vmnet,vboxnet,virbr,ifb,ve-,vb-,veth" >> /etc/connman/main.conf
 systemctl restart connman
+
+# For building kantui and kanto-auto-deployer, we need Rust
+echo "Installing Rust"
+curl https://sh.rustup.rs -sSf | sh
+source "$HOME/.cargo/env"
+
+echo "Building kantui"
+git clone https://github.com/eclipse-leda/leda-utils.git
+pushd leda-utils/src/rust/kanto-tui
+sudo apt-get install -y gcc
+git submodule update
+cargo build --release
+strip ./target/release/kantui
+mkdir -p /etc/kantui/
+cp ./kantui_conf.toml /etc/kantui/kantui_conf.toml
+cp ./target/release/kantui /usr/bin
+
+popd
 
 until systemctl is-active container-management
 do
