@@ -12,7 +12,7 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
-# Build and Run Leda on X86 and ARM64 in Docker Containers
+# Publish Leda on Apertis on QEMU on Docker container image to container registry on ghcr.io
 #
 #set -e
 
@@ -22,9 +22,4 @@ then
     exit
 fi
 
-docker rm --force leda-apertis-x86
-docker run --name leda-apertis-x86 --tty --interactive ghcr.io/eclipse-leda/leda-distro/leda-apertis-x86
-
-# docker run --tty --interactive --entrypoint /bin/bash leda-apertis-x86
-# docker exec --tty --interactive leda-apertis-x86 /bin/bash
-# docker push ghcr.io/eclipse-leda/leda-distro/leda-apertis-x86
+docker push ghcr.io/eclipse-leda/leda-distro/leda-apertis-x86

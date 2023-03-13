@@ -16,6 +16,11 @@
 #
 #set -e
 
+if dpkg -l kanto; then
+    echo "SDV Installer: Kanto already installed, assuming SDV core components have been installed as well. Exiting."
+    exit 0
+fi
+
 # Add the `development` Apertis repository and install `containerd` Debian package
 echo "deb https://repositories.apertis.org/apertis/ v2023 development" >> /etc/apt/sources.list.d/apertis-development.list
 apt update

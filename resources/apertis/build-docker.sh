@@ -24,4 +24,4 @@ fi
 
 # Set the build context to "../.." to allow to access the Yocto build workspace
 # for copying the ovmf.qcow2 file
-docker build --tag leda-apertis-x86 --file Dockerfile.apertis ../..
+docker build --tag ghcr.io/eclipse-leda/leda-distro/leda-apertis-x86 --file Dockerfile.apertis ../..
