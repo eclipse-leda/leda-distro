@@ -140,7 +140,7 @@ qemu-system-x86_64 -version
 echo "Entry: Starting SDV Installer in background..."
 /docker/leda-apertis-bootstrapper.sh &
 
-echo "Entry: Starting Qemu with Leda image..."
+echo "Entry: Starting QEMU with Apertis image..."
 if [ "$PRIVILEGED" == 0 ]; then
     startQemuUnprivileged
 else

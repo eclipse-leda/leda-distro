@@ -36,6 +36,12 @@ do
   sleep 1
 done
 
+until [ -S /run/container-management/container-management.sock ]
+do
+  echo "SDV Installer: Kanto Container Management not yet listening on unix domain socket, trying again..."
+  sleep 1
+done
+
 # Kuksa Databroker
 echo "SDV Installer: Kuksa Databroker"
 kanto-cm create --name databroker \
@@ -123,5 +129,5 @@ kanto-cm start --name hvac
 
 echo "SDV Installer done."
 echo ""
-echo "You may now login to Apertis as `user` with password `user`"
+echo "You may now login to Apertis as 'user' with password 'user'"
 echo ""
