@@ -22,6 +22,7 @@ then
     exit
 fi
 
+docker rm --force leda-apertis-x86
 docker run --name leda-apertis-x86 --tty --interactive leda-apertis-x86
 
 # docker run --tty --interactive --entrypoint /bin/bash leda-apertis-x86

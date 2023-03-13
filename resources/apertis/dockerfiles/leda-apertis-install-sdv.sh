@@ -37,12 +37,14 @@ do
 done
 
 # Kuksa Databroker
+echo "SDV Installer: Kuksa Databroker"
 kanto-cm create --name databroker \
     --ports=30555:55555/tcp \
     ghcr.io/eclipse/kuksa.val/databroker:0.3.0
 kanto-cm start --name databroker
 
 # Leda Incubator: Vehicle Update Manager
+echo "SDV Installer: Vehicle Update Manager"
 kanto-cm create --name vum \
     --e=SELF_UPDATE_TIMEOUT=30m \
     --e=SELF_UPDATE_ENABLE_REBOOT=true \
@@ -54,6 +56,7 @@ kanto-cm create --name vum \
 kanto-cm start --name vum
 
 # Leda Incubator: Self Update Agent
+echo "SDV Installer: Self Update Agent"
 sudo mkdir -p /data/selfupdates
 sudo kanto-cm create --name sua \
     --mp="/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:shared" \
@@ -65,6 +68,7 @@ sudo kanto-cm create --name sua \
 sudo kanto-cm start --name sua
 
 # Leda Incubator: Cloud Connector
+echo "SDV Installer: Cloud Connector (unconfigured)"
 mkdir -p /data/var/certificates
 # Replace with your device certificates
 touch /data/var/certificates/device.crt
@@ -84,6 +88,7 @@ kanto-cm create --name cloudconnector \
 kanto-cm start --name cloudconnector
 
 # Examples: Seat Service
+echo "SDV Installer: Kuksa.VAL Seat Service Example"
 kanto-cm create --name seatservice \
     --e=BROKER_ADDR=databroker-host:30555 \
     --e=RUST_LOG=info \
@@ -94,6 +99,7 @@ kanto-cm create --name seatservice \
 kanto-cm start --name seatservice
 
 # Example: Kuksa DBC Feeder
+echo "SDV Installer: Kuksa.VAL DBC CAN Feeder Example"
 kanto-cm create --name feedercan \
     --e=VEHICLEDATABROKER_DAPR_APP_ID=databroker \
     --e=VDB_ADDRESS=databroker-host:30555 \
@@ -107,9 +113,15 @@ kanto-cm create --name feedercan \
 kanto-cm start --name feedercan
 
 # Example: Kuksa HVAC Example
+echo "SDV Installer: Kuksa.VAL HVAC Example"
 kanto-cm create --name hvac \
     --e=VEHICLEDATABROKER_DAPR_APP_ID=databroker \
     --e=VDB_ADDRESS=databroker-host:30555 \
     --hosts="databroker-host:host_ip" \
     ghcr.io/eclipse/kuksa.val.services/hvac_service:v0.1.0
 kanto-cm start --name hvac
+
+echo "SDV Installer done."
+echo ""
+echo "You may now login to Apertis as `user` with password `user`"
+echo ""
