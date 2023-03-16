@@ -109,6 +109,14 @@ jobs:
         container_name: 'yocto-sstate-cache'
         overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
+      with:
+        source_dir: 'build/tmp/deploy/deb/'
+        extra_args: '--destination-path yocto-qemux86_64/'
+        container_name: 'debian'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-qemuarm64:
     name: "qemuarm64"
@@ -189,6 +197,14 @@ jobs:
         container_name: 'yocto-sstate-cache'
         overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
+      with:
+        source_dir: 'build/tmp/deploy/deb/'
+        extra_args: '--destination-path yocto-qemuarm64/'
+        container_name: 'debian'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-raspberrypi4-64:
     name: "raspberrypi4-64"
@@ -262,6 +278,14 @@ jobs:
         source_dir: 'build/sstate-cache/'
         extra_args: '--destination-path sstate-cache/'
         container_name: 'yocto-sstate-cache'
+        overwrite: 'true'
+        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
+    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
+      if: github.repository_owner == 'SoftwareDefinedVehicle'
+      with:
+        source_dir: 'build/tmp/deploy/deb/'
+        extra_args: '--destination-path yocto-raspberrypi4-64/'
+        container_name: 'debian'
         overwrite: 'true'
         connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
