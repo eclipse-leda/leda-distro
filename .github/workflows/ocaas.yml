@@ -19,9 +19,9 @@ on:
   pull_request:
     types:
       - opened
-#  push:
-#    paths:
-#      - '.ort.yml'
+  push:
+    paths:
+      - '.ort.yml'
  
 jobs:
   ocaas-scan:
