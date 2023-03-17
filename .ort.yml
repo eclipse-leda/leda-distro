@@ -1,0 +1,5 @@
+excludes:
+  paths:
+  - pattern: "poky/bitbake/**"
+    reason: "BUILD_TOOL_OF"
+    comment: "Toaster is a web interface used to configure and run builds"
