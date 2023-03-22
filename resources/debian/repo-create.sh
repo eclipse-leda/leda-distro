@@ -38,8 +38,10 @@ deb https://sdvyocto.blob.core.windows.net/debian/ ${OS_RELEASE} main
 EOF
 
 # Now add the packages 
-find ../../build/tmp/deploy/deb/ -name "*.deb" -type f -print0 | while IFS= read -r -d $'\0' debFile; do
+# find ../../build/tmp/deploy/deb/ -name "*.deb" -type f -print0 | while IFS= read -r -d $'\0' debFile; do
+while read debFile; do
     echo "Processing ${debFile}"
     ./fix-version.sh ${debFile}
     reprepro --section misc --component main --priority optional -b ${BASE_DIR} includedeb ${OS_RELEASE} ${debFile}
-done
+done < packagelist
+

@@ -29,3 +29,7 @@ RUN echo "deb https://sdvyocto.blob.core.windows.net/debian dracon main" > /etc/
 RUN apt-get update
 
 RUN apt install -y leda-utils
+RUN apt install -y packagegroup-sdv-core
+RUN apt install -y packagegroup-sdv-tools
+RUN apt install -y packagegroup-sdv-examples
+RUN apt install -y packagegroup-sdv-additions

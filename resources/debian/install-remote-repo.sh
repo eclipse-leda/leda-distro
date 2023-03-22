@@ -1,5 +1,5 @@
 #!/bin/bash
-sudo bash -c "echo \"deb file:${FULL_DIR} dracon main\" > /etc/apt/sources.list.d/sdv.list"
+sudo bash -c "echo \"deb https://sdvyocto.blob.core.windows.net/debian dracon main\" > /etc/apt/sources.list.d/sdv.list"
 gpg --output public.key.gpg --export leda-dev@eclipse.org
 # gpg --output private.pgp --armor --export-secret-key leda-dev@eclipse.org
 # gpg --output public.pgp --armor --export leda-dev@eclipse.org
