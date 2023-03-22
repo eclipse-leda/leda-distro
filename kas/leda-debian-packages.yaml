@@ -1,0 +1,38 @@
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+# Every file needs to contain a header, that provides kas with information
+# about the context of this file.
+header:
+  version: 12
+  includes:
+  - kas/common-kirkstone.yaml
+machine: qemux86-64
+target:
+  - packagegroup-sdv-core
+  - packagegroup-sdv-additions
+  - packagegroup-sdv-airgap-containers
+  - packagegroup-sdv-examples
+  - packagegroup-sdv-tools
+local_conf_header:
+  meta-leda: |
+    PACKAGE_CLASSES += " package_deb"
+repos:
+  meta-rauc-community:
+    url: "https://github.com/rauc/meta-rauc-community.git"
+    refspec: kirkstone
+    layers:
+      meta-rauc-qemux86:
+      meta-rauc-raspberrypi:
+  meta-raspberrypi:
+    url: "https://git.yoctoproject.org/meta-raspberrypi"
+    refspec: kirkstone

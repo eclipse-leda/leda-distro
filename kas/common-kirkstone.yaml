@@ -14,14 +14,10 @@
 # about the context of this file.
 header:
   version: 12
-  includes:
-  - kas/mirrors.yaml
-  - kas/spdx.yaml
 distro: leda
 target: sdv-image-all
 local_conf_header:
   meta-leda: |
-    PACKAGE_CLASSES += " package_deb"
     INHERIT += "rm_work"
     INHERIT:remove = " archiver"
     INHERIT:remove = " cve-check"
