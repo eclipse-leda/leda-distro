@@ -697,8 +697,7 @@ curations:
     concluded_license: "Apache-2.0"
     reason: "INCORRECT"
     comment: "It's our standard Apache-2.0 license header."
-curations:    
-  packages:
+packages:
     - id: "Crate::ryu:1.0.10"
       curations:
         comment: "Licenses were scanned manually in source and effective licenses are concluded."
