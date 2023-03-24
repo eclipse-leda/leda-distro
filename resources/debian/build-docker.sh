@@ -1,5 +1,4 @@
-# syntax=docker/dockerfile:1
-#
+#!/bin/bash
 # /********************************************************************************
 # * Copyright (c) 2023 Contributors to the Eclipse Foundation
 # *
@@ -12,24 +11,5 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-#
 
-FROM debian:bullseye AS build
-
-ARG DEBIAN_FRONTEND=noninteractive
-ARG TZ=Etc/UTC
-
-LABEL name="leda-debian-x86"
-
-COPY public.key.gpg /etc/apt/trusted.gpg.d/
-
-RUN apt-get update
-RUN apt-get install -y ca-certificates
-RUN echo "deb https://sdvyocto.blob.core.windows.net/debian dracon main" > /etc/apt/sources.list.d/sdv.list
-RUN apt-get update
-
-RUN apt install -y leda-utils
-RUN apt install -y packagegroup-sdv-core
-RUN apt install -y packagegroup-sdv-tools
-RUN apt install -y packagegroup-sdv-examples
-RUN apt install -y packagegroup-sdv-additions
+docker build --build-arg BASE_IMAGE=debian:bookworm --tag leda-debian -f Dockerfile.debian .

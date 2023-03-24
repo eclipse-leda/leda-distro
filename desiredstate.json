@@ -1,0 +1,121 @@
+{
+    "name": "mike_test3",
+       "specification": {
+           "baselines": [],
+           "domains": [
+               {
+                   "id": "containers",
+                   "components": [
+                       {
+                           "id": "wiper-app",
+                           "version": "edge",
+                           "config": [
+                               {
+                                   "key": "image",
+                                   "value": "ghcr.io/softwaredefinedvehicle/wiperpoc/wiperpoc:latest"
+                               },
+                               {
+                                   "key": "env",
+                                   "value": "SDV_MIDDLEWARE_TYPE=native"
+                               },
+                               {
+                                   "key": "env",
+                                   "value": "SDV_VEHICLEDATABROKER_ADDRESS=127.0.0.1:55555"
+                               },
+                               {
+                                   "key": "env",
+                                   "value": "SDV_MQTT_ADDRESS=mqtt://127.0.0.1:1883"
+                               },
+                               {
+                                   "key": "env",
+                                   "value": "SDV_SEATSERVICE_ADDRESS=127.0.0.1:30051"
+                               },
+                               {
+                                   "key": "network",
+                                   "value": "host"
+                               }
+                           ]
+                       },
+                       {
+                           "id": "ota-client",
+                           "version": "v0.0.2",
+                           "config": [
+                               {
+                                   "key": "image",
+                                   "value": "ghcr.io/softwaredefinedvehicle/sdv-ota-client/ota-client:v0.0.2"
+                               },
+                               {
+                                   "key": "mount",
+                                   "value": "/etc/ota-client:/app/config"
+                               },
+                               {
+                                   "key": "mount",
+                                   "value": "/data/var/certificates:/app/config/certs"
+                               },
+                               {
+                                   "key": "mount",
+                                   "value": "/etc/ssl/certs:/app/config/ca-certs/"
+                               },
+                               {
+                                   "key": "mount",
+                                   "value": "/tmp:/tmp"
+                               },
+                               {
+                                   "key": "host",
+                                   "value": "mosquitto:host_ip"
+                               }
+                           ]
+                       },
+                       {
+                           "id": "vehicledatabroker",
+                           "version": "v0.0.2",
+                           "config": [
+                               {
+                                   "key": "image",
+                                   "value": "ghcr.io/boschglobal/kuksa.val/databroker:0.0.2"
+                               },
+                               {
+                                   "key": "port",
+                                   "value": "55555:55555"
+                               }
+                           ]
+                       },
+                       {
+                           "id": "someip-feeder",
+                           "version": "sha-3c4811b",
+                           "config": [
+                               {
+                                   "key": "image",
+                                   "value": "ghcr.io/softwaredefinedvehicle/kuksa.val.feeders.fork/someip-feeder:sha-3c4811b"
+                               },
+                               {
+                                   "key": "network",
+                                   "value": "host"
+                               },
+                               {
+                                   "key": "env",
+                                   "value": "BROKER_ADDR=127.0.0.1:55555"
+                               }
+                           ]
+                       }
+                   ],
+                   "config": []
+               },
+               {
+                   "id": "safetyApp",
+                   "components": [],
+                   "config": []
+               },
+               {
+                   "id": "safetyEcu",
+                   "components": [],
+                   "config": []
+               },
+               {
+                   "id": "selfUpdate",
+                   "components": [],
+                   "config": []
+               }
+           ]
+       }
+   }

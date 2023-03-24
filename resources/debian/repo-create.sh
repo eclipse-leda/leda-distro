@@ -1,4 +1,16 @@
 #!/bin/bash
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
 
 # sudo apt install -y reprepro
 # sudo apt install -y devscripts
@@ -12,7 +24,7 @@ KEY_ID=`gpg --list-secret-key --with-subkey-fingerprint | tail -2 | xargs`
 echo "GPG Key ID is: ${KEY_ID}"
 
 # Create folder suppoed to be Apache httpd Document Root
-rm -rf ${BASE_DIR}
+# rm -rf ${BASE_DIR}
 
 mkdir -p ${BASE_DIR}/conf
 
@@ -44,4 +56,3 @@ while read debFile; do
     ./fix-version.sh ${debFile}
     reprepro --section misc --component main --priority optional -b ${BASE_DIR} includedeb ${OS_RELEASE} ${debFile}
 done < packagelist
-
