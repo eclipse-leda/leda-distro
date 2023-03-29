@@ -10,20 +10,10 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-# We have a conf and classes directory, add to BBPATH
-BBPATH .= ":${LAYERDIR}"
-
-# We have recipes-* directories, add to BBFILES
-BBFILES += "${LAYERDIR}/recipes-*/*.bb \
-            ${LAYERDIR}/recipes-*/*.bbappend"
-
-BBFILE_COLLECTIONS += "meta-leda-tegra"
-BBFILE_PATTERN_meta-leda-tegra = "^${LAYERDIR}/"
-BBFILE_PRIORITY_meta-leda-tegra = "6"
-
-LAYERDEPENDS_meta-leda-tegra = " \
-           core \
-           meta-kanto \
-           meta-rauc-tegra \
-"
-LAYERSERIES_COMPAT_meta-leda-tegra = "kirkstone"
+COMPATIBLE_MACHINE = "tegra210"
+# Tegra needs a plain WIC file (not qcow2) to be flashed to SD-Card
+WKS_FILE:jetson-nano-2gb-devkit ?= "jetson-sdcard.wks"
+IMAGE_FSTYPES:jetson-nano-2gb-devkit = "tegraflash tar.gz wic.gz"
+# Allow wics to partition this image by providing boot files
+IMAGE_BOOT_FILES:jetson-nano-2gb-devkit = "Image u-boot.bin tegra210-p3448-0003-p3542-0000-jetson-nano-2gb-devkit.dtb u-boot-jetson-nano-2gb-devkit.bin"
+INCOMPATIBLE_LICENSE = ""

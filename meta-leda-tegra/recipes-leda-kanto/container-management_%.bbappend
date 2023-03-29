@@ -10,20 +10,9 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-# We have a conf and classes directory, add to BBPATH
-BBPATH .= ":${LAYERDIR}"
 
-# We have recipes-* directories, add to BBFILES
-BBFILES += "${LAYERDIR}/recipes-*/*.bb \
-            ${LAYERDIR}/recipes-*/*.bbappend"
+COMPATIBLE_MACHINE = "tegra210"
 
-BBFILE_COLLECTIONS += "meta-leda-tegra"
-BBFILE_PATTERN_meta-leda-tegra = "^${LAYERDIR}/"
-BBFILE_PRIORITY_meta-leda-tegra = "6"
-
-LAYERDEPENDS_meta-leda-tegra = " \
-           core \
-           meta-kanto \
-           meta-rauc-tegra \
-"
-LAYERSERIES_COMPAT_meta-leda-tegra = "kirkstone"
+RDEPENDS:${PN}:jetson-nano-2gb-devkit:remove = "kernel-module-dm-thin-pool"
+RDEPENDS:${PN}:jetson-nano-2gb-devkit:remove = "kernel-module-xt-masquerade"
+RDEPENDS:${PN}:jetson-nano-2gb-devkit:append = " thin-provisioning-tools"

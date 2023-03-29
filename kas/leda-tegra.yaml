@@ -18,14 +18,6 @@ header:
   includes:
   - kas/common-kirkstone.yaml
 machine: jetson-nano-2gb-devkit
-local_conf_header:
-  incompatible: |
-    # SKIP_RECIPE[haveged] = "Incopatible license: GPL-3.0-only"
-    # BBMASK = "meta-tegra/external/openembedded-layer/recipes-extended/haveged"
-    # BBMASK = "meta-openembedded/meta-oe/recipes-extended/haveged"
-    DISTRO_FEATURES = "x11 opengl "
-    IMAGE_CLASSES += "image_types_tegra"
-    IMAGE_FSTYPES = "tegraflash"
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
