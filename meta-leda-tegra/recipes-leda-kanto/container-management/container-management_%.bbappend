@@ -10,10 +10,7 @@
 # *
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
-COMPATIBLE_MACHINE = "tegra210"
-# Tegra needs a plain WIC file (not qcow2) to be flashed to SD-Card
-WKS_FILE:jetson-nano-2gb-devkit ?= "jetson-sdcard.wks"
-IMAGE_FSTYPES:jetson-nano-2gb-devkit = "tegraflash tar.gz wic.gz"
-# Allow wics to partition this image by providing boot files
-IMAGE_BOOT_FILES:jetson-nano-2gb-devkit = "Image u-boot.bin tegra210-p3448-0003-p3542-0000-jetson-nano-2gb-devkit.dtb u-boot-jetson-nano-2gb-devkit.bin"
-INCOMPATIBLE_LICENSE = ""
+
+RDEPENDS:${PN}:jetson-nano-2gb-devkit:remove = "kernel-module-dm-thin-pool"
+RDEPENDS:${PN}:jetson-nano-2gb-devkit:remove = "kernel-module-xt-masquerade"
+RDEPENDS:${PN}:jetson-nano-2gb-devkit:append = " thin-provisioning-tools"

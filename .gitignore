@@ -52,6 +52,9 @@ meta-leda/
 meta-virtualization/
 poky/
 
+meta-tegra/
+meta-tegra-community/
+
 # Remote sstate-cache on Azure Storage
 azure-sstate-cache/
 azure-downloads-cache/
