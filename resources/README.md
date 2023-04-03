@@ -2,6 +2,8 @@
 
 This folder containers additional resources for building and running Leda quickstart images using QEMU and Docker.
 
+- `apertis`- For Leda develoeprs: Documentation how to install Leda stack onto an Apertis IoT Fixed Function image
+- `debian`- For Leda develoeprs: Experiment to install Yocto-built Debian packages of Leda components into plain Debian docker images.
 - `docker`- For users: Documentation explains how to start the Leda Quickstart Docker container
 - `docker-compose` - For users: Documentation and docker compose setup, which starts multiple Leda containers including an update bundle webserver
 - `docker-release` - For Leda developers: Building Leda docker container based on the latest public release of Leda (requires public release)
