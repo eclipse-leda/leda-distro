@@ -17,7 +17,7 @@ function buildAndRun() {
     echo "Building for ${BASE_IMAGE}"
     CONTAINER_IMAGE_HASH=$(docker build --build-arg BASE_IMAGE=${BASE_IMAGE} -q -f Dockerfile.debian .) || exit 1
     echo "Performing test run on ${BASE_IMAGE}"
-    docker run --rm -it ${CONTAINER_IMAGE_HASH}
+    docker run --privileged --rm -it ${CONTAINER_IMAGE_HASH}
     RC=$?
     if [ $RC -eq 0 ]; then
         echo "Success on ${BASE_IMAGE}"
@@ -27,11 +27,11 @@ function buildAndRun() {
     fi
 }
 
-buildAndRun "debian:bookworm"
+buildAndRun "debian:bullseye"
 
 exit 0
 
-buildAndRun "debian:bullseye"
+buildAndRun "debian:bookworm"
 buildAndRun "debian:buster"
 
 buildAndRun "ubuntu:lunar"

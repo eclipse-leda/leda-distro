@@ -37,11 +37,16 @@ RUN wget https://github.com/eclipse-leda/leda-utils/releases/download/v0.0.1/ecl
     apt-get install -y ./eclipse-leda-kantui_0.0.1.0.7019_amd64.deb
 RUN apt show eclipse-leda-kantui
 
-RUN echo "deb https://sdvyocto.blob.core.windows.net/debian dracon main" > /etc/apt/sources.list.d/sdv.list
+COPY ./repo-root /repo-root
+
+RUN echo "deb file:/repo-root dracon main" > /etc/apt/sources.list.d/sdv.list
 RUN apt-get update
 
 RUN apt-get install -y leda-utils
 RUN apt-get install -y sdv-container-cloudconnector
+RUN apt-get install -y sdv-container-feedercan
+RUN apt-get install -y sdv-container-hvacservice
+RUN apt-get install -y sdv-container-seatservice
 RUN apt-get install -y sdv-container-selfupdateagent
 RUN apt-get install -y sdv-container-vehicleupdatemanager
 RUN apt-get install -y sdv-kuksa-val-databroker
@@ -60,6 +65,10 @@ RUN tar Cxzvf /usr/lib/cni cni-plugins-linux-amd64-v1.1.1.tgz
 # RUN apt-get install -y databroker-cli
 # RUN apt-get install -y container-management
 # RUN apt-get install -y kanto-auto-deployer
+
+# For container: Self Update Agent needs DBUS
+COPY dockerfiles/dbus-config.conf ./
+RUN apt-get install -y dbus
 
 COPY dockerfiles/leda-debian-test.sh ./
 CMD [ "./leda-debian-test.sh" ]

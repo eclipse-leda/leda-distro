@@ -22,10 +22,15 @@ Building Debian packages using BitBake to make packages installable on vanilla D
     Run the repo-create.sh
 
     Ensure ${PROJET_ROOT}/azure-debian/ is mounted, or adapt upload-repo.sh
-    Run the script to upload the Apt repository to a remote webserve.
+    Run the script to upload the Apt repository to a remote webserver.
 
 4. Test with Docker
 
     Run the build-docker.sh which will build container images with predefined Apt remote repository.
     The build will fail if it cannot install any of the SDV Core components.
 
+    Run the test-docker.sh to build for multiple target OS distros and run a small test script.
+    The test script runs Mosquitto, DBUS, containerd and container-management and will then create 
+    the SDV core containers.
+
+    No functional testing is being done in this stage.
