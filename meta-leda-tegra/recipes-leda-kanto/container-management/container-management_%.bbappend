@@ -14,3 +14,7 @@
 RDEPENDS:${PN}:jetson-nano-2gb-devkit:remove = "kernel-module-dm-thin-pool"
 RDEPENDS:${PN}:jetson-nano-2gb-devkit:remove = "kernel-module-xt-masquerade"
 RDEPENDS:${PN}:jetson-nano-2gb-devkit:append = " thin-provisioning-tools"
+
+RDEPENDS:${PN}:jetson-nano-devkit:remove = "kernel-module-dm-thin-pool"
+RDEPENDS:${PN}:jetson-nano-devkit:remove = "kernel-module-xt-masquerade"
+RDEPENDS:${PN}:jetson-nano-devkit:append = " thin-provisioning-tools"
