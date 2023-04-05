@@ -1,0 +1,30 @@
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+
+# Maps the CAN signal KBI_angez_Geschw of the CAN message Kombi_01 to the VSS path Vehicle.Speed
+Vehicle.Speed:
+  type: sensor
+  datatype: float
+  dbc:
+    message: Kombi_01
+    signal: KBI_angez_Geschw
+    interval_ms: 1000
+
+# Maps the CAN signal FSS_Laenge_Pos of the CAN message FS_Position_01 to the VSS path Vehicle.Cabin.Seat.Row1.Pos1.Position
+Vehicle.Cabin.Seat.Row1.Pos1.Position:
+  type: sensor
+  datatype: float
+  dbc:
+    message: FS_Position_01
+    signal: FSS_Laenge_Pos
+    interval_ms: 1000
