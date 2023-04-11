@@ -22,8 +22,6 @@ target: sdv-image-all
 local_conf_header:
   meta-leda: |
     INHERIT += "rm_work"
-    INHERIT:remove = " archiver"
-    INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
   rauc-sign-conf: |
@@ -35,23 +33,23 @@ local_conf_header:
 repos:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
-    refspec: kirkstone
+    refspec: 407c3e0237d947ec003bdd1af89a226121c7939c
     layers:
       meta:
       meta-poky:
       meta-yocto-bsp:
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
-    refspec: kirkstone
+    refspec: 39e6f9387947c512148be09663476f59ff500c2b
   meta-kanto:
     url: "https://github.com/eclipse-kanto/meta-kanto.git"
-    refspec: kirkstone
+    refspec: 7d4067987321fbf274cf34b05415bb74a20abf52
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
-    refspec: kirkstone
+    refspec: bfa6727718bc4eb550c24e2c03a4118b4e7bc842
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    refspec: kirkstone
+    refspec: 571e36e20e9d1f27af0eb4545291beeb64f280e2
     layers:
       meta-oe:
       meta-filesystems:
@@ -59,10 +57,10 @@ repos:
       meta-networking:
   meta-spdxscanner:
     url: https://git.yoctoproject.org/meta-spdxscanner
-    refspec: kirkstone
+    refspec: 8b07df1535fe1203b07fc87f8c6a1e34311e2a1d
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main
+    refspec: baff5afa0014e1acba84758c01b88cfafbbe94e1
     layers:
       meta-leda-bsp:
       meta-leda-components:

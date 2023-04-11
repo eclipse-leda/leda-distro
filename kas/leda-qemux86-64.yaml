@@ -20,6 +20,6 @@ machine: qemux86-64
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: kirkstone
+    refspec: 7e626bdeb6b6e28c5f11c4af699df0742d258171
     layers:
       meta-rauc-qemux86:
