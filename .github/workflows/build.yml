@@ -127,6 +127,7 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
+        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml -- --setscene-only; do ((--r))||exit;sleep 60;done)
         (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
