@@ -22,6 +22,7 @@ target: sdv-image-all
 local_conf_header:
   meta-leda: |
     INHERIT += "rm_work"
+    PACKAGE_CLASSES += " package_deb"
     INHERIT:remove = " archiver"
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"

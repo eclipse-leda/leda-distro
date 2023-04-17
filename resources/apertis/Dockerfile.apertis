@@ -1,0 +1,84 @@
+# syntax=docker/dockerfile:1
+#
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+
+FROM debian:bullseye AS build
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TZ=Etc/UTC
+
+LABEL name="leda-apertis-x86"
+
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/debian-bullseye-backports.list
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends ca-certificates curl
+RUN apt-get install -y -t bullseye-backports qemu-system-x86
+
+RUN curl -o apertis.img.gz https://images.apertis.org/release/v2023/v2023.0/amd64/iot/apertis_v2023-iot-amd64-uefi_v2023.0.img.gz
+RUN gunzip apertis.img.gz
+RUN ls -al
+RUN qemu-img convert -f raw -O qcow2 apertis.img apertis.qcow2
+
+FROM debian:bullseye AS runtime
+
+RUN apt-get update
+RUN apt-get install -y --no-install-recommends \
+    bind9-utils \
+    ca-certificates \
+    curl \
+    dnsmasq \
+    dnsutils \
+    iproute2 \
+    iptables \
+    iputils-ping \
+    isc-dhcp-server \
+    net-tools \
+    ssh \
+    sudo \
+    uml-utilities \
+    xz-utils \
+    sshpass
+
+# Debian Bullseye contains QEMU 5.2
+# RUN apt-get install -y --no-install-recommends qemu-system-x86
+
+# Debian Bullseye-Backports contains QEMU 7.2
+RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/debian-bullseye-backports.list
+RUN apt-get update
+RUN apt-get install -y -t bullseye-backports qemu-system-x86
+
+WORKDIR /root
+
+COPY --from=build apertis.qcow2 /root/apertis.qcow2
+COPY build/tmp/deploy/images/qemux86-64/ovmf.qcow2 /root/ovmf.qcow2
+
+# Original runner and a temporary modified one ("...-x86.sh")
+RUN mkdir -p /docker
+COPY resources/apertis/dockerfiles/leda-apertis-docker-entrypoint-x86.sh /docker/
+COPY resources/apertis/dockerfiles/leda-apertis-bootstrapper.sh /docker/
+COPY resources/apertis/dockerfiles/leda-apertis-install-sdv.sh /docker/
+RUN chmod a+x /docker/leda-apertis-docker-entrypoint-x86.sh
+RUN chmod a+x /docker/leda-apertis-bootstrapper.sh
+RUN chmod a+x /docker/leda-apertis-install-sdv.sh
+ENTRYPOINT [ "/docker/leda-apertis-docker-entrypoint-x86.sh" ]
+
+# Expose SSH access
+EXPOSE 2222
+
+# Expose MQTT broker: Eclipse Mosquitto
+EXPOSE 1883
+
+# Expose Eclipse Kuksa Databroker
+EXPOSE 30555

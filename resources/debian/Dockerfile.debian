@@ -1,0 +1,74 @@
+# syntax=docker/dockerfile:1
+#
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+
+ARG BASE_IMAGE=debian:bullseye
+FROM ${BASE_IMAGE} AS build
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG TZ=Etc/UTC
+
+COPY public.key.gpg /etc/apt/trusted.gpg.d/
+
+RUN apt-get update
+RUN apt-get install -y wget ca-certificates openssh-server rauc mosquitto mosquitto-clients
+
+RUN wget https://github.com/eclipse-kanto/kanto/releases/download/v0.1.0-M2/kanto_0.1.0-M2_linux_x86_64.deb && \
+   apt-get install -y ./kanto_0.1.0-M2_linux_x86_64.deb
+RUN apt show kanto
+
+RUN wget https://github.com/eclipse-leda/leda-utils/releases/download/v0.0.1/eclipse-leda-kanto-auto-deployer_0.0.1.0.7019_amd64.deb && \
+   apt-get install -y ./eclipse-leda-kanto-auto-deployer_0.0.1.0.7019_amd64.deb
+RUN apt show eclipse-leda-kanto-auto-deployer
+
+RUN wget https://github.com/eclipse-leda/leda-utils/releases/download/v0.0.1/eclipse-leda-kantui_0.0.1.0.7019_amd64.deb && \
+    apt-get install -y ./eclipse-leda-kantui_0.0.1.0.7019_amd64.deb
+RUN apt show eclipse-leda-kantui
+
+COPY ./repo-root /repo-root
+
+RUN echo "deb file:/repo-root dracon main" > /etc/apt/sources.list.d/sdv.list
+RUN apt-get update
+
+RUN apt-get install -y leda-utils
+RUN apt-get install -y sdv-container-cloudconnector
+RUN apt-get install -y sdv-container-feedercan
+RUN apt-get install -y sdv-container-hvacservice
+RUN apt-get install -y sdv-container-seatservice
+RUN apt-get install -y sdv-container-selfupdateagent
+RUN apt-get install -y sdv-container-vehicleupdatemanager
+RUN apt-get install -y sdv-kuksa-val-databroker
+RUN apt-get install -y sdv-core-containers
+RUN apt-get install -y sdv-example-containers
+
+RUN dpkg -L sdv-container-cloudconnector
+RUN dpkg -L sdv-core-containers
+
+RUN wget https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz
+RUN mkdir -p /usr/lib/cni
+RUN tar Cxzvf /usr/lib/cni cni-plugins-linux-amd64-v1.1.1.tgz
+
+# These fail due to libc (and more) dependency conflicts.
+# RUN apt-get install -y kantui
+# RUN apt-get install -y databroker-cli
+# RUN apt-get install -y container-management
+# RUN apt-get install -y kanto-auto-deployer
+
+# For container: Self Update Agent needs DBUS
+COPY dockerfiles/dbus-config.conf ./
+RUN apt-get install -y dbus
+
+COPY dockerfiles/leda-debian-test.sh ./
+CMD [ "./leda-debian-test.sh" ]

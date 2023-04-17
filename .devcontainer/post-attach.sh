@@ -48,3 +48,4 @@ function azure-mount() {
 # Second arg: Name of Azure container
 azure-mount "azure-sstate-cache" "yocto-sstate-cache"
 azure-mount "azure-downloads-cache" "downloads"
+azure-mount "azure-debian" "debian"
