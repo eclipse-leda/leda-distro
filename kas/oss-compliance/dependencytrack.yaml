@@ -1,7 +1,7 @@
 header:
   version: 12
 local_conf_header:
-  etas-dtrack: |
+  dependencytrack: |
     DEPENDENCYTRACK_PROJECT = "cde49aa3-1ac4-4f44-be11-a3c6ebda50d5"
     DEPENDENCYTRACK_API_URL = "http://localhost:8081/api"
     DEPENDENCYTRACK_API_KEY = "bbYtyccxaa4iqDtRysUY6uuwaEGziPHu"

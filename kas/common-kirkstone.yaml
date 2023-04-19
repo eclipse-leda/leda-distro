@@ -14,16 +14,11 @@
 # about the context of this file.
 header:
   version: 12
-  includes:
-  - kas/mirrors.yaml
-  - kas/spdx.yaml
 distro: leda
 target: sdv-image-all
 local_conf_header:
   meta-leda: |
     INHERIT += "rm_work"
-    INHERIT:remove = " archiver"
-    INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
   rauc-sign-conf: |
