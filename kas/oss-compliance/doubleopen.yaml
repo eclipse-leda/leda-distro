@@ -1,0 +1,9 @@
+header:
+  version: 12
+local_conf_header:
+  doubleopen: |
+    INHERIT += "doubleopen"
+repos:
+  meta-doubleopen:
+    url: https://github.com/doubleopen-project/meta-doubleopen
+    refspec: main
