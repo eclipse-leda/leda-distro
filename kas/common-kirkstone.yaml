@@ -60,7 +60,7 @@ repos:
     refspec: 8b07df1535fe1203b07fc87f8c6a1e34311e2a1d
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: 83c6a22259f1f81c9249a10b1669036c730126eb
+    refspec: b6e2f7b03b64680d1241cf99649f76de62e8886a
     layers:
       meta-leda-bsp:
       meta-leda-components:
