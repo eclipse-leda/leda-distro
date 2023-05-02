@@ -22,8 +22,6 @@ target: sdv-image-all
 local_conf_header:
   meta-leda: |
     INHERIT += "rm_work"
-    INHERIT:remove = " archiver"
-    INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
   rauc-sign-conf: |
