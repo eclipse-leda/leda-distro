@@ -99,15 +99,15 @@ jobs:
         CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom-qemux86/runtime
         CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/recipes ./cyclonedx-sbom-qemux86/recipes    
         CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom-qemux86/runtime    
+    - name: Package CycloneDX SBOM
+      run: |
+        tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz -C ./cyclonedx-sbom-qemux86 .  
     - name: Upload CycloneDX SBOM
       uses: actions/upload-artifact@v3
       with: 
         name: eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz
-    - name: Package CycloneDX SBOM
-      run: |
-        tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz -C ./cyclonedx-sbom-qemux86 .  
     - name: Package SPDX files
       run: |
         tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
