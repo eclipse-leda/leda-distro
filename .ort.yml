@@ -1,4 +1,6 @@
 # Curation for OSS OCaaS findings. For reference, see : https://github.com/oss-review-toolkit/ort/blob/main/docs/config-file-ort-yml.md
+analyzer:
+  skip_excluded: true
 excludes:
   paths:
   - pattern: "poky/bitbake/**"
@@ -692,8 +694,28 @@ curations:
     reason: "INCORRECT"
     comment: "Dual licensing, selecting Artistic license"
     concluded_license: "Artistic-1.0"
-  - path: "resources/**"
-    detected_license: "GPL-2.0-only"
+  - path: "resources/covesa/**"
+    detected_license: "LicenseRef-scancode-biosl-4.0"
+    concluded_license: "Apache-2.0"
+    reason: "INCORRECT"
+    comment: "It's our standard Apache-2.0 license header."
+  - path: "resources/docker-release/**"
+    detected_license: "LicenseRef-scancode-biosl-4.0"
+    concluded_license: "Apache-2.0"
+    reason: "INCORRECT"
+    comment: "It's our standard Apache-2.0 license header."
+  - path: "resources/docker-snapshot/**"
+    detected_license: "LicenseRef-scancode-biosl-4.0"
+    concluded_license: "Apache-2.0"
+    reason: "INCORRECT"
+    comment: "It's our standard Apache-2.0 license header."
+  - path: "scripts/run-dhcp.sh"
+    detected_license: "LicenseRef-scancode-biosl-4.0"
+    concluded_license: "Apache-2.0"
+    reason: "INCORRECT"
+    comment: "It's our standard Apache-2.0 license header."
+  - path: ".github/workflows/**"
+    detected_license: "LicenseRef-scancode-biosl-4.0"
     concluded_license: "Apache-2.0"
     reason: "INCORRECT"
     comment: "It's our standard Apache-2.0 license header."
