@@ -96,7 +96,7 @@ jobs:
       run: |
         wget -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
         chmod +x ./cyclonedx
-        CYCLONEDX_CLI=./cyclonedx python3 ./workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom/runtime    
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom/runtime    
     - name: Package SPDX files
       run: |
         tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
