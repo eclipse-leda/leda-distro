@@ -98,7 +98,7 @@ jobs:
         chmod +x ./cyclonedx
         CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom-qemux86/runtime
         CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/recipes ./cyclonedx-sbom-qemux86/recipes    
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom-qemux86/runtime    
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/packages ./cyclonedx-sbom-qemux86/packages    
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz -C ./cyclonedx-sbom-qemux86 .  
@@ -197,6 +197,22 @@ jobs:
         name: eclipse-leda-qemu-arm64.tar.xz
         if-no-files-found: error
         path: eclipse-leda-qemu-arm64.tar.xz
+    - name: Convert SPDX files to CycloneDX format
+      run: |
+        wget -nc -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
+        chmod +x ./cyclonedx
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/runtime ./cyclonedx-sbom-qemuarm64/runtime
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/recipes ./cyclonedx-sbom-qemuarm64/recipes    
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/packages ./cyclonedx-sbom-qemuarm64/packages    
+    - name: Package CycloneDX SBOM
+      run: |
+        tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemuarm64.tar.gz -C ./cyclonedx-sbom-qemuarm64 .  
+    - name: Upload CycloneDX SBOM
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-cyclonedx-sbom-qemuarm64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-cyclonedx-sbom-qemuarm64.tar.gz
     - name: Package SPDX files
       run: |
         tar --create --gzip --file eclipse-leda-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
@@ -281,6 +297,22 @@ jobs:
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error
         path: eclipse-leda-raspberrypi.tar.xz
+    - name: Convert SPDX files to CycloneDX format
+      run: |
+        wget -nc -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
+        chmod +x ./cyclonedx
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/runtime ./cyclonedx-sbom-raspberrypi4-64/runtime
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/recipes ./cyclonedx-sbom-raspberrypi4-64/recipes    
+        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/packages ./cyclonedx-sbom-raspberrypi4-64/packages    
+    - name: Package CycloneDX SBOM
+      run: |
+        tar --create --gzip --file eclipse-leda-cyclonedx-sbom-raspberrypi4-64.tar.gz -C ./cyclonedx-sbom-raspberrypi4-64 .  
+    - name: Upload CycloneDX SBOM
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-cyclonedx-sbom-raspberrypi4-64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-cyclonedx-sbom-raspberrypi4-64.tar.gz
     - name: Package SPDX files
       run: |
         tar --create --gzip --file eclipse-leda-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
