@@ -16,10 +16,15 @@
 import os
 import sys
 import shutil
+import logging
 import argparse
 import subprocess
 from pathlib import Path
 from multiprocessing.pool import ThreadPool as Pool
+
+logger = logging.getLogger("SBOM-CONVERTER")
+logger.setLevel(os.getenv("CONVERTER_LOG_LEVEL", "INFO"))
+logging.basicConfig(level=logging.INFO, format="[%(name)s %(levelname)s]: %(message)s")
 
 
 def cyclonedx_cli_valid(cyclonedx_cli: Path) -> bool:
@@ -30,7 +35,7 @@ def cyclonedx_cli_valid(cyclonedx_cli: Path) -> bool:
         stdout = s.stdout.decode("ascii")
         return "cyclonedx" in stdout
     except Exception as ex:
-        print(f"Cyclonedx cyclonedx_cli in {cyclonedx_cli} not valid:\n{ex}")
+        logger.error(f"Cyclonedx cyclonedx_cli in {cyclonedx_cli} not valid:\n{ex}")
         return False
 
 
@@ -73,8 +78,11 @@ def convert_single_file(
         check=False,
     )
     if s.returncode != 0:
-        print(s.stdout.decode("ascii"))
-        print(s.stderr.decode("ascii"))
+        logger.error(f"Failed to convert {input_file_path}")
+        logger.debug(s.stdout.decode("ascii"))
+        logger.debug(s.stderr.decode("ascii"))
+    if s.returncode == 0:
+        logger.debug(f"Converted successfully {input_file_path}")
     return s.returncode == 0
 
 
@@ -83,7 +91,7 @@ def convert_directory(
 ):
     input_directory = input_directory.resolve()
     if not input_directory.is_dir():
-        print(f"{input_directory} is not a valid directory")
+        logger.error(f"{input_directory} is not a valid directory")
         sys.exit(2)
 
     output_directory = output_directory.resolve()
@@ -95,7 +103,7 @@ def convert_directory(
         full_output_path = output_directory / new_name
 
         if full_output_path.exists() and full_output_path.is_file():
-            print(f"Skipping {spdx_file} as it is already converted")
+            logger.warning(f"Skipping {spdx_file} as it is already converted")
             return True
         convert_single_file(cyclonedx_cli, spdx_file, full_output_path)
 
@@ -131,8 +139,8 @@ def main():
     try:
         cyclonedx_cli = get_cyclonedx_cli()
     except Exception as ex:
-        print(ex)
-        print(
+        logger.error(ex)
+        logger.error(
             "cyclonedx binary not found. Please add it to PATH or set the "
             "CYCLONEDX_CLI environmental variable with the correct path.\n"
             "The binary for CycloneDX-cli can be found in the official releases:\n"
@@ -141,7 +149,11 @@ def main():
         sys.exit(1)  # could not find cli, abort
 
     args = cli_args()
-    convert_directory(cyclonedx_cli, args.INPUT_DIR, args.OUTPUT_DIR)
+    input_dir = args.INPUT_DIR.resolve()
+    output_dir = args.OUTPUT_DIR.resolve()
+    logger.info(f"Converting {input_dir} from SPDX to CycloneDX. Output: {output_dir}")
+    convert_directory(cyclonedx_cli, input_dir, output_dir)
+    logger.info("Done.")
 
 
 if __name__ == "__main__":

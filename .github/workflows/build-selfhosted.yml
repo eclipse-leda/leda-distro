@@ -100,7 +100,8 @@ jobs:
         python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/recipes ./cyclonedx-sbom-qemux86/recipes    
         python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/packages ./cyclonedx-sbom-qemux86/packages    
       env:
-        CYCLONEDX_CLI: ./cyclonedx 
+        CYCLONEDX_CLI: ./cyclonedx
+        CONVERTER_LOG_LEVEL: INFO
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz -C ./cyclonedx-sbom-qemux86 .  
@@ -207,7 +208,8 @@ jobs:
         python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/recipes ./cyclonedx-sbom-qemuarm64/recipes    
         python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/packages ./cyclonedx-sbom-qemuarm64/packages
       env:
-        CYCLONEDX_CLI: ./cyclonedx 
+        CYCLONEDX_CLI: ./cyclonedx
+        CONVERTER_LOG_LEVEL: INFO
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemuarm64.tar.gz -C ./cyclonedx-sbom-qemuarm64 .  
@@ -309,7 +311,8 @@ jobs:
         python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/recipes ./cyclonedx-sbom-raspberrypi4-64/recipes    
         python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/packages ./cyclonedx-sbom-raspberrypi4-64/packages    
       env:
-        CYCLONEDX_CLI: ./cyclonedx 
+        CYCLONEDX_CLI: ./cyclonedx
+        CONVERTER_LOG_LEVEL: INFO
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-raspberrypi4-64.tar.gz -C ./cyclonedx-sbom-raspberrypi4-64 .  
