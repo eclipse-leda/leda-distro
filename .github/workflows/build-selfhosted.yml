@@ -96,9 +96,11 @@ jobs:
       run: |
         wget -nc -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
         chmod +x ./cyclonedx
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom-qemux86/runtime
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/recipes ./cyclonedx-sbom-qemux86/recipes    
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/packages ./cyclonedx-sbom-qemux86/packages    
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/runtime ./cyclonedx-sbom-qemux86/runtime
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/recipes ./cyclonedx-sbom-qemux86/recipes    
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemux86-64/packages ./cyclonedx-sbom-qemux86/packages    
+      env:
+        CYCLONEDX_CLI: ./cyclonedx 
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz -C ./cyclonedx-sbom-qemux86 .  
@@ -201,9 +203,11 @@ jobs:
       run: |
         wget -nc -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
         chmod +x ./cyclonedx
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/runtime ./cyclonedx-sbom-qemuarm64/runtime
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/recipes ./cyclonedx-sbom-qemuarm64/recipes    
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/packages ./cyclonedx-sbom-qemuarm64/packages    
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/runtime ./cyclonedx-sbom-qemuarm64/runtime
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/recipes ./cyclonedx-sbom-qemuarm64/recipes    
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/qemuarm64/packages ./cyclonedx-sbom-qemuarm64/packages
+      env:
+        CYCLONEDX_CLI: ./cyclonedx 
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-qemuarm64.tar.gz -C ./cyclonedx-sbom-qemuarm64 .  
@@ -301,9 +305,11 @@ jobs:
       run: |
         wget -nc -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
         chmod +x ./cyclonedx
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/runtime ./cyclonedx-sbom-raspberrypi4-64/runtime
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/recipes ./cyclonedx-sbom-raspberrypi4-64/recipes    
-        CYCLONEDX_CLI=./cyclonedx python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/packages ./cyclonedx-sbom-raspberrypi4-64/packages    
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/runtime ./cyclonedx-sbom-raspberrypi4-64/runtime
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/recipes ./cyclonedx-sbom-raspberrypi4-64/recipes    
+        python3 ./.github/workflow-scripts/sbom-converter.py ./build/tmp/deploy/spdx/raspberrypi4-64/packages ./cyclonedx-sbom-raspberrypi4-64/packages    
+      env:
+        CYCLONEDX_CLI: ./cyclonedx 
     - name: Package CycloneDX SBOM
       run: |
         tar --create --gzip --file eclipse-leda-cyclonedx-sbom-raspberrypi4-64.tar.gz -C ./cyclonedx-sbom-raspberrypi4-64 .  
