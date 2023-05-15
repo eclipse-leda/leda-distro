@@ -113,13 +113,13 @@ jobs:
         path: eclipse-leda-cyclonedx-sbom-qemux86_64.tar.gz
     - name: Package SPDX files
       run: |
-        tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
+        tar --create --gzip --file eclipse-leda-spdx-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
     - name: Upload SPDX SBOM
       uses: actions/upload-artifact@v3
       with: 
-        name: eclipse-leda-sbom-qemux86_64.tar.gz
+        name: eclipse-leda-spdx-sbom-qemux86_64.tar.gz
         if-no-files-found: error
-        path: eclipse-leda-sbom-qemux86_64.tar.gz
+        path: eclipse-leda-spdx-sbom-qemux86_64.tar.gz
     - name: Package Patched Sources
       run: |
         tar --create --gzip --file eclipse-leda-sources-qemux86_64.tar.gz -C ./build/tmp/deploy/sources/ .
@@ -221,13 +221,13 @@ jobs:
         path: eclipse-leda-cyclonedx-sbom-qemuarm64.tar.gz
     - name: Package SPDX files
       run: |
-        tar --create --gzip --file eclipse-leda-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
+        tar --create --gzip --file eclipse-leda-spdx-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
     - name: Upload files
       uses: actions/upload-artifact@v3
       with: 
-        name: eclipse-leda-sbom-qemuarm64.tar.gz
+        name: eclipse-leda-spdx-sbom-qemuarm64.tar.gz
         if-no-files-found: error
-        path: eclipse-leda-sbom-qemuarm64.tar.gz
+        path: eclipse-leda-spdx-sbom-qemuarm64.tar.gz
     - name: Package Patched Sources
       run: |
         tar --create --gzip --file eclipse-leda-sources-qemuarm64.tar.gz -C ./build/tmp/deploy/sources/ .
@@ -324,13 +324,13 @@ jobs:
         path: eclipse-leda-cyclonedx-sbom-raspberrypi4-64.tar.gz
     - name: Package SPDX files
       run: |
-        tar --create --gzip --file eclipse-leda-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
+        tar --create --gzip --file eclipse-leda-spdx-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
     - name: Upload files
       uses: actions/upload-artifact@v3
       with: 
-        name: eclipse-leda-sbom-raspberrypi4-64.tar.gz
+        name: eclipse-leda-spdx-sbom-raspberrypi4-64.tar.gz
         if-no-files-found: error
-        path: eclipse-leda-sbom-raspberrypi4-64.tar.gz
+        path: eclipse-leda-spdx-sbom-raspberrypi4-64.tar.gz
     - name: Package Patched Sources
       run: |
         tar --create --gzip --file eclipse-leda-sources-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/sources/ .
