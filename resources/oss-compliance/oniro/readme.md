@@ -2,6 +2,10 @@
 
 Scans an existing BitBake build directory and generates license compliance reports.
 
+It uses two tools:
+- TinfoilHat to generate metadata (`*.tinfoilhat.json`)
+- Aliensrc Creator to package sources as `.aliensrc` tar balls, which include metadata (`aliensrc.json`) and source files of the original package
+
 ## Usage
 
 1. Optional: Run a `kas` build with enabled remote mirrors, and one for downloading all sources

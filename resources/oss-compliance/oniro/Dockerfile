@@ -31,6 +31,7 @@ ENV LANG en_US.UTF-8
 # Install Tinfoilhat
 RUN git clone https://gitlab.eclipse.org/eclipse/oniro-compliancetoolchain/toolchain/tinfoilhat.git
 RUN cp tinfoilhat/tinfoilhat.py /usr/bin/tinfoilhat && chmod +x /usr/bin/tinfoilhat
+RUN cp tinfoilhat/aliensrc_creator.py /usr/bin/aliensrc_creator && chmod +x /usr/bin/aliensrc_creator
 
 WORKDIR /app
 ADD tinfoilhat-entrypoint.sh /app
