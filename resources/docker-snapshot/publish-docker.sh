@@ -12,7 +12,7 @@
 # * SPDX-License-Identifier: Apache-2.0
 # ********************************************************************************/
 #
-# Build and Run Leda on X86 and ARM64 in Docker Containers
+# Build and Publish Docker Containers for Leda on X86 and ARM64
 #
 #set -e
 
@@ -34,10 +34,14 @@ echo "${GITHUB_TOKEN}" | docker login --username "github" --password-stdin ghcr.
 # docker run -it --privileged --device=/dev/kvm:/dev/kvm --device=/dev/net/tun:/dev/net/tun ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest
 # docker push ghcr.io/eclipse-leda/leda-distro/leda-quickstart-x86:latest
 
-export LEDA_VERSION_TAG="latest"
-docker compose --profile tools --profile disabled --profile tests --profile metrics build 
-docker compose --profile tools --profile disabled --profile tests --profile metrics push
+function publishDocker() {
+    export LEDA_VERSION_TAG="$1"
+    echo "Building and publishing tag: ${LEDA_VERSION_TAG}"
+    docker compose --profile tools --profile disabled --profile tests --profile metrics build --build-arg LEDA_VERSION_TAG="${LEDA_VERSION_TAG}" || exit 1
+    docker compose --profile tools --profile disabled --profile tests --profile metrics push
+}
 
-export LEDA_VERSION_TAG=$(git describe --tags)
-docker compose --profile tools --profile disabled --profile tests --profile metrics build 
-docker compose --profile tools --profile disabled --profile tests --profile metrics push 
+git fetch --prune --unshallow
+GIT_VERSION_TAG=$(git describe --tags --always)
+publishDocker "latest"
+publishDocker "${GIT_VERSION_TAG}"
