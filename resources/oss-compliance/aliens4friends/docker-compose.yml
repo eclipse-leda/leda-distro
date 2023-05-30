@@ -1,0 +1,59 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2021 NOI Techpark <p.moser@noi.bz.it>
+
+version: '3.4'
+services:
+  fossology:
+    image: fossology/fossology
+    environment:
+      FOSSOLOGY_DB_HOST: postgres
+      FOSSOLOGY_DB_NAME: fossology
+      FOSSOLOGY_DB_USER: fossy
+      FOSSOLOGY_DB_PASSWORD: fossy
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8999:80
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sSf localhost/repo/api/v1/health | grep -q '{\"status\":\"OK\",' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  postgres:
+    image: postgres:12
+    environment:
+      POSTGRES_DB: fossology
+      POSTGRES_USER: fossy
+      POSTGRES_PASSWORD: fossy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - aliens4friends-fossology-db:/var/lib/postgresql/data/
+  toolchain:
+    user: "1000:1000"
+    build:
+      dockerfile: infrastructure/docker/toolchain.dockerfile
+      #context: https://gitlab.eclipse.org/eclipse/oniro-compliancetoolchain/toolchain/aliens4friends.git
+      context: aliens4friends
+    environment:
+      - A4F_POOL=/home/a4fuser/aliens4friends-pool
+      - FOSSY_SERVER=http://fossology/repo
+    volumes:
+      - /workspaces/leda-distro-fork/build/tmp/deploy/:/deploy:ro
+    working_dir: /home/a4fuser
+    configs:
+      - source: aliens4friends-config
+        target: /home/a4fuser/.env
+  test-fossology-api:
+    build:
+      dockerfile: Dockerfile.foss-py-test
+      context: .
+configs:
+  aliens4friends-config:
+    file: ./.env
+volumes:
+  aliens4friends-fossology-db:

@@ -1,0 +1,9 @@
+# Testing fossology python api
+
+FROM python:3.9
+WORKDIR /usr/src/app
+COPY dockerfiles/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+COPY dockerfiles/test-fossology-api.py .
+
+CMD [ "python", "./test-fossology-api.py" ]

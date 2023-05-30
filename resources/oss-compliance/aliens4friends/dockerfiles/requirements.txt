@@ -1,0 +1,12 @@
+fossology==2.1.0
+wheel==0.34.2
+numpy==1.19.5
+python-debian==0.1.39
+spdx-tools==0.6.1
+fossology==2.1.0
+python-dotenv==0.15.0
+packaging==20.9
+flanker==0.9.11
+deepdiff==5.2.3
+beautifulsoup4==4.9.3
+psycopg2-binary==2.9.1
