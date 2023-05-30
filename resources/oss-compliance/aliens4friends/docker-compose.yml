@@ -4,7 +4,10 @@
 version: '3.4'
 services:
   fossology:
-    image: fossology/fossology
+    build:
+      dockerfile: infrastructure/docker/fossology/fossology.dockerfile
+      #context: https://gitlab.eclipse.org/eclipse/oniro-compliancetoolchain/toolchain/aliens4friends.git
+      context: aliens4friends
     environment:
       FOSSOLOGY_DB_HOST: postgres
       FOSSOLOGY_DB_NAME: fossology
@@ -44,10 +47,29 @@ services:
       - FOSSY_SERVER=http://fossology/repo
     volumes:
       - /workspaces/leda-distro-fork/build/tmp/deploy/:/deploy:ro
+      - aliens4friends-userhome:/home/a4fuser
     working_dir: /home/a4fuser
     configs:
       - source: aliens4friends-config
         target: /home/a4fuser/.env
+    depends_on:
+      fossology:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "a4f config
+        a4f session -ns MYSESSION
+        a4f add -s MYSESSION /deploy/aliensrc/*
+        a4f add -s MYSESSION /deploy/tinfoilhat/*
+        a4f listpool --session MYSESSION --filetype ALIENSRC
+        a4f match -s MYSESSION
+        a4f snapmatch -s MYSESSION
+        a4f scan -s MYSESSION
+        a4f delta -s MYSESSION
+        a4f spdxdebian -s MYSESSION
+        a4f spdxalien -s MYSESSION
+        a4f upload --folder leda -s MYSESSION
+        exit 0;
+      "
   test-fossology-api:
     build:
       dockerfile: Dockerfile.foss-py-test
@@ -57,3 +79,4 @@ configs:
     file: ./.env
 volumes:
   aliens4friends-fossology-db:
+  aliens4friends-userhome:
