@@ -31,6 +31,8 @@ It uses two tools:
 
 6. Open fossology at http://127.0.0.1:8999
 
+7. Open Aliens4Friends Dashboard at http://127.0.0.1:8085/?json=http%253A%252F%252Fwebserver%253A80%252Fstats%252Feclipse-leda.aliens4friends.json
+
 ## Troubleshooting
 
 ### Unable to build aliens4friends fossology container

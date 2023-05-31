@@ -17,8 +17,10 @@
 # cd aliens4friends
 # docker compose run --rm toolchain a4f config > .env
 
-docker compose build --build-arg GITHUB_BOT_AUTH=${GITHUB_TOKEN} --progress plain
-docker compose down
+#docker compose build --build-arg GITHUB_BOT_AUTH=${GITHUB_TOKEN} --progress plain
+#docker compose down
+
+mkdir ./aliens4friends-pool
 docker compose up -d --wait
 
 # a4f config

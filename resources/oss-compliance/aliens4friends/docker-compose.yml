@@ -36,8 +36,25 @@ services:
       retries: 5
     volumes:
       - aliens4friends-fossology-db:/var/lib/postgresql/data/
+  webserver:
+    image: nginx
+    volumes:
+      - ./aliens4friends-pool:/usr/share/nginx/html:ro
+#      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - 8080:80
+  dashboard:
+    build:
+      dockerfile: infrastructure/docker/Dockerfile
+      context: https://github.com/noi-techpark/solda-aliens4friends-dashboard.git
+      target: build
+    restart: unless-stopped
+    environment:
+      - APP_DEBUG=true
+      - APP_ENV=local
+    ports:
+      - 8085:5000
   toolchain:
-    user: "1000:1000"
     build:
       dockerfile: infrastructure/docker/toolchain.dockerfile
       #context: https://gitlab.eclipse.org/eclipse/oniro-compliancetoolchain/toolchain/aliens4friends.git
@@ -47,7 +64,7 @@ services:
       - FOSSY_SERVER=http://fossology/repo
     volumes:
       - /workspaces/leda-distro-fork/build/tmp/deploy/:/deploy:ro
-      - aliens4friends-userhome:/home/a4fuser
+      - ./aliens4friends-pool:/home/a4fuser/aliens4friends-pool
     working_dir: /home/a4fuser
     configs:
       - source: aliens4friends-config
@@ -58,8 +75,8 @@ services:
     entrypoint: >
       /bin/sh -c "a4f config
         a4f session -ns MYSESSION
-        a4f add -s MYSESSION /deploy/aliensrc/a*
-        a4f add -s MYSESSION /deploy/tinfoilhat/a*
+        a4f add -s MYSESSION /deploy/aliensrc/b*
+        a4f add -s MYSESSION /deploy/tinfoilhat/b*
         a4f listpool --session MYSESSION --filetype ALIENSRC
         a4f match -s MYSESSION
         a4f snapmatch -s MYSESSION
