@@ -25,7 +25,19 @@ It uses two tools:
 
     ls build/tmp/deploy/tinfoilhat
 
+5. Run aliens4friends:
+
+   ./run-aliens4friends.sh
+
+6. Open fossology at http://127.0.0.1:8999
+
 ## Troubleshooting
+
+### Unable to build aliens4friends fossology container
+
+Replace `FROM fossology/fossology:3.9.0`
+
+with: `FROM fossology:3.9`
 
 ### Unsupported SOURCE_MIRROR_URLs
 

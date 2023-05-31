@@ -21,21 +21,6 @@ docker compose build --build-arg GITHUB_BOT_AUTH=${GITHUB_TOKEN} --progress plai
 docker compose down
 docker compose up -d --wait
 
-docker compose run toolchain a4f config
-docker compose run toolchain a4f session -ns MYSESSION
-docker compose run toolchain a4f add -s MYSESSION /deploy/aliensrc/zlib-1.2.11-r0-9b0214ed.aliensrc
-docker compose run toolchain a4f add -s MYSESSION /deploy/tinfoilhat/zlib-1.2.11-r0-9b0214ed.tinfoilhat.json
-docker compose run toolchain a4f listpool --session MYSESSION --filetype ALIENSRC
-docker compose run toolchain a4f match -s MYSESSION
-docker compose run toolchain a4f snapmatch -s MYSESSION
-docker compose run toolchain a4f scan -s MYSESSION
-docker compose run toolchain a4f delta -s MYSESSION
-docker compose run toolchain a4f spdxdebian -s MYSESSION
-docker compose run toolchain a4f spdxalien -s MYSESSION
-docker compose run toolchain a4f upload --folder leda -s MYSESSION
-docker compose run toolchain a4f fossy -s MYSESSION
-docker compose run toolchain a4f harvest -s MYSESSION --report-name eclipse-leda.aliens4friends.json
-
 # a4f config
 # a4f session -ns MYSESSION
 # a4f add -s MYSESSION /deploy/aliensrc/zlib-1.2.11-r0-9b0214ed.aliensrc

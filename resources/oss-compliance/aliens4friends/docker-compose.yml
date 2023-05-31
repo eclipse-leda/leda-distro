@@ -58,8 +58,8 @@ services:
     entrypoint: >
       /bin/sh -c "a4f config
         a4f session -ns MYSESSION
-        a4f add -s MYSESSION /deploy/aliensrc/*
-        a4f add -s MYSESSION /deploy/tinfoilhat/*
+        a4f add -s MYSESSION /deploy/aliensrc/a*
+        a4f add -s MYSESSION /deploy/tinfoilhat/a*
         a4f listpool --session MYSESSION --filetype ALIENSRC
         a4f match -s MYSESSION
         a4f snapmatch -s MYSESSION
@@ -68,6 +68,7 @@ services:
         a4f spdxdebian -s MYSESSION
         a4f spdxalien -s MYSESSION
         a4f upload --folder leda -s MYSESSION
+        a4f harvest -s MYSESSION --report-name eclipse-leda.aliens4friends.json
         exit 0;
       "
   test-fossology-api:
