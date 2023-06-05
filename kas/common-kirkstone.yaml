@@ -61,9 +61,10 @@ repos:
     url: https://git.yoctoproject.org/meta-spdxscanner
     refspec: kirkstone
   meta-leda:
-    url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main
+    url: "https://github.com/SoftwareDefinedVehicle/meta-leda-fork.git"
+    refspec: meta-leda-backports
     layers:
       meta-leda-bsp:
       meta-leda-components:
       meta-leda-distro:
+      meta-leda-backports:
