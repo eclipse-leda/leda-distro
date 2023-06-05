@@ -65,3 +65,4 @@ repos:
       meta-leda-bsp:
       meta-leda-components:
       meta-leda-distro:
+      meta-leda-backports:
