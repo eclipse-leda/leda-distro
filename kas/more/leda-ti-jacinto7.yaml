@@ -1,5 +1,5 @@
 # /********************************************************************************
-# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
 # *
 # * See the NOTICE file(s) distributed with this work for additional
 # * information regarding copyright ownership.
@@ -20,8 +20,8 @@ target: sdv-image-all
 local_conf_header:
   user: |
     BBMASK .= "linux-ti-staging_6.1.bb|linux-ti-staging-rt_6.1.bb|linux-ti-staging-systest_6.1.bb"
-    IMAGE_FSTYPES:remove = "ubi"
-    IMAGE_FSTYPES = " wic.bz2 wic.bmap ext4 tar.gz"
+    IMAGE_FSTYPES += " tar.bz2 wic.bz2 wic.bmap ext4" 
+    IMAGE_FSTYPES:remove = "ubi wic.qcow2"
     INHERIT:remove = "cve-check"
     WKS_FILE = "ti-dual-image.wks.in"
   meta-leda: |
