@@ -74,6 +74,7 @@ repos:
     url: "https://github.com/eclipse-leda/meta-leda"
     refspec: main
     layers:
+      meta-leda-backports:
       meta-leda-components:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
