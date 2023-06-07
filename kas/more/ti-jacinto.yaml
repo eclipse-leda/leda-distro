@@ -14,19 +14,15 @@
 # about the context of this file.
 header:
   version: 12
-distro: leda
-target: sdv-image-all
+machine: j721e-evm
+distro: arago
+target: core-image-minimal
 local_conf_header:
   meta-leda: |
-    INHERIT += "rm_work"
-    INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
-    KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
-  rauc-sign-conf: |
-    RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
-    RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
-    RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
-  buils-stats: |
-    USER_CLASSES += "buildstats buildstats-summary"
+    IMAGE_INSTALL += "packagegroup-sdv-core"
+    DISTRO_FEATURES += " sdv"
+    DISTRO_FEATURES += " rauc"
+    DISTRO_FEATURES += " virtualization"
 repos:
   poky:
     url: "https://git.yoctoproject.org/git/poky"
@@ -35,6 +31,28 @@ repos:
       meta:
       meta-poky:
       meta-yocto-bsp:
+  meta-qt5:
+    url: https://github.com/meta-qt5/meta-qt5
+    refspec: kirkstone
+  meta-arm:
+    url: "https://git.yoctoproject.org/meta-arm/"
+    refspec: kirkstone
+    layers:
+      meta-arm:
+      meta-arm-bsp:
+      meta-arm-toolchain:
+  meta-ti:
+    url: "https://git.yoctoproject.org/meta-ti/"
+    refspec: kirkstone
+    layers:
+      meta-ti-bsp:
+      meta-ti-extras:
+  meta-arago:
+    url: "https://git.yoctoproject.org/meta-arago"
+    refspec: kirkstone
+    layers:
+      meta-arago-distro:
+      meta-arago-extras:
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
     refspec: kirkstone
@@ -52,14 +70,13 @@ repos:
       meta-filesystems:
       meta-python:
       meta-networking:
-  meta-spdxscanner:
-    url: https://git.yoctoproject.org/meta-spdxscanner
-    refspec: kirkstone
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     refspec: main
     layers:
-      meta-leda-bsp:
       meta-leda-components:
-      meta-leda-distro:
-      meta-leda-backports:
+  meta-rauc-community:
+    url: "https://github.com/rauc/meta-rauc-community.git"
+    refspec: kirkstone
+    layers:
+      meta-rauc-qemux86:
