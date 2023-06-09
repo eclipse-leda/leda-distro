@@ -13,5 +13,6 @@
         "**/build/tmp/**": true,
         "**/azure-**-cache/**": true
     },
-    "search.useIgnoreFiles": false
+    "search.useIgnoreFiles": false,
+    "git.ignoreLimitWarning": true
 }

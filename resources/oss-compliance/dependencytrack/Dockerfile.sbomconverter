@@ -1,0 +1,22 @@
+# https://github.com/CycloneDX/cyclonedx-cli
+FROM python:3
+
+# RUN useradd -m -s /bin/bash linuxbrew && \
+#     echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >>/etc/sudoers
+# USER linuxbrew
+# RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+# USER root
+# ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
+
+RUN wget -nc -O cyclonedx https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.24.2/cyclonedx-linux-x64
+RUN chmod a+x /cyclonedx
+
+ADD sbom-converter.py /sbom-converter.py
+ADD sbom-converter-entrypoint.sh /sbom-converter-entrypoint.sh
+
+VOLUME [ "/build" ]
+VOLUME [ "/output" ]
+
+ENV CYCLONEDX_CLI=/cyclonedx
+
+ENTRYPOINT [ "/bin/bash", "/sbom-converter-entrypoint.sh" ]
