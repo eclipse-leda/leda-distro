@@ -1,11 +1,13 @@
 FROM debian:11
-RUN apt-get update && apt-get -y install ca-certificates mosquitto
-RUN apt-get -y install procps lsof strace less
-RUN bash -c 'echo "listener 1883 0.0.0.0\nnallow_anonymous true" > /etc/mosquitto/conf.d/public.conf'
+RUN apt-get update && apt-get -y install ca-certificates mosquitto dbus rauc
+RUN apt-get -y install procps lsof strace less net-tools
 ADD install-leda.sh ./
-RUN chmod a+x ./install-leda.sh
-RUN ./install-leda.sh
-RUN mkdir -p /var/lib/docker/containerd/daemon/io.containerd.snapshotter.v1.overlayfs
+RUN chmod a+x ./install-leda.sh && ./install-leda.sh
+RUN rm *.deb && rm ./install-leda.sh
+RUN echo "listener 1883 0.0.0.0" > /etc/mosquitto/conf.d/public.conf
+RUN echo "allow_anonymous true" >> /etc/mosquitto/conf.d/public.conf
 ADD entrypoint.sh ./
 RUN chmod a+x ./entrypoint.sh
+VOLUME [ "/var" ]
+VOLUME [ "/run" ]
 ENTRYPOINT [ "./entrypoint.sh" ]

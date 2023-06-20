@@ -19,7 +19,7 @@
 #     -v /var/lib/container-management:/var/lib/container-management \
 #     leda-test-debian11
 
-docker run -it --rm --privileged leda-test-debian11
+# docker volume rm leda-var-lib-ctrd leda-run
+#docker run -it --rm --privileged --cap-add=SYS_ADMIN --volume leda-var-lib-ctrd:/var/lib/containerd --volume leda-run:/run leda-test-debian11
 
-
-
+docker run -it --rm --privileged --cap-add=SYS_ADMIN leda-test-debian11
