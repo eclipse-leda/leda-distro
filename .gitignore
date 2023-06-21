@@ -82,3 +82,6 @@ resources/docker-snapshot/dockerfiles/leda-tests/log.html
 resources/docker-snapshot/dockerfiles/leda-tests/output.xml
 resources/docker-snapshot/dockerfiles/leda-tests/report.html
 
+resources/oss-compliance/aliens4friends/aliens4friends
+resources/oss-compliance/aliens4friends/aliens4friends-pool
+resources/oss-compliance/dependencytrack/output
