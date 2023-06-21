@@ -35,6 +35,9 @@ repos:
       meta:
       meta-poky:
       meta-yocto-bsp:
+  meta-lts-mixins:
+    url: "https://git.yoctoproject.org/git/meta-lts-mixins"
+    refspec: kirkstone/rust-1.68
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
     refspec: kirkstone
