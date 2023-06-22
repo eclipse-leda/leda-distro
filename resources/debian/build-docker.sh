@@ -16,7 +16,7 @@
 function buildImage() {
     IMAGE="$1"
     echo "Building ${IMAGE}"
-    docker build --tag ghcr.io/eclipse-leda/leda-distro/leda-test-${IMAGE} --file Dockerfile.${IMAGE} dockerfiles/    
+    docker build --quiet --tag ghcr.io/eclipse-leda/leda-distro/leda-test-${IMAGE} --file Dockerfile.${IMAGE} dockerfiles/    
 }
 
 buildImage debian10

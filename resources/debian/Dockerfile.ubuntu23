@@ -24,4 +24,3 @@ RUN chmod a+x ./entrypoint.sh
 VOLUME [ "/var" ]
 VOLUME [ "/run" ]
 ENTRYPOINT [ "./entrypoint.sh" ]
-CMD [ "kantui" ]

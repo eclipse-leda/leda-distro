@@ -13,6 +13,9 @@ This repository is an attempt into building up the Leda edge stack for easy inst
 
 The following components are supposed to be installed:
 
+- Mosquitto
+- systemd (optional)
+- d-bus (optional, for self-update-agent and RAUC integration)
 - containerd.io
 - -RAUC Update Service- - the self-update use case is not applicable in this case
 - Eclipse Kanto Container Management - extends containerd
@@ -26,6 +29,8 @@ The following components are supposed to be installed:
 3. Reuse packages from host distro (eg containerd on Debian vs. containerd.io on Ubuntu)
 4. Testing of installation steps done in Docker
 
+> Note: As our project does not yet have a public Debian repository, users need to download the Debian packages manually.
+
 ## Package sources
 
 Some components are already available as .deb packages on GitHub (but not yet in the Debian repository).
@@ -33,13 +38,12 @@ Some components are already available as .deb packages on GitHub (but not yet in
 - Eclipse Kanto: Container Management is available as .deb packages on GitHub
 - Eclipse Leda: leda-utils, kantui and kanto-auto-deployer as .deb packages on GitHub
 
-## Building packages
-
-## Installing packages
-
 ## Testing installation
 
-To test the installation, we're using a `debian` Docker base image.
-As Kanto is supposed to run on top of containerd, and we don't want to run a second containerd (host) inside of Docker, we're going to reuse the containerd socket from the host Docker.
+To test the installation, we're using a `debian` and `ubuntu` Docker base images.
 
+As we're running a containerd instance inside of a Docker container, the container requires some additional privileges and the `SYS_ADMIN` capability.
 
+```shell
+docker run --rm --privileged --cap-add=SYS_ADMIN ghcr.io/eclipse-leda/leda-distro/leda-test-ubuntu23
+```

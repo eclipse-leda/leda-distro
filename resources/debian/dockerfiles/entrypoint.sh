@@ -54,5 +54,5 @@ if [ -t 0 ] ; then
     bash
 else
     echo "(not interactive shell)"
-    /bin/bash -c "$@"
+    [ ! -z "$@" ] && /bin/bash -c "$@"
 fi
