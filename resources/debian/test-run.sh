@@ -13,4 +13,22 @@
 # ********************************************************************************/
 #
 
-docker run -it --rm --privileged --cap-add=SYS_ADMIN ghcr.io/eclipse-leda/leda-distro/leda-test-ubuntu23
+# Fail early
+set -e
+
+function testImage() {
+    IMAGE="$1"
+    if docker run --rm --privileged --cap-add=SYS_ADMIN ghcr.io/eclipse-leda/leda-distro/leda-test-${IMAGE} ; then
+        echo "Succeeded: $IMAGE"
+    else
+        echo "Failed: $IMAGE"
+    fi
+}
+
+testImage "debian10"
+testImage "debian11"
+testImage "debian12"
+testImage "ubuntu18"
+testImage "ubuntu20"
+testImage "ubuntu22"
+testImage "ubuntu23"

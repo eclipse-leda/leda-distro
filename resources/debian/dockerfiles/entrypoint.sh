@@ -1,4 +1,22 @@
 #!/bin/bash
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+#
+set -e
+
+echo "Eclipse Leda"
+echo "running on $(cat /etc/issue)"
+echo "running on $(cat /etc/os-release)"
 
 # Required for Self Update Agent -> RAUC integration
 mkdir -p /run/dbus/
@@ -26,6 +44,15 @@ do
 done
 
 kanto-auto-deployer /var/containers/manifests/
+echo "Core container deployment code: $?"
 kanto-auto-deployer /var/containers/manifests/examples
-kantui
-bash
+echo "Example deployment code: $?"
+
+if [ -t 0 ] ; then
+    echo "(interactive shell. type 'exit' to quit the container)"
+    kantui
+    bash
+else
+    echo "(not interactive shell)"
+    /bin/bash -c "$@"
+fi
