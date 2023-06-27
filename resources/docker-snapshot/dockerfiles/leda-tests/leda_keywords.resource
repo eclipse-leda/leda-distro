@@ -23,7 +23,6 @@ Library  Process
 Library  String
 
 *** Variables ***
-${message_wait_timeout_seconds}    120
 ${leda.sshport}                    2222
 
 *** Keywords ***
@@ -48,8 +47,13 @@ Trigger to start update
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
   RETURN    ${version_id.stdout}
 
+Execute SUA command
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
+  ${message}=      Get File  ${filename}
+  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
+  
 Connect and Subscribe to Listen
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${payload_regex}
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${payload_regex}    ${message_wait_timeout_seconds}
   Connect  ${broker.uri}  ${broker.port}
   Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=${message_wait_timeout_seconds}
 
