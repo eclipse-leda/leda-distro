@@ -47,27 +47,25 @@ ${topic_currentstate}      selfupdate/currentstate/get
 
 *** Test Cases ***
 Wait for SUA alive
-    Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
+  Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
 
 Self Update Agent Test
-  [Documentation]    Install update bundle
-  # Wait for max five minutes until SUA is deployed and running
-  Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
-  # 1. Identification =============
+  Log  "Identify"
   ${expected_version}=      Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${identified_success_regex}    10
-  # 2. Downloading =============
+  Log  "Download"
   Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${download_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${download_success_regex}    120
-  # 3. Updating =============
+  Log  "Update"
   Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${update_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}    90
-  # 4. Activating =============
+  Log  "Activate"
   Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${activate_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${activation_success_regex}    5
-  # 5. Cleanup =============
+  Log  "Cleanup"
   Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${cleanup_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${cleanup_success_regex}    5
+  Log  "Finalize"
   ${result}=    Leda Execute OK   echo VERSION_ID=${expected_version} > /etc/os-release
   ${result_status}=      Leda Execute OK      rauc status --detailed --output-format=json
   ${json}=               Evaluate             json.loads("""${result_status.stdout}""")
