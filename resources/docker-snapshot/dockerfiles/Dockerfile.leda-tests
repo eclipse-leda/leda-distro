@@ -14,7 +14,7 @@
 FROM python
 LABEL name="leda-tests"
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && \
-    apt-get install -y --no-install-recommends iputils-ping netcat mosquitto-clients
+    apt-get install -y --no-install-recommends iputils-ping netcat-traditional mosquitto-clients
 WORKDIR /root
 
 RUN pip install robotframework robotframework-mqttlibrary robotframework-ymllib robotframework-metrics robotframework-jsonlibrary
