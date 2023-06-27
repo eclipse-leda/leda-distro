@@ -29,10 +29,19 @@ ${leda.sshport}                2001
 ${broker.uri}               127.0.0.1
 ${broker.port}              1884
 ${topic_pub}                selfupdate/desiredstate
+${topic_pub_commands}       selfupdate/desiredstate/command
 ${topic_sub}                selfupdate/#
 ${start_update_filename}    robot-resources/start-update-example-x86.json
+${download_filename}        robot-resources/download-command.json
+${update_filename}          robot-resources/update-command.json
+${activate_filename}        robot-resources/activate-command.json
+${cleanup_filename}         robot-resources/cleanup-command.json
 ${get_state_filename}       robot-resources/get_state.json
-${update_success_regex}    ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
+${identified_success_regex}  ([.\\s\\S]*)("IDENTIFIED")([\\s\\S.]*)
+${download_success_regex}    ([.\\s\\S]*)("DOWNLOAD_SUCCESS")([\\s\\S.]*)
+${update_success_regex}      ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
+${activation_success_regex}  ([.\\s\\S]*)("ACTIVATION_SUCCESS")([\\s\\S.]*)
+${cleanup_success_regex}     ([.\\s\\S]*)("COMPLETE")([\\s\\S.]*)
 ${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)
 ${topic_currentstate}      selfupdate/currentstate/get
 
@@ -44,8 +53,21 @@ Self Update Agent Test
   [Documentation]    Install update bundle
   # Wait for max five minutes until SUA is deployed and running
   Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
+  # 1. Identification =============
   ${expected_version}=      Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${identified_success_regex}    10
+  # 2. Downloading =============
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${download_filename}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${download_success_regex}    120
+  # 3. Updating =============
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${update_filename}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}    90
+  # 4. Activating =============
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${activate_filename}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${activation_success_regex}    5
+  # 5. Cleanup =============
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${cleanup_filename}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${cleanup_success_regex}    5
   ${result}=    Leda Execute OK   echo VERSION_ID=${expected_version} > /etc/os-release
   ${result_status}=      Leda Execute OK      rauc status --detailed --output-format=json
   ${json}=               Evaluate             json.loads("""${result_status.stdout}""")
