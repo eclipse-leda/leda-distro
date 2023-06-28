@@ -21,6 +21,7 @@ local_conf_header:
     INHERIT += "rm_work"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
+    KAD_LOCK_PATH="/data/var/lib/kanto-auto-deployer/KAD.enabled"
   rauc-sign-conf: |
     RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
@@ -59,8 +60,8 @@ repos:
     url: https://git.yoctoproject.org/meta-spdxscanner
     refspec: kirkstone
   meta-leda:
-    url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main
+    url: "https://github.com/SoftwareDefinedVehicle/meta-leda-fork.git"
+    refspec: kad-mqtt-poc
     layers:
       meta-leda-bsp:
       meta-leda-components:
