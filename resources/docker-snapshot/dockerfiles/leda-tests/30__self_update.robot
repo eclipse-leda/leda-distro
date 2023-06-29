@@ -50,8 +50,9 @@ Wait for SUA alive
   Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
 
 Self Update Test
+  [Documentation]    Install update bundle
   Log To Console  \nGet Version and Start Update...
-  ${EXPECTED_VERSION} =  Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
+  ${expected_version} =  Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${identified_success_regex}    20
   # Download
   Log To Console  Download...
@@ -71,8 +72,8 @@ Self Update Test
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${cleanup_success_regex}    5
   # Finalize
   Log To console  Finalize
-  ${result}=    Leda Execute OK   echo VERSION_ID=${EXPECTED_VERSION} > /etc/os-release
+  ${result}=    Leda Execute OK   echo VERSION_ID=${expected_version} > /etc/os-release
   ${result_status}=      Leda Execute OK      rauc status --detailed --output-format=json
   ${json}=               Evaluate             json.loads("""${result_status.stdout}""")
   ${installed_json}=     Get Value From Json    ${json}    $..slots[*][?(@.slot_status.status=='ok')]     fail_on_empty=${True}
-  Should Match           ${installed_json[0]['slot_status']['bundle']['version']}   ${EXPECTED_VERSION}
+  Should Match           ${installed_json[0]['slot_status']['bundle']['version']}   ${expected_version}
