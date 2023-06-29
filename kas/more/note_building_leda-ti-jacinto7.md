@@ -51,7 +51,7 @@ via the layer path for example:
             meta-my-custom-layer:
 ```
 
-# Kikstart File
+# Kickstart File
 
 This uses the default kickstart `wks.in` file from d-s-e's fork of meta-rauc-community. While this is sufficient for the
 purposes of just building you **should** define a `wks.in` similar to the RPI4-64B one in `meta-leda/meta-leda-distro/wic/raspberrypi.wks.in`.
