@@ -56,7 +56,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author -t ${{ secrets.GITHUB_TOKEN }}
@@ -164,7 +164,7 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author -t ${{ secrets.GITHUB_TOKEN }}
@@ -271,7 +271,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        (r=3;while ! kas build kas/leda-raspberrypi4-64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-raspberrypi4-64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author -t ${{ secrets.GITHUB_TOKEN }}
@@ -376,12 +376,12 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Build qemuarm64
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Stop docker
       if: always()
       run: |
