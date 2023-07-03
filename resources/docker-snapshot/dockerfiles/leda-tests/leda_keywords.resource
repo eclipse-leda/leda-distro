@@ -28,15 +28,21 @@ ${leda.sshport}                    2222
 *** Keywords ***
 
 Verify SUA is alive
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${get_current_state_filename}    ${payload_regex}
-  ${message}=  Get File  ${get_current_state_filename}
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}  ${topic_sub}  ${filename}    ${payload_regex}
+  ${message}=  Get File  ${filename}
   Connect  ${broker.uri}  ${broker.port}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
   Log    ${payload_regex}
-  Subscribe And Validate  selfupdate/currentstate    qos=1    payload=${payload_regex}    timeout=10
+  Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=10
+
+Publish until met
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}   ${topic_sub}   ${message}   ${payload_regex}
+  Connect  ${broker.uri}  ${broker.port}
+  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
+  Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=10
 
 Trigger to start update
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}  ${topic_sub}  ${start_update_filename}   ${payload_regex}
   ${version_id}=    Leda Execute OK              cat /etc/os-release | grep ^VERSION_ID= | cut -c12-
   ${template}=      Get File  ${start_update_filename}
   # Replace ${VERSION_ID} dynamically with the actual version on the device for easier testing
@@ -44,7 +50,7 @@ Trigger to start update
   # Workaround for testing purposes - override current os-release version
   ${fakeversion}=   Generate Random String  8
   ${result}=    Leda Execute OK   echo VERSION_ID=${fakeversion} > /etc/os-release
-  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
+  Wait Until Keyword Succeeds  3m  3s  Publish until met  ${broker.uri}  ${broker.port}  ${topic_pub}  ${topic_sub}  ${message}  ${payload_regex}
   RETURN    ${version_id.stdout}
 
 Execute SUA command
