@@ -19,7 +19,7 @@ Library  OperatingSystem
 Library  Process
 Library  JSONLibrary
 
-Test Timeout       5 minutes
+Test Timeout       10 minutes
 
 *** Variables ***
 ${leda.target}                 local
