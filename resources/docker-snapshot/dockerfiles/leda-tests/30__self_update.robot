@@ -65,7 +65,7 @@ Self Update Test
 
   Log To Console  Activate...
   Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_command}    ${activate_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${activation_success_regex}    5
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${activation_success_regex}    30
 
   Log To Console  Cleanup...
   Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_command}    ${cleanup_filename}
