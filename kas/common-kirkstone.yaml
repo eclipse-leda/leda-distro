@@ -19,7 +19,6 @@ target: sdv-image-all
 local_conf_header:
   meta-leda: |
     INHERIT += "rm_work"
-    INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
   rauc-sign-conf: |
@@ -60,10 +59,8 @@ repos:
     url: https://git.yoctoproject.org/meta-spdxscanner
     refspec: kirkstone
   meta-leda:
-    url: "https://github.com/SoftwareDefinedVehicle/meta-leda-fork"
-    refspec: sua-build-177
-#    url: "https://github.com/eclipse-leda/meta-leda"
-#    refspec: main
+    url: "https://github.com/eclipse-leda/meta-leda"
+    refspec: main
     layers:
       meta-leda-bsp:
       meta-leda-components:
