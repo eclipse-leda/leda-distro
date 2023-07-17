@@ -70,6 +70,7 @@ services:
       leda-bridge:
     ports:
       - "8080:80"
+      - "8443:443"
     healthcheck:
       test: "curl http://localhost:80"
       interval: 10s
