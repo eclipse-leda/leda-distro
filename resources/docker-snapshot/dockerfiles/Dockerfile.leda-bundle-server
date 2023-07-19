@@ -19,8 +19,6 @@ LABEL name="leda-bundle-server"
 
 WORKDIR /root
 
-COPY examples/nginx/* /usr/share/nginx/
-
 COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-full-qemux86-64.raucb /usr/share/nginx/html/
 COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-minimal-qemux86-64.raucb /usr/share/nginx/html/
 COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-rescue-qemux86-64.raucb /usr/share/nginx/html/
@@ -28,3 +26,5 @@ COPY build/tmp/deploy/images/qemux86-64/sdv-rauc-bundle-rescue-qemux86-64.raucb 
 COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-full-qemuarm64.raucb /usr/share/nginx/html/
 COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-minimal-qemuarm64.raucb /usr/share/nginx/html/
 COPY build/tmp/deploy/images/qemuarm64/sdv-rauc-bundle-rescue-qemuarm64.raucb /usr/share/nginx/html/
+
+COPY examples/nginx/* /etc/nginx/conf.d/

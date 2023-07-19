@@ -12,7 +12,7 @@
                         "config": [
                             {
                                 "key": "image",
-                                "value": "https://leda-bundle-server/sdv-rauc-bundle-minimal-qemux86-64.raucb"
+                                "value": "http://leda-bundle-server/sdv-rauc-bundle-minimal-qemux86-64.raucb"
                             }
                         ]
                     }
