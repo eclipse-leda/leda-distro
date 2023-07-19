@@ -48,6 +48,9 @@ repos:
       meta-filesystems:
       meta-python:
       meta-networking:
+  meta-lts-mixins:
+    url: "https://git.yoctoproject.org/git/meta-lts-mixins"
+    refspec: kirkstone/rust-1.68
   meta-arm:
     url: "https://git.yoctoproject.org/meta-arm/"
     refspec: kirkstone
