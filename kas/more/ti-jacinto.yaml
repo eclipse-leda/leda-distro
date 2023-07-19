@@ -56,6 +56,9 @@ repos:
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
     refspec: kirkstone
+  meta-lts-mixins:
+    url: "https://git.yoctoproject.org/git/meta-lts-mixins"
+    refspec: kirkstone/rust-1.68
   meta-kanto:
     url: "https://github.com/eclipse-kanto/meta-kanto.git"
     refspec: kirkstone
