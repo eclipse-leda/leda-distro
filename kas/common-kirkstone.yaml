@@ -23,7 +23,8 @@ local_conf_header:
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
   rauc-sign-conf: |
-    RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
+    RAUC_KEYRING_URI = "file://${TOPDIR}/../examples/example-ca/ca.cert.pem"
+    RAUC_KEYRING_FILE = "${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
     RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
   buils-stats: |
