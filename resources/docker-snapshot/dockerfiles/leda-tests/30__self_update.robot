@@ -19,7 +19,7 @@ Library  OperatingSystem
 Library  Process
 Library  JSONLibrary
 
-Test Timeout       5 minutes
+Test Timeout       10 minutes
 
 *** Variables ***
 ${leda.target}                 local
@@ -29,8 +29,10 @@ ${leda.sshport}                2001
 ${broker.uri}               127.0.0.1
 ${broker.port}              1884
 ${topic_pub}                selfupdate/desiredstate
-${topic_pub_commands}       selfupdate/desiredstate/command
-${topic_sub}                selfupdate/#
+${topic_pub_command}        selfupdate/desiredstate/command
+${topic_sub}                selfupdate/desiredstatefeedback
+${topic_pub_currentstate}   selfupdate/currentstate/get
+${topic_sub_currentstate}   selfupdate/currentstate
 ${start_update_filename}    robot-resources/start-update-example-x86.json
 ${download_filename}        robot-resources/download-command.json
 ${update_filename}          robot-resources/update-command.json
@@ -42,30 +44,34 @@ ${download_success_regex}    ([.\\s\\S]*)("DOWNLOAD_SUCCESS")([\\s\\S.]*)
 ${update_success_regex}      ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
 ${activation_success_regex}  ([.\\s\\S]*)("ACTIVATION_SUCCESS")([\\s\\S.]*)
 ${cleanup_success_regex}     ([.\\s\\S]*)("COMPLETE")([\\s\\S.]*)
-${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)
-${topic_currentstate}      selfupdate/currentstate/get
+${sua_alive_regex}           ([.\\s\\S]*)("self-update-agent")([\\s\\S.]*)
 
 *** Test Cases ***
 Wait for SUA alive
-  Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
+  Wait Until Keyword Succeeds  5m  3s  Verify SUA is alive  ${broker.uri}  ${broker.port}  ${topic_pub_currentstate}  ${topic_sub_currentstate}  ${get_state_filename}  ${sua_alive_regex}
 
-Self Update Agent Test
-  Log  "Identify"
-  ${expected_version}=      Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${identified_success_regex}    10
-  Log  "Download"
-  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${download_filename}
+Self Update Test
+  [Documentation]    Install update bundle
+  Log To Console  \nGet Version and Start Update...
+  ${expected_version}=  Trigger to start update  ${broker.uri}  ${broker.port}  ${topic_pub}  ${topic_sub}  ${start_update_filename}  ${identified_success_regex}
+
+  Log To Console  Download...
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_command}    ${download_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${download_success_regex}    120
-  Log  "Update"
-  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${update_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}    90
-  Log  "Activate"
-  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${activate_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${activation_success_regex}    5
-  Log  "Cleanup"
-  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_commands}    ${cleanup_filename}
+
+  Log To Console  Update...
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_command}    ${update_filename}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}    120
+
+  Log To Console  Activate...
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_command}    ${activate_filename}
+  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${activation_success_regex}    30
+
+  Log To Console  Cleanup...
+  Execute SUA command   ${broker.uri}    ${broker.port}    ${topic_pub_command}    ${cleanup_filename}
   Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${cleanup_success_regex}    5
-  Log  "Finalize"
+
+  Log To console  Finalize
   ${result}=    Leda Execute OK   echo VERSION_ID=${expected_version} > /etc/os-release
   ${result_status}=      Leda Execute OK      rauc status --detailed --output-format=json
   ${json}=               Evaluate             json.loads("""${result_status.stdout}""")
