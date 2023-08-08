@@ -49,15 +49,15 @@ RUN apt-get install -y -t bullseye-backports qemu-system-x86
 
 WORKDIR /root
 
-RUN wget https://autosd.sig.centos.org/AutoSD-9/nightly/sample-images/auto-osbuild-qemu-cs9-qa-ostree-x86_64-946743607.247784c5.qcow2.xz
-RUN xz -d auto-osbuild-qemu-cs9-qa-ostree-x86_64-946743607.247784c5.qcow2.xz
+# Images types:
+# auto-osbuild-qemu-autosd9-minimal-ostree -> missing podman
+# auto-osbuild-qemu-cs9-qa-ostree -> not AutoSD?
+RUN wget --recursive --no-directories --accept-regex "/.*\/auto-osbuild-qemu-cs9-qa-ostree-x86_64-.*\.qcow2.xz$|.*index.html" "https://autosd.sig.centos.org/AutoSD-9/latest/sample-images/"
+RUN xz -d *.qcow2.xz
+RUN mv *.qcow2 auto-osbuild-qemu-autosd9-minimal-ostree-x86_64.qcow2
 
 RUN apt-get install -y git
 RUN git clone https://gitlab.com/CentOS/automotive/sample-images.git
-
-ADD leda-qemu-autosd-entrypoint.sh /leda-qemu-autosd-entrypoint.sh
-
-# TODO: Setup DHCP and DNS server
 
 # Expose SSH access
 EXPOSE 2222
@@ -68,9 +68,8 @@ EXPOSE 1883
 # Expose Eclipse Kuksa Databroker
 EXPOSE 30555
 
-# ENTRYPOINT [ "/leda-qemu-autosd-entrypoint.sh" ]
 # https://gitlab.com/CentOS/automotive/sample-images/-/blob/main/osbuild-manifests/runvm
 ENTRYPOINT [ "/root/sample-images/osbuild-manifests/runvm", \
     "--nographics", \
-    "auto-osbuild-qemu-cs9-qa-ostree-x86_64-946743607.247784c5.qcow2" \
+    "auto-osbuild-qemu-autosd9-minimal-ostree-x86_64.qcow2" \
      ]

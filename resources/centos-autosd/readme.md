@@ -85,5 +85,29 @@ podman run --detach --network host --env "DATABROKER_ADDRESS=localhost:55555" gh
 Run the Kuksa.VAL Databroker CLI as a container:
 
 ```shell
-podman run --network host -it --rm ghcr.io/eclipse/kuksa.val/databroker-cli:0.4
+podman run --network host -it --rm --env "RUST_BACKTRACE=1" ghcr.io/eclipse/kuksa.val/databroker-cli:0.4
 ```
+
+## Building and Customizing AutoSD
+
+See https://sigs.centos.org/automotive/building/
+
+## Installing Eclipse Kanto
+ls -al
+
+Inside RHIVOL prompt, get the Kanto RPM package:
+
+wget https://rpmfind.net/linux/centos-stream/9-stream/BaseOS/x86_64/os/Packages/glibc-2.34-72.el9.i686.rpm
+wget https://rpmfind.net/linux/centos-stream/9-stream/BaseOS/x86_64/os/Packages/libgcc-11.4.1-2.1.el9.i686.rpm
+
+wget https://rpmfind.net/linux/fedora/linux/releases/38/Everything/x86_64/os/Packages/c/c-ares-1.19.0-1.fc38.i686.rpm
+wget https://rpmfind.net/linux/epel/9/Everything/x86_64/Packages/m/mosquitto-2.0.15-1.el9.x86_64.rpm
+
+wget https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/c/containerd-1.6.19-2.fc39.x86_64.rpm
+
+wget https://rpmfind.net/linux/fedora/linux/development/rawhide/Everything/x86_64/os/Packages/m/mosquitto-2.0.15-3.fc39.x86_64.rpm
+
+
+wget https://github.com/eclipse-kanto/kanto/releases/download/v0.1.0-M3/kanto_0.1.0-M3_linux_x86_64.rpm
+rpm -i kanto_0.1.0-M3_linux_x86_64.rpm
+
