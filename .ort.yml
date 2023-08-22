@@ -3,6 +3,8 @@ analyzer:
   skip_excluded: true
 excludes:
   paths:
+  - pattern: "resources/oss-compliance/aliens4friends/**"
+    reason: "BUILD_TOOL_OF"
   - pattern: "poky/bitbake/**"
     reason: "BUILD_TOOL_OF"
     comment: "Toaster is a web interface used to configure and run builds"
