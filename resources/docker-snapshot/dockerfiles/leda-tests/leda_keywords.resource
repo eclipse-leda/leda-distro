@@ -16,6 +16,7 @@ Documentation     This is a resource file, that can contain variables and keywor
 ...               Keywords defined here can be used where this file is loaded.
 
 Library  MQTTLibrary
+Library  JSONLibrary
 Library  yaml
 Library  Collections
 Library  OperatingSystem
@@ -24,6 +25,7 @@ Library  String
 
 *** Variables ***
 ${leda.sshport}                    2222
+${json_query}     $..payload[*].softwareNodes[?(@.id=='containers:{container}')].parameters[?(@.key=='status')].value
 
 *** Keywords ***
 
@@ -58,6 +60,11 @@ Execute SUA command
   ${message}=      Get File  ${filename}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
   
+Publish command from file
+  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
+  ${message}=      Get File  ${filename}
+  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
+
 Connect and Subscribe to Listen
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_sub}    ${payload_regex}    ${message_wait_timeout_seconds}
   Connect  ${broker.uri}  ${broker.port}
@@ -119,3 +126,38 @@ Leda Execute
     Log    ${result.stdout}
     Log    ${result.stderr}
     RETURN    ${result}
+
+Check containers status
+    [Documentation]    Checks list of containers for status (Running and Stopped)
+    [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
+    Connect    ${broker.uri}    ${broker.port} 
+    @{listNext}      Create List    @{list}
+    TRY
+      WHILE   ${listNext} != @{EMPTY}   limit=50
+        Publish command from file    ${broker.uri}    ${broker.port}
+        ...   containersupdate/currentstate/get
+        ...   robot-resources/update-state.json
+        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=0   timeout=70    limit=1
+        Length should be  ${messagelist}   1
+        ${json_string}=       Get From List   ${messagelist}    0
+        ${message}=	      Convert String to JSON	   ${json_string}
+        @{listCurrent}   Create List    @{listNext}
+        FOR    ${container}    IN    @{listCurrent}
+          ${jq}=    Format String  ${json_query}
+          ...    container=${container}
+          ${result}=     Get Value From Json    ${message}    ${jq}
+          IF  ${result} == @{EMPTY}   
+            CONTINUE
+          END
+          Length should be  ${result}   1
+          ${result}=       Get From List   ${result}    0
+          IF   '${result}' == '${status}'
+            Remove values from list    ${listNext}   ${container}
+          END
+        END
+      END
+    EXCEPT    WHILE loop was aborted    type=start
+      Log    The loop did not finish within the limit.
+    END   
+    Disconnect
+    RETURN    ${listNext}
