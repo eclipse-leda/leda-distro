@@ -128,33 +128,36 @@ Leda Execute
     RETURN    ${result}
 
 Check containers status
-    [Documentation]    Checks list of containers for status (Running and Stopped)
+    [Documentation]    Checks list of containers for status (Running, Stopped and Any)
     [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
     Connect    ${broker.uri}    ${broker.port} 
     @{listNext}      Create List    @{list}
     TRY
-      WHILE   ${listNext} != @{EMPTY}   limit=50
+      WHILE   ${listNext} != @{EMPTY}   limit=100
         Publish command from file    ${broker.uri}    ${broker.port}
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
-        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=0   timeout=90    limit=1
+        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=50    limit=1
         Length should be  ${messagelist}   1
-        ${json_string}=       Get From List   ${messagelist}    0
+        ${json_string}=   Get From List   ${messagelist}    0
         ${message}=	      Convert String to JSON	   ${json_string}
-        @{listCurrent}   Create List    @{listNext}
+        @{listCurrent}    Create List    @{listNext}
         FOR    ${container}    IN    @{listCurrent}
           ${jq}=    Format String  ${json_query}
           ...    container=${container}
-          ${result}=     Get Value From Json    ${message}    ${jq}
+          ${result}=      Get Value From Json    ${message}    ${jq}
           IF  ${result} == @{EMPTY}   
             CONTINUE
           END
           Length should be  ${result}   1
-          ${result}=       Get From List   ${result}    0
-          IF   '${result}' == '${status}'
+          ${result}=      Get From List   ${result}    0
+          IF       '${result}' == '${status}'
+            Remove values from list    ${listNext}   ${container}
+          ELSE IF  '${status}' == 'Any'
             Remove values from list    ${listNext}   ${container}
           END
         END
+        Unsubscribe     containersupdate/currentstate
       END
     EXCEPT    WHILE loop was aborted    type=start
       Log    The loop did not finish within the limit.
