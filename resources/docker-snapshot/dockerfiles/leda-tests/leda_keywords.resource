@@ -137,7 +137,7 @@ Check containers status
         Publish command from file    ${broker.uri}    ${broker.port}
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
-        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=0   timeout=70    limit=1
+        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=0   timeout=90    limit=1
         Length should be  ${messagelist}   1
         ${json_string}=       Get From List   ${messagelist}    0
         ${message}=	      Convert String to JSON	   ${json_string}

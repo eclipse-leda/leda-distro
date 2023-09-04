@@ -21,12 +21,7 @@ Library  Process
 Test Timeout       10 minutes
 
 *** Variables ***
-#${leda.target}                 local
-#${leda.target.hostname}        localhost
-#${leda.sshport}                2001
 
-#${broker.uri}               127.0.0.1
-#${broker.port}              1884
 ${sua_alive_regex}           ([.\\s\\S]*)("self-update-agent")([\\s\\S.]*)
 ${topic_pub_currentstate}   selfupdate/currentstate/get
 ${topic_sub_currentstate}   selfupdate/currentstate
@@ -35,7 +30,7 @@ ${get_state_filename}       robot-resources/get_state.json
 ${topic_pub_desiredstate}   vehicleupdate/desiredstate
 ${desired_state_no_containers_filename}     robot-resources/desired-state-no-containers.json
 ${desired_state_filename}                   robot-resources/desired-state.json
-@{containers}               seatservice-example   hvacservice-example   databroker   feedercan
+@{containers}               seatservice-example    hvacservice-example    databroker    feedercan
 
 *** Test Cases ***
 
