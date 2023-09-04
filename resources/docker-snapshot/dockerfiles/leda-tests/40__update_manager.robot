@@ -30,7 +30,7 @@ ${get_state_filename}       robot-resources/get_state.json
 ${topic_pub_desiredstate}   vehicleupdate/desiredstate
 ${desired_state_no_containers_filename}     robot-resources/desired-state-no-containers.json
 ${desired_state_filename}                   robot-resources/desired-state.json
-@{containers}               seatservice-example    hvacservice-example    databroker    feedercan
+@{containers}           databroker    feedercan    seatservice-example    hvacservice-example
 
 *** Test Cases ***
 
