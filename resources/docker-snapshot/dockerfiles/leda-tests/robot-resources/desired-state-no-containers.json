@@ -1,0 +1,12 @@
+{
+	"activityId": "activity-id-no-containers",
+	"payload": {
+		"domains": [{
+			"id": "containers",
+			"config": [],
+			"components": [
+
+			]
+		}]
+	}
+}

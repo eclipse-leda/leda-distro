@@ -33,7 +33,6 @@ SDV Containers Exist
     Verify Leda Containers
     ...     sua
     ...     databroker
-    ...     vum
     ...     feedercan
     ...     seatservice-example
     ...     hvacservice-example
