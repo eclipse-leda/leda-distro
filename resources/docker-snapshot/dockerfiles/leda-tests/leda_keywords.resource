@@ -114,13 +114,21 @@ Leda Execute
     Log    ${result.stderr}
     RETURN    ${result}
 
+View json
+    [Documentation]    For debug purposes
+    [Arguments]        ${message}
+    ${command}=       Format String  echo '{message}' | jq .
+    ...    message=${message}
+    ${result}=    Run Process    bash    -c    ${command}    shell=True
+    Log to console    ${result.stdout}
+
 Check containers status
-    [Documentation]    Checks list of containers for status (Running, Stopped and Any)
+    [Documentation]    Checks list of containers for status (Running, Missing, Any and Stopped)
     [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
     Connect    ${broker.uri}    ${broker.port} 
     @{listNext}      Create List    @{list}
     TRY
-      WHILE   ${listNext} != @{EMPTY}   limit=200
+      WHILE   ${listNext} != @{EMPTY}   limit=100
         Publish command from file    ${broker.uri}    ${broker.port}
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
@@ -133,7 +141,10 @@ Check containers status
           ${jq}=    Format String  ${json_query}
           ...    container=${container}
           ${result}=      Get Value From Json    ${message}    ${jq}
-          IF  ${result} == @{EMPTY}   
+          IF  ${result} == @{EMPTY}
+            IF  '${status}' == 'Missing'
+              Remove values from list    ${listNext}   ${container}
+            END
             CONTINUE
           END
           Length should be  ${result}   1
@@ -163,3 +174,29 @@ Check containers presence
     [Documentation]    Checks list of containers presence in any status
     [Arguments]    ${broker.uri}    ${broker.port}   @{list}
     Wait Until Keyword Succeeds  5m  30s  Expected containers status  ${broker.uri}  ${broker.port}   Any   @{list}
+
+Check desired state
+    [Arguments]    ${broker.uri}    ${broker.port}
+    Connect    ${broker.uri}    ${broker.port}
+    WHILE   True   limit=50        
+      @{messagelist}=   Subscribe   vehicleupdate/desiredstatefeedback   qos=1   timeout=120    limit=1
+      Length should be  ${messagelist}   1
+      ${json_string}=   Get From List   ${messagelist}    0
+      ${message}=	   Convert String to JSON	   ${json_string}
+      ${result}=     Get Value From Json    ${message}    $..payload['status']
+      ${msg}=        Get Value From Json    ${message}    $..payload['message']
+      ${result}=     Get From List   ${result}    0
+      Unsubscribe    vehicleupdate/desiredstatefeedback
+      Log  ${result} ${msg}
+      IF  'COMPLETED' in '${result}'
+        Disconnect
+        RETURN
+      ELSE IF   'FAILED' in '${result}' or 'INCOMPLETE' in '${result}'
+        Disconnect
+        ${msg}=  Get Value From Json    ${message}    $..payload['message']
+  	    FAIL  Desired state is ${result} (${msg})
+        RETURN
+      END
+    END
+    Disconnect
+    FAIL  Too many attempts. Limit was reached

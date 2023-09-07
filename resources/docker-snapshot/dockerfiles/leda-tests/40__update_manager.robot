@@ -30,18 +30,20 @@ ${desired_state_filename}                 robot-resources/desired-state.json
 @{stop_containers}        seatservice-example    databroker    feedercan    hvacservice-example
 
 *** Test Cases ***
-Check containers running
-  [Documentation]    Check containers running
+Containers are running
+  [Documentation]    Containers are running upon system start
   Check containers presence    ${broker.uri}  ${broker.port}  @{all_containers}
   Expected containers status   ${broker.uri}  ${broker.port}  Running  @{containers}
 
-Stop containers
-  [Documentation]    Stop containers
+Desired state to stop containers
+  [Documentation]    Stop containers via empty desired state
   Publish command from file    ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_no_containers_filename}
-  Expected containers status   ${broker.uri}  ${broker.port}  Stopped  @{stop_containers}
+  Check desired state   ${broker.uri}  ${broker.port}
+#  Expected containers status   ${broker.uri}  ${broker.port}  Missing  @{stop_containers}
 
-Bring all containers running
-  [Documentation]    Bring all containers running
+Desired state to start containers
+  [Documentation]    Containers running via full desired state
   Publish command from file   ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_filename}
-  Expected containers status  ${broker.uri}  ${broker.port}  Running  @{containers}
-  Expected containers status  ${broker.uri}  ${broker.port}  Any  @{any_state_containers}
+  Check desired state   ${broker.uri}  ${broker.port}
+#  Expected containers status  ${broker.uri}  ${broker.port}  Running  @{containers}
+#  Expected containers status  ${broker.uri}  ${broker.port}  Any  @{any_state_containers}
