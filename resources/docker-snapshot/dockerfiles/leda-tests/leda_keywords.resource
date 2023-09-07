@@ -29,14 +29,6 @@ ${json_query}     $..payload[*].softwareNodes[?(@.id=='containers:{container}')]
 
 *** Keywords ***
 
-Verify SUA is alive
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}  ${topic_sub}  ${filename}    ${payload_regex}
-  ${message}=  Get File  ${filename}
-  Connect  ${broker.uri}  ${broker.port}
-  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
-  Log    ${payload_regex}
-  Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=10
-
 Publish until met
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}   ${topic_sub}   ${message}   ${payload_regex}
   Connect  ${broker.uri}  ${broker.port}
@@ -55,11 +47,6 @@ Trigger to start update
   Wait Until Keyword Succeeds  3m  3s  Publish until met  ${broker.uri}  ${broker.port}  ${topic_pub}  ${topic_sub}  ${message}  ${payload_regex}
   RETURN    ${version_id.stdout}
 
-Execute SUA command
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
-  ${message}=      Get File  ${filename}
-  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
-  
 Publish command from file
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
   ${message}=      Get File  ${filename}
@@ -133,11 +120,11 @@ Check containers status
     Connect    ${broker.uri}    ${broker.port} 
     @{listNext}      Create List    @{list}
     TRY
-      WHILE   ${listNext} != @{EMPTY}   limit=100
+      WHILE   ${listNext} != @{EMPTY}   limit=200
         Publish command from file    ${broker.uri}    ${broker.port}
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
-        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=50    limit=1
+        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=1    limit=1
         Length should be  ${messagelist}   1
         ${json_string}=   Get From List   ${messagelist}    0
         ${message}=	      Convert String to JSON	   ${json_string}
@@ -164,3 +151,15 @@ Check containers status
     END   
     Disconnect
     RETURN    ${listNext}
+
+Expected containers status
+    [Documentation]    Can rise an error after call to Check containers status
+    ...     Used from Wait Until Keyword Succeeds when needed
+    [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
+    ${result}=     Check containers status  ${broker.uri}  ${broker.port}   ${status}   @{list}
+    Should Be Empty    ${result}    msg=Container(s) ${result} must have ${status} status
+
+Check containers presence
+    [Documentation]    Checks list of containers presence in any status
+    [Arguments]    ${broker.uri}    ${broker.port}   @{list}
+    Wait Until Keyword Succeeds  5m  30s  Expected containers status  ${broker.uri}  ${broker.port}   Any   @{list}
