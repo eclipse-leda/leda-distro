@@ -25,7 +25,7 @@ Library  String
 
 *** Variables ***
 ${leda.sshport}                    2222
-${json_query}     $..payload[*].softwareNodes[?(@.id=='containers:{container}')].parameters[?(@.key=='status')].value
+${json_query_containers_status}     $..payload[*].softwareNodes[?(@.id=='containers:{container}')].parameters[?(@.key=='status')].value
 
 *** Keywords ***
 
@@ -133,12 +133,12 @@ Check containers status
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
         @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=1    limit=1
-        Length should be  ${messagelist}   1
+        Length should be  ${messagelist}   1    msg=Cannot get current state of containers
         ${json_string}=   Get From List   ${messagelist}    0
         ${message}=	      Convert String to JSON	   ${json_string}
         @{listCurrent}    Create List    @{listNext}
         FOR    ${container}    IN    @{listCurrent}
-          ${jq}=    Format String  ${json_query}
+          ${jq}=    Format String  ${json_query_containers_status}
           ...    container=${container}
           ${result}=      Get Value From Json    ${message}    ${jq}
           IF  ${result} == @{EMPTY}
@@ -176,24 +176,25 @@ Check containers presence
     Wait Until Keyword Succeeds  5m  30s  Expected containers status  ${broker.uri}  ${broker.port}   Any   @{list}
 
 Check desired state
-    [Arguments]    ${broker.uri}    ${broker.port}
+    [Documentation]    Checks desired state. Desired state must be published, before it can be checked 
+    [Arguments]    ${broker.uri}    ${broker.port}   ${timeout}=120
     Connect    ${broker.uri}    ${broker.port}
     WHILE   True   limit=50        
-      @{messagelist}=   Subscribe   vehicleupdate/desiredstatefeedback   qos=1   timeout=120    limit=1
-      Length should be  ${messagelist}   1
+      @{messagelist}=   Subscribe   vehicleupdate/desiredstatefeedback   qos=1   timeout=${timeout}    limit=1
+      Length should be  ${messagelist}   1    msg=Send desired state first. No feedback found
       ${json_string}=   Get From List   ${messagelist}    0
       ${message}=	   Convert String to JSON	   ${json_string}
       ${result}=     Get Value From Json    ${message}    $..payload['status']
-      ${msg}=        Get Value From Json    ${message}    $..payload['message']
       ${result}=     Get From List   ${result}    0
       Unsubscribe    vehicleupdate/desiredstatefeedback
-      Log  ${result} ${msg}
+      Log     ${result}
       IF  'COMPLETED' in '${result}'
         Disconnect
         RETURN
       ELSE IF   'FAILED' in '${result}' or 'INCOMPLETE' in '${result}'
         Disconnect
-        ${msg}=  Get Value From Json    ${message}    $..payload['message']
+        ${msg}=   Get Value From Json    ${message}    $..payload['message']
+        ${msg}=   Get From List   ${msg}    0
   	    FAIL  Desired state is ${result} (${msg})
         RETURN
       END
