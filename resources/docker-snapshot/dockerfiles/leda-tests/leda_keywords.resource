@@ -168,7 +168,7 @@ Expected containers status
     ...     Used from Wait Until Keyword Succeeds when needed
     [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
     ${result}=     Check containers status  ${broker.uri}  ${broker.port}   ${status}   @{list}
-    Should Be Empty    ${result}    msg=Container(s) ${result} must have ${status} status
+    Should Be Empty    ${result}    msg=Container(s) ${result} must be ${status}
 
 Check containers presence
     [Documentation]    Checks list of containers presence in any status
