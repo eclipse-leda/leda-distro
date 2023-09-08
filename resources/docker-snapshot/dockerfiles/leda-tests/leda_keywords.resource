@@ -47,7 +47,7 @@ Trigger to start update
   Wait Until Keyword Succeeds  3m  3s  Publish until met  ${broker.uri}  ${broker.port}  ${topic_pub}  ${topic_sub}  ${message}  ${payload_regex}
   RETURN    ${version_id.stdout}
 
-Publish command from file
+Publish from file
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
   ${message}=      Get File  ${filename}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
@@ -129,7 +129,7 @@ Check containers status
     @{listNext}      Create List    @{list}
     TRY
       WHILE   ${listNext} != @{EMPTY}   limit=100
-        Publish command from file    ${broker.uri}    ${broker.port}
+        Publish from file    ${broker.uri}    ${broker.port}
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
         @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=1    limit=1

@@ -35,10 +35,10 @@ Containers are running
 
 Desired state to stop containers
   [Documentation]    Stop containers via empty desired state
-  Publish command from file    ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_no_containers_filename}
-  Check desired state   ${broker.uri}  ${broker.port}
+  Publish from file    ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_no_containers_filename}
+  Check desired state  ${broker.uri}  ${broker.port}
 
 Desired state to start containers
   [Documentation]    Containers running via full desired state
-  Publish command from file   ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_filename}
-  Check desired state   ${broker.uri}  ${broker.port}
+  Publish from file    ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_filename}
+  Check desired state  ${broker.uri}  ${broker.port}
