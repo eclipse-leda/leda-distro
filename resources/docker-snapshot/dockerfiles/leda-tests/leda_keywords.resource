@@ -25,17 +25,9 @@ Library  String
 
 *** Variables ***
 ${leda.sshport}                    2222
-${json_query}     $..payload[*].softwareNodes[?(@.id=='containers:{container}')].parameters[?(@.key=='status')].value
+${json_query_containers_status}     $..payload[*].softwareNodes[?(@.id=='containers:{container}')].parameters[?(@.key=='status')].value
 
 *** Keywords ***
-
-Verify SUA is alive
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}  ${topic_sub}  ${filename}    ${payload_regex}
-  ${message}=  Get File  ${filename}
-  Connect  ${broker.uri}  ${broker.port}
-  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
-  Log    ${payload_regex}
-  Subscribe And Validate  ${topic_sub}    qos=1    payload=${payload_regex}    timeout=10
 
 Publish until met
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}   ${topic_sub}   ${message}   ${payload_regex}
@@ -55,12 +47,7 @@ Trigger to start update
   Wait Until Keyword Succeeds  3m  3s  Publish until met  ${broker.uri}  ${broker.port}  ${topic_pub}  ${topic_sub}  ${message}  ${payload_regex}
   RETURN    ${version_id.stdout}
 
-Execute SUA command
-  [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
-  ${message}=      Get File  ${filename}
-  Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
-  
-Publish command from file
+Publish from file
   [Arguments]    ${broker.uri}    ${broker.port}    ${topic_pub}    ${filename}
   ${message}=      Get File  ${filename}
   Publish Single  topic=${topic_pub}  payload=${message}  hostname=${broker.uri}  port=${broker.port}
@@ -127,26 +114,37 @@ Leda Execute
     Log    ${result.stderr}
     RETURN    ${result}
 
+View json
+    [Documentation]    For debug purposes
+    [Arguments]        ${message}
+    ${command}=       Format String  echo '{message}' | jq .
+    ...    message=${message}
+    ${result}=    Run Process    bash    -c    ${command}    shell=True
+    Log to console    ${result.stdout}
+
 Check containers status
-    [Documentation]    Checks list of containers for status (Running, Stopped and Any)
+    [Documentation]    Checks list of containers for status (Running, Missing, Any and Stopped)
     [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
     Connect    ${broker.uri}    ${broker.port} 
     @{listNext}      Create List    @{list}
     TRY
       WHILE   ${listNext} != @{EMPTY}   limit=100
-        Publish command from file    ${broker.uri}    ${broker.port}
+        Publish from file    ${broker.uri}    ${broker.port}
         ...   containersupdate/currentstate/get
         ...   robot-resources/update-state.json
-        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=50    limit=1
-        Length should be  ${messagelist}   1
+        @{messagelist}=   Subscribe   containersupdate/currentstate   qos=1   timeout=1    limit=1
+        Length should be  ${messagelist}   1    msg=Cannot get current state of containers
         ${json_string}=   Get From List   ${messagelist}    0
         ${message}=	      Convert String to JSON	   ${json_string}
         @{listCurrent}    Create List    @{listNext}
         FOR    ${container}    IN    @{listCurrent}
-          ${jq}=    Format String  ${json_query}
+          ${jq}=    Format String  ${json_query_containers_status}
           ...    container=${container}
           ${result}=      Get Value From Json    ${message}    ${jq}
-          IF  ${result} == @{EMPTY}   
+          IF  ${result} == @{EMPTY}
+            IF  '${status}' == 'Missing'
+              Remove values from list    ${listNext}   ${container}
+            END
             CONTINUE
           END
           Length should be  ${result}   1
@@ -164,3 +162,42 @@ Check containers status
     END   
     Disconnect
     RETURN    ${listNext}
+
+Expected containers status
+    [Documentation]    Can rise an error after call to Check containers status
+    ...     Used from Wait Until Keyword Succeeds when needed
+    [Arguments]    ${broker.uri}    ${broker.port}   ${status}   @{list}
+    ${result}=     Check containers status  ${broker.uri}  ${broker.port}   ${status}   @{list}
+    Should Be Empty    ${result}    msg=Container(s) ${result} must be ${status}
+
+Check containers presence
+    [Documentation]    Checks list of containers presence in any status
+    [Arguments]    ${broker.uri}    ${broker.port}   @{list}
+    Wait Until Keyword Succeeds  5m  30s  Expected containers status  ${broker.uri}  ${broker.port}   Any   @{list}
+
+Check desired state
+    [Documentation]    Checks desired state. Desired state must be published, before it can be checked 
+    [Arguments]    ${broker.uri}    ${broker.port}   ${timeout}=120
+    Connect    ${broker.uri}    ${broker.port}
+    WHILE   True   limit=50        
+      @{messagelist}=   Subscribe   vehicleupdate/desiredstatefeedback   qos=1   timeout=${timeout}    limit=1
+      Length should be  ${messagelist}   1    msg=Send desired state first. No feedback found
+      ${json_string}=   Get From List   ${messagelist}    0
+      ${message}=	   Convert String to JSON	   ${json_string}
+      ${result}=     Get Value From Json    ${message}    $..payload['status']
+      ${result}=     Get From List   ${result}    0
+      Unsubscribe    vehicleupdate/desiredstatefeedback
+      Log     ${result}
+      IF  'COMPLETED' in '${result}'
+        Disconnect
+        RETURN
+      ELSE IF   'FAILED' in '${result}' or 'INCOMPLETE' in '${result}' or 'SUPERSEDED' in '${result}'
+        Disconnect
+        ${msg}=   Get Value From Json    ${message}    $..payload['message']
+        ${msg}=   Get From List   ${msg}    0
+  	    FAIL  Desired state is ${result} (${msg})
+        RETURN
+      END
+    END
+    Disconnect
+    FAIL  Too many attempts. Limit was reached
