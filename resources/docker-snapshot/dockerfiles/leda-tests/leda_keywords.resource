@@ -191,7 +191,7 @@ Check desired state
       IF  'COMPLETED' in '${result}'
         Disconnect
         RETURN
-      ELSE IF   'FAILED' in '${result}' or 'INCOMPLETE' in '${result}'
+      ELSE IF   'FAILED' in '${result}' or 'INCOMPLETE' in '${result}' or 'SUPERSEDED' in '${result}'
         Disconnect
         ${msg}=   Get Value From Json    ${message}    $..payload['message']
         ${msg}=   Get From List   ${msg}    0
