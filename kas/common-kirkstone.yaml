@@ -63,7 +63,7 @@ repos:
     refspec: kirkstone
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main 
+    refspec: main
     layers:
       meta-leda-bsp:
       meta-leda-components:
