@@ -45,9 +45,6 @@ podman run --network host --detach --name databroker ghcr.io/eclipse/kuksa.val/d
 # Eclipse Mosquitto (MQTT Broker)
 podman run --network host --detach --name mosquitto docker.io/library/eclipse-mosquitto:latest
 
-# Leda/Kanto Vehicle Update manager
-podman run --network host --privileged --add-host "mosquitto:127.0.0.1" --detach --name vum --mount type=bind,src=/proc,target=/proc ghcr.io/eclipse-leda/leda-contrib-vehicle-update-manager/vehicleupdatemanager:main-1d8dca55a755c4b3c7bc06eabfa06ad49e068a48
-
 # Leda Self Update Agent
 mkdir -p /data/selfupdates
 chcon -Rt svirt_sandbox_file_t /var/run/dbus/system_bus_socket
