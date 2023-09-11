@@ -21,39 +21,24 @@ Library  Process
 Test Timeout       10 minutes
 
 *** Variables ***
-
-${sua_alive_regex}           ([.\\s\\S]*)("self-update-agent")([\\s\\S.]*)
-${topic_pub_currentstate}   selfupdate/currentstate/get
-${topic_sub_currentstate}   selfupdate/currentstate
-${get_state_filename}       robot-resources/get_state.json
-
-${topic_pub_desiredstate}   vehicleupdate/desiredstate
-${desired_state_no_containers_filename}     robot-resources/desired-state-no-containers.json
-${desired_state_filename}                   robot-resources/desired-state.json
+${topic_pub_desiredstate}                 vehicleupdate/desiredstate
+${desired_state_no_containers_filename}   robot-resources/desired-state-no-containers.json
+${desired_state_filename}                 robot-resources/desired-state.json
+@{all_containers}         sua    feedercan    seatservice-example    databroker    hvacservice-example    cloudconnector
 @{containers}             sua    feedercan    seatservice-example    databroker    hvacservice-example
-@{any_state_containers}   cloudconnector
-@{stop_containers}        seatservice-example    databroker    feedercan    hvacservice-example
 
 *** Test Cases ***
+Containers are running
+  [Documentation]    Containers are running upon system start
+  Check containers presence    ${broker.uri}  ${broker.port}  @{all_containers}
+  Expected containers status   ${broker.uri}  ${broker.port}  Running  @{containers}
 
-Check containers running
-  [Documentation]    Check containers running
-  Wait Until Keyword Succeeds  5m  3s  Verify SUA is alive  ${broker.uri}  ${broker.port}  ${topic_pub_currentstate}  ${topic_sub_currentstate}  ${get_state_filename}  ${sua_alive_regex}
-  ${result}=     Check containers status  ${broker.uri}  ${broker.port}  Running  @{containers}
-  Should Be Empty    ${result}    msg=Container(s) ${result} must be Running
-  ${result}=     Check containers status  ${broker.uri}  ${broker.port}  Any  @{any_state_containers}
-  Should Be Empty    ${result}    msg=Container(s) ${result} must persist
+Desired state to stop containers
+  [Documentation]    Stop containers via empty desired state
+  Publish from file    ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_no_containers_filename}
+  Check desired state  ${broker.uri}  ${broker.port}
 
-Stop containers
-  [Documentation]    Stop containers
-  Publish command from file    ${broker.uri}    ${broker.port}    ${topic_pub_desiredstate}    ${desired_state_no_containers_filename}
-  ${result}=     Check containers status  ${broker.uri}  ${broker.port}  Stopped  @{stop_containers}
-  Should Be Empty    ${result}    msg=Container(s) ${result} must be Stopped
-
-Bring all containers running
-  [Documentation]    Bring all containers running
-  Publish command from file    ${broker.uri}    ${broker.port}    ${topic_pub_desiredstate}    ${desired_state_filename}
-  ${result}=     Check containers status  ${broker.uri}  ${broker.port}  Running  @{containers}
-  Should Be Empty    ${result}    msg=Container(s) ${result} must be Running
-  ${result}=     Check containers status  ${broker.uri}  ${broker.port}  Any  @{any_state_containers}
-  Should Be Empty    ${result}    msg=Container(s) ${result} must persist
+Desired state to start containers
+  [Documentation]    Containers running via full desired state
+  Publish from file    ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${desired_state_filename}
+  Check desired state  ${broker.uri}  ${broker.port}
