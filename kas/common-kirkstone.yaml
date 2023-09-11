@@ -62,8 +62,8 @@ repos:
     url: https://git.yoctoproject.org/meta-spdxscanner
     refspec: kirkstone
   meta-leda:
-    url: "https://github.com/SoftwareDefinedVehicle/meta-leda-fork"
-    refspec: blueprint-selector 
+    url: "https://github.com/eclipse-leda/meta-leda"
+    refspec: main 
     layers:
       meta-leda-bsp:
       meta-leda-components:
