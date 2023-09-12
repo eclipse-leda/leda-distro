@@ -1,0 +1,87 @@
+# /********************************************************************************
+# * Copyright (c) 2023 Contributors to the Eclipse Foundation
+# *
+# * See the NOTICE file(s) distributed with this work for additional
+# * information regarding copyright ownership.
+# *
+# * This program and the accompanying materials are made available under the
+# * terms of the Apache License 2.0 which is available at
+# * https://www.apache.org/licenses/LICENSE-2.0
+# *
+# * SPDX-License-Identifier: Apache-2.0
+# ********************************************************************************/
+# Every file needs to contain a header, that provides kas with information
+# about the context of this file.
+header:
+  version: 12
+machine: j721e-evm
+distro: leda
+target: sdv-image-all
+local_conf_header:
+  user: |
+    BBMASK .= "linux-ti-staging_6.1.bb|linux-ti-staging-rt_6.1.bb|linux-ti-staging-systest_6.1.bb"
+    IMAGE_FSTYPES:forcevariable := " tar.bz2 wic.bz2 wic.bmap ext4" 
+    IMAGE_FSTYPES:remove = "ubi wic.qcow2"
+    INHERIT:remove = "cve-check"
+    WKS_FILE = "ti-dual-image.wks.in"
+  meta-leda: |
+    INHERIT += "rm_work"
+    INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
+    KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
+  rauc-sign-conf: |
+    RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
+    RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
+    RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+repos:
+  poky:
+    url: "https://git.yoctoproject.org/git/poky"
+    refspec: kirkstone
+    layers:
+      meta:
+      meta-poky:
+      meta-yocto-bsp:
+  meta-openembedded:
+    url: "https://git.openembedded.org/meta-openembedded"
+    refspec: kirkstone
+    layers:
+      meta-oe:
+      meta-filesystems:
+      meta-python:
+      meta-networking:
+  meta-lts-mixins:
+    url: "https://git.yoctoproject.org/git/meta-lts-mixins"
+    refspec: kirkstone/rust-1.68
+  meta-arm:
+    url: "https://git.yoctoproject.org/meta-arm/"
+    refspec: kirkstone
+    layers:
+      meta-arm:
+      meta-arm-toolchain:
+  meta-ti:
+    url: "https://git.yoctoproject.org/meta-ti/"
+    refspec: kirkstone
+    layers:
+      meta-ti-bsp:
+      meta-ti-extras:
+  meta-rauc:
+    url: "https://github.com/rauc/meta-rauc.git"
+    refspec: kirkstone
+  meta-rauc-community:
+    url: "https://github.com/d-s-e/meta-rauc-community.git"
+    refspec: kirkstone-ti-support
+    layers:
+      meta-rauc-ti:
+  meta-virtualization:
+    url: "https://git.yoctoproject.org/meta-virtualization"
+    refspec: kirkstone
+  meta-kanto:
+    url: "https://github.com/eclipse-kanto/meta-kanto.git"
+    refspec: kirkstone
+  meta-leda:
+    url: "https://github.com/eclipse-leda/meta-leda"
+    refspec: main
+    layers:
+      meta-leda-bsp:
+      meta-leda-components:
+      meta-leda-distro:
+      meta-leda-backports:

@@ -14,20 +14,18 @@
 # about the context of this file.
 header:
   version: 12
-  includes:
-  - kas/mirrors.yaml
-  - kas/spdx.yaml
 distro: leda
 target: sdv-image-all
 local_conf_header:
   meta-leda: |
     INHERIT += "rm_work"
-    INHERIT:remove = " archiver"
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
+    BLUEPRINTS_DIR = "/data/var/containers/blueprints"
   rauc-sign-conf: |
-    RAUC_KEYRING_FILE="${TOPDIR}/../examples/example-ca/ca.cert.pem"
+    RAUC_KEYRING_URI = "file://${TOPDIR}/../examples/example-ca/ca.cert.pem"
+    RAUC_KEYRING_FILE = "${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
     RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
   buils-stats: |
@@ -40,6 +38,9 @@ repos:
       meta:
       meta-poky:
       meta-yocto-bsp:
+  meta-lts-mixins:
+    url: "https://git.yoctoproject.org/git/meta-lts-mixins"
+    refspec: kirkstone/rust-1.68
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
     refspec: kirkstone
@@ -70,3 +71,4 @@ repos:
       meta-leda-bsp:
       meta-leda-components:
       meta-leda-distro:
+      meta-leda-backports:

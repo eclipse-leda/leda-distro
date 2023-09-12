@@ -24,7 +24,10 @@ jobs:
 
   leda-qemux86_64:
     name: "qemux86_64"
-    runs-on: ubuntu-22.04
+    # Eclipse Foundation: Label for large GitHub Build runners (paid)
+    # See Eclipse HelpDesk #1915
+    runs-on: "LargeRunner_16cores_64GB_600GB"
+#    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
     continue-on-error: true
@@ -47,7 +50,7 @@ jobs:
       env:
         KAS_MACHINE: qemux86-64
       run: |
-        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemux86-64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author -t ${{ secrets.GITHUB_TOKEN }}
@@ -92,6 +95,15 @@ jobs:
         name: eclipse-leda-sbom-qemux86_64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sbom-qemux86_64.tar.gz
+    - name: Package Patched Sources
+      run: |
+        tar --create --gzip --file eclipse-leda-sources-qemux86_64.tar.gz -C ./build/tmp/deploy/sources/ .
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-sources-qemux86_64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-sources-qemux86_64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
@@ -127,7 +139,8 @@ jobs:
       env:
         KAS_MACHINE: qemuarm64
       run: |
-        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml -- --setscene-only; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-qemuarm64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author -t ${{ secrets.GITHUB_TOKEN }}
@@ -172,6 +185,15 @@ jobs:
         name: eclipse-leda-sbom-qemuarm64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sbom-qemuarm64.tar.gz
+    - name: Package Patched Sources
+      run: |
+        tar --create --gzip --file eclipse-leda-sources-qemuarm64.tar.gz -C ./build/tmp/deploy/sources/ .
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-sources-qemuarm64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-sources-qemuarm64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:
@@ -207,7 +229,7 @@ jobs:
       env:
         KAS_MACHINE: raspberrypi4-64
       run: |
-        (r=3;while ! kas build kas/leda-raspberrypi4-64.yaml:kas/mirrors.yaml ; do ((--r))||exit;sleep 60;done)
+        (r=3;while ! kas build kas/leda-raspberrypi4-64.yaml:kas/mirrors.yaml:kas/oss-compliance/spdx.yaml ; do ((--r))||exit;sleep 60;done)
     - name: Generate CHANGELOG.md
       run: |
         docker run --rm -v "$(pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator github_changelog_generator -u eclipse-leda -p leda-distro --no-author -t ${{ secrets.GITHUB_TOKEN }}
@@ -248,6 +270,15 @@ jobs:
         name: eclipse-leda-sbom-raspberrypi4-64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sbom-raspberrypi4-64.tar.gz
+    - name: Package Patched Sources
+      run: |
+        tar --create --gzip --file eclipse-leda-sources-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/sources/ .
+    - name: Upload files
+      uses: actions/upload-artifact@v3
+      with: 
+        name: eclipse-leda-sources-raspberrypi4-64.tar.gz
+        if-no-files-found: error
+        path: eclipse-leda-sources-raspberrypi4-64.tar.gz
     - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
       if: github.repository_owner == 'SoftwareDefinedVehicle'
       with:

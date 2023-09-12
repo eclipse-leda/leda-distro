@@ -51,6 +51,7 @@ meta-spdxscanner/
 meta-leda/
 meta-virtualization/
 poky/
+meta-lts-mixins/
 
 # Remote sstate-cache on Azure Storage
 azure-sstate-cache/
@@ -82,3 +83,6 @@ resources/docker-snapshot/dockerfiles/leda-tests/log.html
 resources/docker-snapshot/dockerfiles/leda-tests/output.xml
 resources/docker-snapshot/dockerfiles/leda-tests/report.html
 
+resources/oss-compliance/aliens4friends/aliens4friends
+resources/oss-compliance/aliens4friends/aliens4friends-pool
+resources/oss-compliance/dependencytrack/output

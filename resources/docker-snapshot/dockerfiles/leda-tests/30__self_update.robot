@@ -19,33 +19,26 @@ Library  OperatingSystem
 Library  Process
 Library  JSONLibrary
 
-Test Timeout       5 minutes
+Test Timeout       10 minutes
 
 *** Variables ***
-${leda.target}                 local
-${leda.target.hostname}        localhost
-${leda.sshport}                2001
-
-${broker.uri}               127.0.0.1
-${broker.port}              1884
-${topic_pub}                selfupdate/desiredstate
-${topic_sub}                selfupdate/#
-${start_update_filename}    robot-resources/start-update-example-x86.json
-${get_state_filename}       robot-resources/get_state.json
-${update_success_regex}    ([.\\s\\S]*)("UPDATE_SUCCESS")([\\s\\S.]*)
-${sua_alive_regex}    ([.\\s\\S]*)(timestamp)([\\s\\S.]*)
-${topic_currentstate}      selfupdate/currentstate/get
+${topic_pub_desiredstate}   vehicleupdate/desiredstate
+# Used to get bundle version
+${topic_sub_selfupdate}     selfupdate/desiredstatefeedback
+${identified_success_regex}  ([.\\s\\S]*)("IDENTIFIED")([\\s\\S.]*)
 
 *** Test Cases ***
-Wait for SUA alive
-    Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
+Wait for SUA running
+  [Documentation]    SUA is running upon system start
+  Check containers presence   ${broker.uri}  ${broker.port}  sua
+  Expected containers status  ${broker.uri}  ${broker.port}  Running  sua
 
-Self Update Agent Test
+Self Update Test
   [Documentation]    Install update bundle
-  # Wait for max five minutes until SUA is deployed and running
-  Wait Until Keyword Succeeds    5m    3s   Verify SUA is alive    ${broker.uri}    ${broker.port}    ${topic_currentstate}    ${get_state_filename}    ${sua_alive_regex}
-  ${expected_version}=      Trigger to start update  ${broker.uri}    ${broker.port}    ${topic_pub}    ${start_update_filename}
-  Connect and Subscribe to Listen   ${broker.uri}    ${broker.port}    ${topic_sub}    ${update_success_regex}
+  ${expected_version}=  Trigger to start update  ${broker.uri}  ${broker.port}  ${topic_pub_desiredstate}  ${topic_sub_selfupdate}  ${start_update_filename}  ${identified_success_regex}
+
+  Check desired state   ${broker.uri}  ${broker.port}
+
   ${result}=    Leda Execute OK   echo VERSION_ID=${expected_version} > /etc/os-release
   ${result_status}=      Leda Execute OK      rauc status --detailed --output-format=json
   ${json}=               Evaluate             json.loads("""${result_status.stdout}""")

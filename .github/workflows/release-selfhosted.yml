@@ -45,3 +45,9 @@ jobs:
             ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-x86_64.tar.xz/eclipse-leda-qemu-x86_64.tar.xz
             ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-arm64.tar.xz/eclipse-leda-qemu-arm64.tar.xz
             ${{steps.download.outputs.download-path}}/eclipse-leda-raspberrypi.tar.xz/eclipse-leda-raspberrypi.tar.xz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-spdx-sbom-qemux86_64.tar.gz/eclipse-leda-spdx-sbom-qemux86_64.tar.gz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-spdx-sbom-qemuarm64.tar.gz/eclipse-leda-spdx-sbom-qemuarm64.tar.gz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-spdx-sbom-raspberrypi4-64.tar.gz/eclipse-leda-spdx-sbom-raspberrypi4-64.tar.gz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-sources-qemux86_64.tar.gz/eclipse-leda-sources-qemux86_64.tar.gz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-sources-qemuarm64.tar.gz/eclipse-leda-sources-qemuarm64.tar.gz
+            ${{steps.download.outputs.download-path}}/eclipse-leda-sources-raspberrypi4-64.tar.gz/eclipse-leda-sources-raspberrypi4-64.tar.gz

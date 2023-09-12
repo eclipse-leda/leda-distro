@@ -1,0 +1,9 @@
+SPDXVersion: SPDX-2.1
+DocumentNamespace: spdx:github.com/eclipse-leda/0.1.0/leda.final.spdx
+
+DataLicense: CC0-1.0
+PackageName: Eclipse Leda
+
+PackageOriginator: Organization: Eclipse Leda Development Team <leda-dev@eclipse.org>
+PackageHomePage: https://github.com/eclipse-leda/
+PackageLicenseDeclared: Apache-2.0
