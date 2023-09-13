@@ -21,7 +21,7 @@ local_conf_header:
     INHERIT += "rm_work"
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
-    KANTO_MANIFESTS_DEV_DIR = "/data/var/containers/manifests"
+    KANTO_MANIFESTS_DIR = "/data/var/containers/manifests"
     KAD_LOCK_PATH="/data/var/lib/kanto-auto-deployer/KAD.enabled"
     BLUEPRINTS_DIR = "/data/var/containers/blueprints"
   rauc-sign-conf: |
