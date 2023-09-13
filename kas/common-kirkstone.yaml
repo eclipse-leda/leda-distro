@@ -58,9 +58,6 @@ repos:
       meta-filesystems:
       meta-python:
       meta-networking:
-  meta-spdxscanner:
-    url: https://git.yoctoproject.org/meta-spdxscanner
-    refspec: kirkstone
   meta-clang:
     url: https://github.com/kraj/meta-clang
     refspec: kirkstone
