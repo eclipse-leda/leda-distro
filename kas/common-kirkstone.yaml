@@ -58,8 +58,8 @@ repos:
       meta-filesystems:
       meta-python:
       meta-networking:
-  meta-clang:
-    url: https://github.com/kraj/meta-clang
+  meta-spdxscanner:
+    url: https://git.yoctoproject.org/meta-spdxscanner
     refspec: kirkstone
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
