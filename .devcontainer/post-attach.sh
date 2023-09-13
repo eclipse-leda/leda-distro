@@ -20,6 +20,13 @@
 sudo chown root:kvm /dev/kvm
 sudo chmod 0660 /dev/kvm
 
+function take_workspace_ownership() {
+    local USER=$1
+    local DIR=$2
+    sudo chown -R ${USER} ${DIR}
+    sudo setfacl -bnR ${DIR}
+}
+
 # Optional: Mount Azure Storage as remote sstate-cache to improve build time.
 # This is only required if you want to manually upload / sync build artifacts to your remote sstate-cache
 # To configure the sstate-cache and upload local build artifacts, the following environment variables need to be set:
@@ -44,7 +51,16 @@ function azure-mount() {
     fi
 }
 
+
+
 # First arg: local mount point
 # Second arg: Name of Azure container
 azure-mount "azure-sstate-cache" "yocto-sstate-cache"
 azure-mount "azure-downloads-cache" "downloads"
+
+# There is a umask issue in GitHub codespaces
+# possibly related to: https://github.com/orgs/community/discussions/26026
+# which causes some recipes to fail to build, due to wrong permissions (e.g. gpsd)
+if [ -z "$CODESPACE_VSCODE_FOLDER" ]; then 
+    take_dir_ownership $(whoami)  ${CODESPACE_VSCODE_FOLDER}
+fi
