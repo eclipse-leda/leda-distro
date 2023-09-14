@@ -62,5 +62,5 @@ azure-mount "azure-downloads-cache" "downloads"
 # possibly related to: https://github.com/orgs/community/discussions/26026
 # which causes some recipes to fail to build, due to wrong permissions (e.g. gpsd)
 if [ -n "$CODESPACE_VSCODE_FOLDER" ]; then 
-    take_dir_ownership $(whoami)  ${CODESPACE_VSCODE_FOLDER}
+    take_workspace_ownership $(whoami)  ${CODESPACE_VSCODE_FOLDER}
 fi
