@@ -26,7 +26,7 @@ jobs:
     name: "qemux86_64"
     # Eclipse Foundation: Label for large GitHub Build runners (paid)
     # See Eclipse HelpDesk #1915
-    runs-on: ["LargeRunner_16cores_64GB_600GB", "self-hosted"]
+    runs-on: "LargeRunner_16cores_64GB_600GB"
 #    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
 #    container: debian:bullseye
