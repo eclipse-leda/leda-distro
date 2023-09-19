@@ -20,11 +20,13 @@ on:
 jobs:
   call-build:
     name: Build
+    if: github.repository_owner == 'eclipse-leda'
     uses: ./.github/workflows/build.yml
     secrets: inherit
 
   upload-assets:
     name: Upload assets
+    if: github.repository_owner == 'eclipse-leda'
     runs-on: ubuntu-22.04
     needs: [ call-build ]
     permissions:
