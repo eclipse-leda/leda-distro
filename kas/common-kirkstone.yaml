@@ -66,8 +66,8 @@ repos:
     url: https://github.com/kraj/meta-clang
     refspec: kirkstone
   meta-leda:
-    url: "https://github.com/SoftwareDefinedVehicle/meta-leda-fork"
-    refspec: wasmedge
+    url: "https://github.com/eclipse-leda/meta-leda"
+    refspec: main
     layers:
       meta-leda-bsp:
       meta-leda-components:
