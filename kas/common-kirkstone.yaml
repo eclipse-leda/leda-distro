@@ -62,6 +62,9 @@ repos:
   meta-spdxscanner:
     url: https://git.yoctoproject.org/meta-spdxscanner
     refspec: kirkstone
+  meta-clang:
+    url: https://github.com/kraj/meta-clang
+    refspec: kirkstone
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     refspec: main

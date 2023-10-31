@@ -52,6 +52,7 @@ meta-leda/
 meta-virtualization/
 poky/
 meta-lts-mixins/
+meta-clang/
 
 # Remote sstate-cache on Azure Storage
 azure-sstate-cache/
