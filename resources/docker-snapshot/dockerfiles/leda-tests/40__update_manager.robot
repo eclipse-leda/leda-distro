@@ -24,13 +24,12 @@ Test Timeout       10 minutes
 ${topic_pub_desiredstate}                 vehicleupdate/desiredstate
 ${desired_state_no_containers_filename}   robot-resources/desired-state-no-containers.json
 ${desired_state_filename}                 robot-resources/desired-state.json
-@{all_containers}         sua    feedercan    seatservice-example    databroker    hvacservice-example    cloudconnector
 @{containers}             sua    feedercan    seatservice-example    databroker    hvacservice-example
 
 *** Test Cases ***
 Containers are running
   [Documentation]    Containers are running upon system start
-  Check containers presence    ${broker.uri}  ${broker.port}  @{all_containers}
+  Check containers presence    ${broker.uri}  ${broker.port}  @{containers}
   Expected containers status   ${broker.uri}  ${broker.port}  Running  @{containers}
 
 Desired state to stop containers
