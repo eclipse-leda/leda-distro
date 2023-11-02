@@ -37,11 +37,6 @@ SDV Containers Exist
     ...     seatservice-example
     ...     hvacservice-example
 
-SDV Unconfigured Containers
-    [Documentation]          Created in any state
-    Container Any State
-    ...     cloudconnector
-
 *** Keywords ***
 Verify Leda Containers
     [Documentation]          Verify if container is created and running
