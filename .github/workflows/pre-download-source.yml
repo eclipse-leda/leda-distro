@@ -18,6 +18,9 @@ name: Pre-download sources
 on:
   workflow_dispatch:
   workflow_call:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 2 * * *'
 
 jobs:
   pre-download-all:
