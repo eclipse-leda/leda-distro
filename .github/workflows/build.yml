@@ -82,7 +82,7 @@ jobs:
           ovmf.qcow2
         time xz -v -8 -T0 ${ARC}
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-qemu-x86_64.tar.xz
         if-no-files-found: error
@@ -91,7 +91,7 @@ jobs:
       run: |
         tar --create --gzip --file eclipse-leda-sbom-qemux86_64.tar.gz -C ./build/tmp/deploy/spdx/qemux86-64/ .
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-sbom-qemux86_64.tar.gz
         if-no-files-found: error
@@ -100,7 +100,7 @@ jobs:
       run: |
         tar --create --gzip --file eclipse-leda-sources-qemux86_64.tar.gz -C ./build/tmp/deploy/sources/ .
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-sources-qemux86_64.tar.gz
         if-no-files-found: error
@@ -173,7 +173,7 @@ jobs:
           u-boot.bin
         time xz -v -8 -T0 ${ARC}
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-qemu-arm64.tar.xz
         if-no-files-found: error
@@ -182,7 +182,7 @@ jobs:
       run: |
         tar --create --gzip --file eclipse-leda-sbom-qemuarm64.tar.gz -C ./build/tmp/deploy/spdx/qemuarm64/ .
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-sbom-qemuarm64.tar.gz
         if-no-files-found: error
@@ -191,7 +191,7 @@ jobs:
       run: |
         tar --create --gzip --file eclipse-leda-sources-qemuarm64.tar.gz -C ./build/tmp/deploy/sources/ .
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-sources-qemuarm64.tar.gz
         if-no-files-found: error
@@ -259,7 +259,7 @@ jobs:
           sdv-rauc-bundle-rescue-raspberrypi4-64.raucb
         time xz -v -1 -T0 ${ARC}
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-raspberrypi.tar.xz
         if-no-files-found: error
@@ -268,7 +268,7 @@ jobs:
       run: |
         tar --create --gzip --file eclipse-leda-sbom-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/spdx/raspberrypi4-64/ .
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-sbom-raspberrypi4-64.tar.gz
         if-no-files-found: error
@@ -277,7 +277,7 @@ jobs:
       run: |
         tar --create --gzip --file eclipse-leda-sources-raspberrypi4-64.tar.gz -C ./build/tmp/deploy/sources/ .
     - name: Upload files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with: 
         name: eclipse-leda-sources-raspberrypi4-64.tar.gz
         if-no-files-found: error
