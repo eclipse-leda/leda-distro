@@ -47,6 +47,9 @@ jobs:
       with:
         path: build/sstate-cache
         key: bb-sstate-cache-qemux86-64
+    # See https://bugs.launchpad.net/ubuntu/+source/apparmor/+bug/2056555
+    - name: Apply fix for Bitbake on Ubuntu 24
+      run: sudo apparmor_parser -R /etc/apparmor.d/unprivileged_userns
     - name: Build sdv-image-all
       env:
         KAS_MACHINE: qemux86-64
