@@ -5,6 +5,4 @@
 .vscode
 .workers
 bitbake
-azure-sstate-cache
-azure-downloads-cache
 tmp

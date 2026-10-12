@@ -57,12 +57,8 @@ Pre-Requisites:
     # Respectively, for other machines:
     kas shell kas/leda-raspberrypi4-64.yaml:kas/generate-mirror.yaml -c 'bitbake --runall=fetch sdv-image-all'
 
-    # Upload the downloads folder to the remote mirror.
-    # In this example, an Azure Blob Storage is used
-    mkdir /tmp/downloads
-    export TEMPD=$(mktemp -d)
-    blobfuse2 --disable-version-check mount /tmp/downloads --use-https=true --tmp-path=${TEMPD} --container-name=downloads
-    cp -v build/downloads/*.tar.gz /tmp/downloads/
+    # Upload the downloads folder to your remote mirror or webserver
+    cp -v build/downloads/*.tar.gz /var/www/
 
 # Generation of SBOM
 

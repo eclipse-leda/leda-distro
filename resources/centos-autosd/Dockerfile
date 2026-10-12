@@ -14,7 +14,7 @@
 # ********************************************************************************/
 #
 
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC
@@ -39,13 +39,7 @@ RUN apt-get install -y --no-install-recommends \
     xz-utils \
     wget
 
-# Debian Bullseye contains QEMU 5.2
-# RUN apt-get install -y --no-install-recommends qemu-system-x86
-
-# Debian Bullseye-Backports contains QEMU 7.2
-RUN echo "deb http://deb.debian.org/debian bullseye-backports main" > /etc/apt/sources.list.d/debian-bullseye-backports.list
-RUN apt-get update
-RUN apt-get install -y -t bullseye-backports qemu-system-x86
+RUN apt-get install -y --no-install-recommends qemu-system-x86
 
 WORKDIR /root
 

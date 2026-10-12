@@ -42,7 +42,7 @@
 # exits once qemu exits and it's the pid1 for the container.
 # 
 
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC

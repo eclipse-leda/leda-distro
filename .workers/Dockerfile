@@ -14,13 +14,12 @@
 # Custom BitBake build container for Eclipse Leda:
 # - preinstalled: BitBake and its dependencies
 # - preinstalled: siemens/kas
-# - preinstalled: blobfuse2 - for mounting remote sstate-cache and downloads mirrors
 #
 # Intended to be used by GitHub Runners as custom container images.
 #
 
 # Use an environment similar to the devcontainer
-FROM debian:bullseye
+FROM debian:bookworm
 
 # Setup non-root user
 RUN groupadd -g 1001 bbuser && \
@@ -48,13 +47,6 @@ RUN apt-get install -y locales locales-all
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
-
-# Install blobfuse2 since blobfuse1 is not avaialable in MS repos for Debian 11
-RUN apt-get -y install software-properties-common \
-    && curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | apt-key add - \
-    && apt-add-repository https://packages.microsoft.com/debian/11/prod/ \
-    && apt-get -y update \
-    && apt-get -y install libfuse3-dev fuse3 blobfuse2
 
 # Install kas tool to set up Yocto build environment
 RUN pip3 install kas
