@@ -37,11 +37,22 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           path: build/
+      - name: Collect quality artifacts
+        uses: eclipse-dash/quevee@v1
+        id: quevee_manifest
+        with:
+          release_url: ${{ github.event.release.html_url }}
+          artifacts_readme: README.md
+          artifacts_testing: resources/docker-snapshot/test-docker.sh,resources/docker-snapshot/dockerfiles/leda-tests/01__base.robot
+          artifacts_documentation: https://eclipse-leda.github.io/leda/
+          artifacts_coding_guidelines: CONTRIBUTING.md
+          artifacts_release_process: .github/workflows/release.yml
       - name: Upload assets
         uses: softprops/action-gh-release@v1
         with:
           fail_on_unmatched_files: true
           files: |
+            ${{ steps.quevee_manifest.outputs.manifest_file }}
             ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-x86_64.tar.xz/eclipse-leda-qemu-x86_64.tar.xz
             ${{steps.download.outputs.download-path}}/eclipse-leda-qemu-arm64.tar.xz/eclipse-leda-qemu-arm64.tar.xz
             ${{steps.download.outputs.download-path}}/eclipse-leda-raspberrypi.tar.xz/eclipse-leda-raspberrypi.tar.xz
