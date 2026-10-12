@@ -39,7 +39,10 @@ repos:
       meta:
       meta-poky:
       meta-yocto-bsp:
-  meta-lts-mixins:
+  meta-lts-mixins_go:
+    url: "https://git.yoctoproject.org/git/meta-lts-mixins"
+    refspec: kirkstone/go
+  meta-lts-mixins_rust:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
     refspec: kirkstone/rust-1.68
   meta-rauc:
