@@ -13,7 +13,7 @@
 #
 # To run on Eclipse managed GitHub Runner, set to run on self-hosted and add a container name to the job:
 #   runs-on: self-hosted
-#   container: debian:bullseye
+#   container: debian:bookworm
 #
 name: BitBake Build
 on:
@@ -29,7 +29,7 @@ jobs:
     runs-on: "LargeRunner_16cores_64GB_600GB"
 #    runs-on: ubuntu-22.04
 #    runs-on: self-hosted
-#    container: debian:bullseye
+#    container: debian:bookworm
     continue-on-error: true
     steps:
     - uses: AutoModality/action-clean@v1
@@ -108,21 +108,13 @@ jobs:
         name: eclipse-leda-sources-qemux86_64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sources-qemux86_64.tar.gz
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/sstate-cache/'
-        extra_args: '--destination-path sstate-cache/'
-        container_name: 'yocto-sstate-cache'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-qemuarm64:
     name: "qemuarm64"
     needs: leda-qemux86_64
     runs-on: ubuntu-22.04
 #    runs-on: self-hosted
-#    container: debian:bullseye
+#    container: debian:bookworm
     continue-on-error: true
     steps:
     - uses: AutoModality/action-clean@v1
@@ -199,21 +191,13 @@ jobs:
         name: eclipse-leda-sources-qemuarm64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sources-qemuarm64.tar.gz
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/sstate-cache/'
-        extra_args: '--destination-path sstate-cache/'
-        container_name: 'yocto-sstate-cache'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-raspberrypi4-64:
     name: "raspberrypi4-64"
     runs-on: ubuntu-22.04
     needs: leda-qemuarm64
 #    runs-on: self-hosted
-#    container: debian:bullseye
+#    container: debian:bookworm
     continue-on-error: true
     steps:
     - uses: AutoModality/action-clean@v1
@@ -285,11 +269,3 @@ jobs:
         name: eclipse-leda-sources-raspberrypi4-64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sources-raspberrypi4-64.tar.gz
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/sstate-cache/'
-        extra_args: '--destination-path sstate-cache/'
-        container_name: 'yocto-sstate-cache'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}

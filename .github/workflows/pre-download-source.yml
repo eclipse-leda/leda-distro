@@ -44,10 +44,3 @@ jobs:
         rm -rf build/downloads/git2
         rm -rf build/downloads/svn
         find build/downloads -name "*.done" -exec rm -f {} \;
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/downloads/'
-        container_name: 'downloads'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}

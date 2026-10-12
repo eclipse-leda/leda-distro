@@ -13,7 +13,7 @@
 #
 # To run on Eclipse managed GitHub Runner, set to run on self-hosted and add a container name to the job:
 #   runs-on: self-hosted
-#   container: debian:bullseye
+#   container: debian:bookworm
 #
 name: BitBake Build (Self-Hosted)
 
@@ -129,14 +129,6 @@ jobs:
         name: eclipse-leda-sources-qemux86_64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sources-qemux86_64.tar.gz
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/sstate-cache/'
-        extra_args: '--destination-path sstate-cache/'
-        container_name: 'yocto-sstate-cache'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-qemuarm64:
     name: "qemuarm64"
@@ -237,14 +229,6 @@ jobs:
         name: eclipse-leda-sources-qemuarm64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sources-qemuarm64.tar.gz
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/sstate-cache/'
-        extra_args: '--destination-path sstate-cache/'
-        container_name: 'yocto-sstate-cache'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-raspberrypi4-64:
     name: "raspberrypi4-64"
@@ -340,14 +324,6 @@ jobs:
         name: eclipse-leda-sources-raspberrypi4-64.tar.gz
         if-no-files-found: error
         path: eclipse-leda-sources-raspberrypi4-64.tar.gz
-    - uses: bacongobbler/azure-blob-storage-upload@v3.0.0
-      if: github.repository_owner == 'SoftwareDefinedVehicle'
-      with:
-        source_dir: 'build/sstate-cache/'
-        extra_args: '--destination-path sstate-cache/'
-        container_name: 'yocto-sstate-cache'
-        overwrite: 'true'
-        connection_string: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
 
   leda-docker:
     name: "docker"
