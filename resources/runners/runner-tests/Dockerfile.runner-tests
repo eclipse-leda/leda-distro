@@ -15,7 +15,7 @@
 #
 # docker build --file Dockerfile.runner-tests --secret id=githubtoken,env=GITHUB_TOKEN --build-arg GITHUB_REPOSITORY=${GITHUB_REPOSITORY} ..
 #
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC

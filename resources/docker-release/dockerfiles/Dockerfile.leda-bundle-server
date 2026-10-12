@@ -15,7 +15,7 @@
 #
 
 
-FROM debian:bullseye AS builder
+FROM debian:bookworm AS builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC

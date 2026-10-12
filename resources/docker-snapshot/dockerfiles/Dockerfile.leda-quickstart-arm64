@@ -14,7 +14,7 @@
 # ********************************************************************************/
 #
 
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG TZ=Etc/UTC
