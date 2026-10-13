@@ -1,7 +1,6 @@
 # SPDX-License-Identifier: CC0-1.0
 # SPDX-FileCopyrightText: 2021 NOI Techpark <p.moser@noi.bz.it>
 
-version: '3.4'
 services:
   fossology:
     build:
