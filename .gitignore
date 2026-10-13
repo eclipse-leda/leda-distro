@@ -52,6 +52,8 @@ meta-leda/
 meta-virtualization/
 poky/
 meta-lts-mixins/
+meta-lts-mixins_go/
+meta-lts-mixins_rust/
 meta-clang/
 
 bitbake/
