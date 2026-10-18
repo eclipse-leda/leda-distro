@@ -28,8 +28,11 @@ local_conf_header:
   rauc-sign-conf: |
     RAUC_KEYRING_URI = "file://${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEYRING_FILE = "${TOPDIR}/../examples/example-ca/ca.cert.pem"
-    RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
-    RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+    RAUC_KEY_FILE = "${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
+    RAUC_CERT_FILE = "${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+  cloud-connector-certificates: |
+    CLOUDCONNECTOR_CERTIFICATE_CERTFILE = "${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+    CLOUDCONNECTOR_CERTIFICATE_KEYFILE = "${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
   buils-stats: |
     USER_CLASSES += "buildstats buildstats-summary"
 repos:
