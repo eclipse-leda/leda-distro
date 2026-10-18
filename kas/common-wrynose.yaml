@@ -24,6 +24,7 @@ local_conf_header:
     KANTO_MANIFESTS_DIR = "/data/var/containers/manifests"
     KAD_LOCK_PATH="/data/var/lib/kanto-auto-deployer/KAD.enabled"
     BLUEPRINTS_DIR = "/data/var/containers/blueprints"
+    PREFERRED_RPROVIDER_libnss-mdns ?= "avahi-libnss-mdns"
   rauc-sign-conf: |
     RAUC_KEYRING_URI = "file://${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEYRING_FILE = "${TOPDIR}/../examples/example-ca/ca.cert.pem"
@@ -32,31 +33,41 @@ local_conf_header:
   buils-stats: |
     USER_CLASSES += "buildstats buildstats-summary"
 repos:
-  poky:
-    url: "https://git.yoctoproject.org/git/poky"
-    refspec: kirkstone
+  bitbake:
+    url: https://github.com/openembedded/bitbake.git
+    tag: yocto-6.0.3
+    commit: fae9db3168dbff1b8c76fe9c6726a9687ff97514
+    layers: {}
+  openembedded-core:
+    url: https://github.com/openembedded/openembedded-core.git
+    tag: yocto-6.0.3
+    commit: ef022bf82d79015802309d14c28b13373ebe53f5
     layers:
       meta:
+  poky:
+    url: "https://git.yoctoproject.org/meta-yocto/"
+    branch: wrynose
+    layers:
       meta-poky:
       meta-yocto-bsp:
   meta-lts-mixins_go:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
-    refspec: kirkstone/go
+    refspec: wrynose/go
   meta-lts-mixins_rust:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
-    refspec: kirkstone/rust-1.68
+    refspec: wrynose/rust
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
-    refspec: kirkstone
+    refspec: wrynose
   meta-kanto:
-    url: "https://github.com/eclipse-kanto/meta-kanto.git"
-    refspec: kirkstone
+    url: "https://github.com/mikehaller/meta-kanto.git"
+    refspec: wrynose
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
-    refspec: kirkstone
+    refspec: wrynose
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    refspec: kirkstone
+    refspec: wrynose
     layers:
       meta-oe:
       meta-filesystems:
@@ -64,14 +75,16 @@ repos:
       meta-networking:
   meta-spdxscanner:
     url: https://git.yoctoproject.org/meta-spdxscanner
-    refspec: kirkstone
+    refspec: wrynose
   meta-clang:
     url: https://github.com/kraj/meta-clang
-    refspec: kirkstone
+    refspec: wrynose
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main
+    refspec: wrynose
     layers:
       meta-leda-bsp:
       meta-leda-components:
       meta-leda-distro:
+      meta-leda-distro-container:
+      meta-leda-score:

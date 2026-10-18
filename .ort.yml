@@ -696,7 +696,7 @@ curations:
     reason: "INCORRECT"
     comment: "Dual licensing, selecting Artistic license"
     concluded_license: "Artistic-1.0"
-  - path: "kas/common-kirkstone.yaml"
+  - path: "kas/common-wrynose.yaml"
     detected_license: "GPL-2.0-only"
     concluded_license: "Apache-2.0"
     reason: "INCORRECT"

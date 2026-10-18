@@ -15,11 +15,11 @@
 header:
   version: 12
   includes:
-  - kas/common-kirkstone.yaml
+  - kas/common-wrynose.yaml
 machine: qemux86-64
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: kirkstone
+    refspec: master
     layers:
       meta-rauc-qemux86:

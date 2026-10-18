@@ -15,14 +15,14 @@
 header:
   version: 12
   includes:
-  - kas/common-kirkstone.yaml
+  - kas/common-wrynose.yaml
 machine: raspberrypi4-64
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: kirkstone
+    refspec: master
     layers:
       meta-rauc-raspberrypi:
   meta-raspberrypi:
     url: "https://git.yoctoproject.org/meta-raspberrypi"
-    refspec: kirkstone
+    refspec: wrynose

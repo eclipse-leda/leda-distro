@@ -75,12 +75,12 @@ repos:
       meta-networking:
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main
+    refspec: wrynose
     layers:
       meta-leda-backports:
       meta-leda-components:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: kirkstone
+    refspec: master
     layers:
       meta-rauc-qemux86:
