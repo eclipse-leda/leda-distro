@@ -13,7 +13,7 @@
 #
 
 # See https://compose-spec.io/
-version: "3.8"
+
 services:
   leda-vss-vspec2json:
     image: ghcr.io/eclipse-leda/leda-distro/leda-vss-vspec2json:${LEDA_VERSION_TAG:-latest}

@@ -34,7 +34,6 @@
 # docker-compose run devshell bash
 
 # See https://compose-spec.io/
-version: "3.8"
 
 #
 # Required for building from private github repos
