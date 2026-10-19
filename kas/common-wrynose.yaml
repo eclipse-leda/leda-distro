@@ -22,7 +22,7 @@ local_conf_header:
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DIR = "/data/var/containers/manifests"
-    KAD_LOCK_PATH="/data/var/lib/kanto-auto-deployer/KAD.enabled"
+    KAD_LOCK_PATH = "/data/var/lib/kanto-auto-deployer/KAD.enabled"
     BLUEPRINTS_DIR = "/data/var/containers/blueprints"
     PREFERRED_RPROVIDER_libnss-mdns ?= "avahi-libnss-mdns"
   rauc-sign-conf: |
