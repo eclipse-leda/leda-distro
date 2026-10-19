@@ -20,6 +20,7 @@ machine: qemux86-64
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: master
+    branch: master
+    commit: 4d666ae4956f1cfacbd1a844f2e1794cb7784e2a
     layers:
       meta-rauc-qemux86:

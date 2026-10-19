@@ -50,27 +50,34 @@ repos:
   poky:
     url: "https://git.yoctoproject.org/meta-yocto/"
     branch: wrynose
+    commit: 7c25b11156553145fa6b241a2d4f65d94438f804
     layers:
       meta-poky:
       meta-yocto-bsp:
   meta-lts-mixins_go:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
-    refspec: wrynose/go
+    branch: wrynose/go
+    commit: b9204473239651065c9384c39edda6020283b701
   meta-lts-mixins_rust:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
-    refspec: wrynose/rust
+    branch: wrynose/rust
+    commit: e575397f478a51fccf17b72459bb4d5c68a853c7
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
-    refspec: wrynose
+    branch: wrynose
+    commit: 38da0e5866a953e664001ba90b5edad68d68cd5d
   meta-kanto:
     url: "https://github.com/mikehaller/meta-kanto.git"
-    refspec: wrynose
+    branch: wrynose
+    commit: 171b7da7942dd7d18ef45076a99c37f838c47ed1
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
-    refspec: wrynose
+    branch: wrynose
+    commit: 2807579615834a143c8ed453b463f93f43446019
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    refspec: wrynose
+    branch: wrynose
+    commit: f28a144aa0a0ae05ca2ee91e1aef6aa05f6a12db
     layers:
       meta-oe:
       meta-filesystems:
@@ -78,13 +85,16 @@ repos:
       meta-networking:
   meta-spdxscanner:
     url: https://git.yoctoproject.org/meta-spdxscanner
-    refspec: wrynose
+    branch: wrynose
+    commit: 21bb3b3234511cc6b74bc29a7b022312355f80a9
   meta-clang:
     url: https://github.com/kraj/meta-clang
-    refspec: wrynose
+    branch: wrynose
+    commit: ef0d22f21910a0c30c967eeb17d8f209806e2d81
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: wrynose
+    branch: wrynose
+    commit: e72a7a644705b0eb7620487812a6ab78844559a6
     layers:
       meta-leda-bsp:
       meta-leda-components:

@@ -20,9 +20,11 @@ machine: raspberrypi4-64
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
-    refspec: master
+    branch: master
+    commit: 4d666ae4956f1cfacbd1a844f2e1794cb7784e2a
     layers:
       meta-rauc-raspberrypi:
   meta-raspberrypi:
     url: "https://git.yoctoproject.org/meta-raspberrypi"
-    refspec: wrynose
+    branch: wrynose
+    commit: 919588393f41b48cb6c5d832aa35e58a19b6762d
