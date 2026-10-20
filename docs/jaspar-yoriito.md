@@ -24,6 +24,7 @@ and VSPEC data must be available and usable on the image.
 
 ## Agreed scope and decisions
 
+- **Pull Request:** https://github.com/eclipse-leda/leda-distro/pull/190 (Draft)
 - **Source:** use the Leda-maintained fork at
   <https://github.com/mikehaller/meta-yoriito>, forked from
   <https://github.com/yoriito/meta-yoriito>. Leda may need to patch the layer
@@ -57,25 +58,26 @@ and VSPEC data must be available and usable on the image.
 
 ### 1. Port and add the layer
 
-- [ ] Create the `leda-integration` branch in the Leda fork, based on upstream
+- [x] Create the `leda-integration` branch in the Leda fork, based on upstream
   `main`, for Wrynose compatibility work.
-- [ ] Port the `meta-yoriito` layer from Scarthgap to Wrynose, keeping changes
+- [x] Port the `meta-yoriito` layer from Scarthgap to Wrynose, keeping changes
   isolated and suitable for contribution upstream where practical.
-- [ ] Pin the branch revision and add the layer to the appropriate KAS
-  configuration.
+- [x] Add the layer to the KAS configuration on the `leda-integration` branch
+  without a fixed commit, so active porting changes are picked up continuously.
 - [ ] Build the layer and resolve compatibility issues before adding it to an
   image.
 
 ### 2. Install and run natively
 
-- [ ] Put Leda-specific recipes and append files under
-  `meta-leda/meta-leda-components/recipes-sdv/yoriito/`.
-- [ ] Add a dedicated `packagegroup-sdv-yoriito` package group in the
-  Yoriito-specific recipe area for the server, CLI, configuration, and example
-  data. Keep Yoriito out of the generic `packagegroup-sdv-additions`.
-- [ ] Include the package group in `sdv-image-full` only; do not add it to the
+- [x] Add a dedicated `packagegroup-sdv-yoriito` package group in the
+  `meta-leda/meta-leda-components/recipes-sdv/yoriito/` for the server, CLI,
+  configuration, and example data, depending on the upstream
+  `packagegroup-yoriito-core`. Keep Yoriito out of the generic
+  `packagegroup-sdv-additions`.
+- [x] Include the package group in `sdv-image-full` only; do not add it to the
   minimal or rescue images.
-- [ ] Add a systemd unit for the server/daemon and enable it by default.
+- [ ] Use the upstream Kura systemd unit, which is enabled by default, and
+  verify it starts successfully on the image.
 - [ ] Ensure the example configuration and VSS/VSPEC data work with the
   installed server.
 - [ ] Keep the CLI tools available on the native image so users can run them
@@ -127,14 +129,40 @@ Use verified values from the built image; do not guess service names, ports,
 paths, signal names, or command syntax. Link to the upstream Yoriito
 documentation for topics beyond the Leda integration and smoke test.
 
+## Confirmed upstream details
+
+The following upstream details have been confirmed from the fork's current
+`main` revision (`972d700c31648cd6f7e707760850485fa443997d`):
+
+- `packagegroup-yoriito-core` brings in `yoriito-viss-server`,
+  `yoriito-viss-client`, `yoriito-vss`, and the Yoriito vehicle API libraries.
+- The server is provided by Kura. Its recipe installs and enables
+  `kura.service`, which starts `/usr/bin/kura` with
+  `/etc/yoriito/viss/config.yml`.
+- The VSS recipe installs `vss.json` under `/etc/yoriito/viss/` and a CSV
+  artifact under `/usr/share/yoriito/`.
+- The remote fork currently exposes `main`, not the planned
+  `leda-integration` branch. A local `leda-integration` branch has been
+  created from `main`; it declares Wrynose compatibility and updates recipe
+  paths to BitBake's `UNPACKDIR` layout. KAS follows that branch without a
+  commit pin so new commits are picked up continuously. The branch must be
+  published before a regular KAS checkout can use it.
+- The layer depends on `rust-bin-layer`; the current `meta-rust-bin` master
+  metadata also declares Wrynose compatibility. KAS currently follows its
+  `master` branch without a commit pin.
+- `kas build kas/leda-qemux86-64.yaml --target yoriito-vss --skip
+  repos_checkout` completed successfully against the local layer checkout.
+  Repository checkout was skipped because `leda-integration` has not yet been
+  published. A `kura` server build was also attempted but stopped while BitBake
+  fetched the full grpc Git history; the server build remains unverified.
+
 ## Open questions
 
-These technical details need to be confirmed during implementation:
+Still to be confirmed during implementation and image testing:
 
-- What are the package names and recipes provided by the upstream layer?
-- What systemd unit name and service behavior does Yoriito provide, or must
-  Leda add?
-- Which example VSS/VSPEC dataset and vehicle-signal names should be used?
+- Publish the `leda-integration` branch so KAS can fetch it during a regular
+  checkout.
+- Which example vehicle-signal names should be used?
 - What are the HTTP API and CLI ports, paths, and exact command syntax?
 - Which container runtime and Yoriito images should the later airgap phase
   support, and how should users select one deployment mode?

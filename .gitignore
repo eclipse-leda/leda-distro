@@ -49,6 +49,8 @@ meta-raspberrypi/
 meta-kanto/
 meta-spdxscanner/
 meta-leda/
+meta-rust-bin/
+meta-yoriito/
 meta-virtualization/
 poky/
 meta-lts-mixins/

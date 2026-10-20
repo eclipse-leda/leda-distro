@@ -91,6 +91,12 @@ repos:
     url: https://github.com/kraj/meta-clang
     branch: wrynose
     commit: ef0d22f21910a0c30c967eeb17d8f209806e2d81
+  meta-rust-bin:
+    url: https://github.com/rust-embedded/meta-rust-bin.git
+    branch: master
+  meta-yoriito:
+    url: https://github.com/mikehaller/meta-yoriito.git
+    branch: leda-integration
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     branch: wrynose
