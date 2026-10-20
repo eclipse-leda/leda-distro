@@ -96,7 +96,7 @@ repos:
     branch: master
   meta-yoriito:
     url: https://github.com/mikehaller/meta-yoriito.git
-    branch: refs/heads/leda-integration
+    branch: leda-integration
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     branch: jaspar-yoriito-integration

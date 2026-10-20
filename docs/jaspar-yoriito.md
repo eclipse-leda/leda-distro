@@ -80,8 +80,12 @@ and VSPEC data must be available and usable on the image.
   verify it starts successfully on the image.
 - [ ] Ensure the example configuration and VSS/VSPEC data work with the
   installed server.
-- [ ] Keep the CLI tools available on the native image so users can run them
-  directly.
+- [x] Add the upstream `vshot` VISS CLI/TUI through a Leda recipe and install
+  it with the Yoriito package group.
+- [x] Build `sdv-image-full` and verify the `vshot` help output using the
+  target Python environment.
+- [ ] Exercise `vshot` against the running Kura service to verify signal
+  reads, writes, subscriptions, and the interactive TUI.
 
 ### 3. Verify the first user workflow
 
@@ -140,6 +144,16 @@ The following upstream details have been confirmed from the Yoriito fork:
   `/etc/yoriito/viss/config.yml`.
 - The VSS recipe installs `vss.json` under `/etc/yoriito/viss/` and a CSV
   artifact under `/usr/share/yoriito/`.
+- Leda's `vshot` recipe builds the Python client from the same Kura revision
+  used by the upstream recipes. It installs a `vshot` command with
+  `get-current`, `get-target`, `set-current`, `set-target`, subscription, and
+  unsubscription subcommands. `vshot -i` starts its command REPL, and
+  `vshot tui` starts the interactive terminal UI. The client source defaults
+  to `localhost` and ports `50052`/`50053`.
+- The QEMU full-image build includes `vshot`; its CLI help was smoke-tested
+  against the target rootfs. The recipe carries a small Python 3.14
+  compatibility patch for `distutils.util.strtobool`, which was removed from
+  the standard library.
 - The remote `leda-integration` branch is at
   `da3825239bdae9d4bdec6da69959a9ac7a040a85`; the local and remote branches
   point to the same commit. The Wrynose port declares compatibility and
@@ -173,6 +187,8 @@ The following upstream details have been confirmed from the Yoriito fork:
 Still to be confirmed during implementation and image testing:
 
 - Which example vehicle-signal names should be used?
-- What are the HTTP API and CLI ports, paths, and exact command syntax?
+- Do the Vshot default ports match the deployed Kura configuration, and do
+  its read/write/subscribe commands work against the running service?
+- What are the HTTP API ports and paths?
 - Which container runtime and Yoriito images should the later airgap phase
   support, and how should users select one deployment mode?
