@@ -99,8 +99,7 @@ repos:
     branch: leda-integration
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    branch: wrynose
-    commit: d2f2b82b3d0db070e0b25438e155c2d3b006d22b
+    branch: jaspar-yoriito-integration
     layers:
       meta-leda-bsp:
       meta-leda-components:
