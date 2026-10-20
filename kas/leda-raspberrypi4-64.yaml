@@ -17,6 +17,11 @@ header:
   includes:
   - kas/common-wrynose.yaml
 machine: raspberrypi4-64
+local_conf_header:
+  wifi-firmware: |
+    # The Pi 4 Model B uses BCM43455; avoid RPi-Distro firmware packages,
+    # including the Synaptics-licensed BCM43456 variant.
+    MACHINE_EXTRA_RRECOMMENDS:remove = " linux-firmware-rpidistro-bcm43455 linux-firmware-rpidistro-bcm43456"
 repos:
   meta-rauc-community:
     url: "https://github.com/rauc/meta-rauc-community.git"
