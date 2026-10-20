@@ -15,5 +15,5 @@
 header:
   version: 12
   includes:
-  - kas/common-kirkstone.yaml
+  - kas/common-wrynose.yaml
 machine: qemuarm64

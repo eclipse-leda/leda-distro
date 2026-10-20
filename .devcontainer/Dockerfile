@@ -54,6 +54,8 @@ RUN /bin/bash -c "(groupadd --system kvm; gpasswd -a ${remoteUser} kvm; chown ro
 # Install kas tool to set up Yocto build environment
 # See https://pipx.pypa.io/stable/how-to/install-pipx.html
 RUN sudo apt-get -y install python3-venv
+
+USER vscode
 RUN python3 -m venv ${HOME}/.local/share/pipx-venv
 RUN ${HOME}/.local/share/pipx-venv/bin/pip -v install pipx
 RUN mkdir -p ${HOME}/.local/bin/

@@ -4,10 +4,11 @@
 
 | Version                 | Supported          |
 | ----------------------- | ------------------ |
-| Yocto 4.x (Kirkstone)   | Yes                |
+| Yocto 6.0 (Wrynose  )   | Supported          |
+| Yocto 5.x (Scarthgap)   | No                 |
+| Yocto 4.x (Kirkstone)   | EOL                |
 | Yocto 3.4 (Honister)    | EOL                |
-| Yocto 3.3               | Untested           |
-| Yocto < 3.3             | No                 |
+| Yocto <= 3.3            | No                 |
 
 
 This Eclipse Foundation Project adheres to the [Eclipse Foundation Vulnerability Reporting Policy](https://www.eclipse.org/security/policy/).

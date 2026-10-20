@@ -17,3 +17,6 @@ Please see the [Leda Documentation](https://eclipse-leda.github.io/leda/docs/bui
 4. To build for another target machine, is the other kas config files:
 
         kas build kas/leda-raspberrypi4-64.yaml
+
+See [Container workflows](./docs/containers.md) for the default runtime, deployment,
+image-build, and airgap installation paths.
