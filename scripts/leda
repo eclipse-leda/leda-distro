@@ -16,4 +16,4 @@
 # and testing on qemu
 #
 
-kas shell kas/leda-qemux86-64.yaml -c 'runqemu ovmf kvm nographic sdv-image-all'
+kas shell kas/leda-qemux86-64.yaml -c 'runqemu slirp ovmf kvm nographic sdv-image-all'

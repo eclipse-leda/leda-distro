@@ -22,41 +22,62 @@ local_conf_header:
     INHERIT:remove = " cve-check"
     INHIBIT_PACKAGE_DEBUG_SPLIT = "1"
     KANTO_MANIFESTS_DIR = "/data/var/containers/manifests"
-    KAD_LOCK_PATH="/data/var/lib/kanto-auto-deployer/KAD.enabled"
+    KAD_LOCK_PATH = "/data/var/lib/kanto-auto-deployer/KAD.enabled"
     BLUEPRINTS_DIR = "/data/var/containers/blueprints"
+    PREFERRED_RPROVIDER_libnss-mdns ?= "avahi-libnss-mdns"
   rauc-sign-conf: |
     RAUC_KEYRING_URI = "file://${TOPDIR}/../examples/example-ca/ca.cert.pem"
     RAUC_KEYRING_FILE = "${TOPDIR}/../examples/example-ca/ca.cert.pem"
-    RAUC_KEY_FILE="${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
-    RAUC_CERT_FILE="${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+    RAUC_KEY_FILE = "${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
+    RAUC_CERT_FILE = "${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+  cloud-connector-certificates: |
+    CLOUDCONNECTOR_CERTIFICATE_CERTFILE = "${TOPDIR}/../examples/example-ca/development-1.cert.pem"
+    CLOUDCONNECTOR_CERTIFICATE_KEYFILE = "${TOPDIR}/../examples/example-ca/private/development-1.key.pem"
   buils-stats: |
     USER_CLASSES += "buildstats buildstats-summary"
 repos:
-  poky:
-    url: "https://git.yoctoproject.org/git/poky"
-    refspec: kirkstone
+  bitbake:
+    url: https://github.com/openembedded/bitbake.git
+    tag: yocto-6.0.3
+    commit: fae9db3168dbff1b8c76fe9c6726a9687ff97514
+    layers: {}
+  openembedded-core:
+    url: https://github.com/openembedded/openembedded-core.git
+    tag: yocto-6.0.3
+    commit: ef022bf82d79015802309d14c28b13373ebe53f5
     layers:
       meta:
+  poky:
+    url: "https://git.yoctoproject.org/meta-yocto/"
+    branch: wrynose
+    commit: 7c25b11156553145fa6b241a2d4f65d94438f804
+    layers:
       meta-poky:
       meta-yocto-bsp:
   meta-lts-mixins_go:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
-    refspec: kirkstone/go
+    branch: wrynose/go
+    commit: b9204473239651065c9384c39edda6020283b701
   meta-lts-mixins_rust:
     url: "https://git.yoctoproject.org/git/meta-lts-mixins"
-    refspec: kirkstone/rust-1.68
+    branch: wrynose/rust
+    commit: e575397f478a51fccf17b72459bb4d5c68a853c7
   meta-rauc:
     url: "https://github.com/rauc/meta-rauc.git"
-    refspec: kirkstone
+    branch: wrynose
+    commit: 38da0e5866a953e664001ba90b5edad68d68cd5d
   meta-kanto:
-    url: "https://github.com/eclipse-kanto/meta-kanto.git"
-    refspec: kirkstone
+    url: "https://github.com/mikehaller/meta-kanto.git"
+    branch: wrynose
+    commit: 171b7da7942dd7d18ef45076a99c37f838c47ed1
   meta-virtualization:
     url: "https://git.yoctoproject.org/meta-virtualization"
-    refspec: kirkstone
+    branch: wrynose
+    commit: 2807579615834a143c8ed453b463f93f43446019
   meta-openembedded:
     url: "https://git.openembedded.org/meta-openembedded"
-    refspec: kirkstone
+    branch: wrynose
+    commit: f28a144aa0a0ae05ca2ee91e1aef6aa05f6a12db
     layers:
       meta-oe:
       meta-filesystems:
@@ -64,14 +85,19 @@ repos:
       meta-networking:
   meta-spdxscanner:
     url: https://git.yoctoproject.org/meta-spdxscanner
-    refspec: kirkstone
+    branch: wrynose
+    commit: 21bb3b3234511cc6b74bc29a7b022312355f80a9
   meta-clang:
     url: https://github.com/kraj/meta-clang
-    refspec: kirkstone
+    branch: wrynose
+    commit: ef0d22f21910a0c30c967eeb17d8f209806e2d81
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    refspec: main
+    branch: wrynose
+    commit: d2f2b82b3d0db070e0b25438e155c2d3b006d22b
     layers:
       meta-leda-bsp:
       meta-leda-components:
       meta-leda-distro:
+      meta-leda-distro-container:
+      meta-leda-score:

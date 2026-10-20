@@ -42,16 +42,15 @@ Please see [Eclipse Leda Documentation](https://eclipse-leda.github.io/leda/)
 - Logging and Telemetry: CNCF's OpenTelemetry
 - Vehicle Application templates by Eclipse Velocitas
 - Vehicle Apps and Vehicle Services programming model by Eclipse Velocitas
-- Vehicle Data Broker by Eclipse Kuksa.VAL
+- Vehicle Data Broker by Eclipse Kuksa
 - Cloud Connectivity by Eclipse Kanto
 - Local Messaging by Mosquitto
 - Vehicle Signal Specification by Covesa
 
-## Roadmap
+## Usage
 
-- Integration of additional Eclipse Automotive, Eclipse SDV and Eclipse IoT components, e.g.
-  - Eclipse Backend Function Bindings (Specification for automotive cloud services)
-  - Eclipse SommR (Some/IP)
+- Build the `sdv-image-all` target (default when running `kas build kas/leda-qemux86-64.yaml)
+- Run `scripts/leda` to start QEMU
 
 # Contributing
 
