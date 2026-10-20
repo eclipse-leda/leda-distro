@@ -64,8 +64,8 @@ and VSPEC data must be available and usable on the image.
   isolated and suitable for contribution upstream where practical.
 - [x] Add the layer to the KAS configuration on the `leda-integration` branch
   without a fixed commit, so active porting changes are picked up continuously.
-- [ ] Build the layer and resolve compatibility issues before adding it to an
-  image.
+- [x] Build the Yoriito VSS and Kura components and resolve the initial
+  Wrynose compatibility issues.
 
 ### 2. Install and run natively
 
@@ -131,8 +131,7 @@ documentation for topics beyond the Leda integration and smoke test.
 
 ## Confirmed upstream details
 
-The following upstream details have been confirmed from the fork's current
-`main` revision (`972d700c31648cd6f7e707760850485fa443997d`):
+The following upstream details have been confirmed from the Yoriito fork:
 
 - `packagegroup-yoriito-core` brings in `yoriito-viss-server`,
   `yoriito-viss-client`, `yoriito-vss`, and the Yoriito vehicle API libraries.
@@ -141,27 +140,38 @@ The following upstream details have been confirmed from the fork's current
   `/etc/yoriito/viss/config.yml`.
 - The VSS recipe installs `vss.json` under `/etc/yoriito/viss/` and a CSV
   artifact under `/usr/share/yoriito/`.
-- The remote fork currently exposes `main`, not the planned
-  `leda-integration` branch. A local `leda-integration` branch has been
-  created from `main`; it declares Wrynose compatibility and updates recipe
-  paths to BitBake's `UNPACKDIR` layout. KAS follows that branch without a
-  commit pin so new commits are picked up continuously. The branch must be
-  published before a regular KAS checkout can use it.
+- The remote `leda-integration` branch is at
+  `da3825239bdae9d4bdec6da69959a9ac7a040a85`; the local and remote branches
+  point to the same commit. The Wrynose port declares compatibility and
+  updates recipes for BitBake's `UNPACKDIR` layout.
 - The layer depends on `rust-bin-layer`; the current `meta-rust-bin` master
   metadata also declares Wrynose compatibility. KAS currently follows its
   `master` branch without a commit pin.
-- `kas build kas/leda-qemux86-64.yaml --target yoriito-vss --skip
-  repos_checkout` completed successfully against the local layer checkout.
-  Repository checkout was skipped because `leda-integration` has not yet been
-  published. A `kura` server build was also attempted but stopped while BitBake
-  fetched the full grpc Git history; the server build remains unverified.
+- The initial KAS checkout failure came from an existing shallow local clone
+  whose fetch refspec tracked only `main`. KAS did not fetch the newly
+  configured branch when given the short branch name. Configuring
+  `refs/heads/leda-integration` makes KAS fetch that exact branch; this was
+  verified with `kas checkout kas/leda-qemux86-64.yaml`.
+- `kas build kas/leda-qemux86-64.yaml --target yoriito-vss` completed
+  successfully. The Kura build initially failed the `buildpaths` QA check,
+  so Leda's `kura_git.bbappend` remaps Rust source paths with
+  `--remap-path-prefix=${WORKDIR}=.`. After that change,
+  `kas build kas/leda-qemux86-64.yaml --target kura` also completed
+  successfully. The first `kura-client` build exposed a missing `<cstdint>`
+  include in the upstream `timebased_filter.h`. Leda carries a temporary
+  patch through `yoriito-common-library_git.bbappend`; BitBake's forced
+  `do_patch` task confirmed the append applies the patch. The client build
+  passed with the same header fix before the patch was moved into `meta-leda`.
+  The source fix is published on
+  [`mikehaller/yoriito-vehicle-api:fix-timebased-filter-cstdint`](https://github.com/mikehaller/yoriito-vehicle-api/tree/fix-timebased-filter-cstdint)
+  for a PR to the upstream `yoriito/vehicle-api` repository. A separate
+  layer-level patch branch is published on
+  [`mikehaller/meta-yoriito:fix-timebased-filter-header`](https://github.com/mikehaller/meta-yoriito/tree/fix-timebased-filter-header).
 
 ## Open questions
 
 Still to be confirmed during implementation and image testing:
 
-- Publish the `leda-integration` branch so KAS can fetch it during a regular
-  checkout.
 - Which example vehicle-signal names should be used?
 - What are the HTTP API and CLI ports, paths, and exact command syntax?
 - Which container runtime and Yoriito images should the later airgap phase
