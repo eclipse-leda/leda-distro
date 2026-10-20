@@ -94,7 +94,7 @@ repos:
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
     branch: wrynose
-    commit: e72a7a644705b0eb7620487812a6ab78844559a6
+    commit: d2f2b82b3d0db070e0b25438e155c2d3b006d22b
     layers:
       meta-leda-bsp:
       meta-leda-components:
