@@ -1,8 +1,11 @@
 # Yoriito Kura at runtime on Eclipse Leda
 
-- Kura binary is installed as system binary and as a systemd service unit which starts automatically at boot.
+## Installation in Leda
+
+- Kura binary is already pre-installed as system binary and as a systemd service unit which starts automatically at boot.
 - You can just start it manually and point it to a config file, the default location is `/etc/yoriito/viss/config.yml`
 
+Status of Kura systemd service:
 ```bash
 $ systemctl status kura
 * kura.service - Yoriito VISS Server: KURA
@@ -19,7 +22,13 @@ $ systemctl status kura
 Oct 20 22:44:40 leda-525400123502 systemd[1]: Started Yoriito VISS Server: KURA.
 ```
 
+Kura server version:
+```bash
+$ kura --version
+kura 0.1.0
+```
 
+Kura server command line arguments (in case you want to run it manually):
 ```bash
 $ kura --help
 Usage: kura [OPTIONS] --config-file-path <CONFIG_FILE_PATH>
@@ -44,12 +53,6 @@ Options:
   -V, --version
           Print version
 ```
-
-```bash
-$ kura --version
-kura 0.1.0
-```
-
 
 /etc/yoriito/viss/config.yml
 ```yaml
@@ -76,6 +79,8 @@ tick_resolution: 1000
         <Rest of Server Configuration Schema>
 ```
 
+Note: the server.json seems to be a schema and not meant to be for user editing.
+
 /etc/yoriito/viss/vss.json
 ```json
 {
@@ -93,3 +98,26 @@ tick_resolution: 1000
 
         <Rest of VSS JSON>
 ```
+
+Note: The `vss.json` files canbe generated using the vspec2json.py tool from COVESA vss-tools.
+
+## vshot - the client cli
+
+In the [Yoriito tutorial](https://docs.yoriito.dev/tutorials/07_develop_pal/07_develop_pal/),
+you can find how to use vshot to change some vehicle signal values in Kura:
+
+```
+$ vshot tui                           # Use TUI mode
+$ vshot -i                            # Use interactive mode
+$ vshot get-current Vehicle.Speed     # Get the current value of Vehicle.Speed
+$ vshot set-current Vehicle.Speed 100 # Set the current value of Vehicle.Speed to 100
+```
+
+The custom PAL layer (see Yoriito tutorial) will then translate between phyiscal CAN-Bus signals and VSS values.
+
+In Eclipse Kuksa, the PAL layer is called "provider api", where customers are expected to implement their own signal providers (or feeders)
+and connect them to Kuksa Databroker.
+
+`vshot` in Eclipse Leda on qemu:
+
+- 
