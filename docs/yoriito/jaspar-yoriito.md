@@ -29,9 +29,9 @@ and VSPEC data must be available and usable on the image.
   <https://github.com/mikehaller/meta-yoriito>, forked from
   <https://github.com/yoriito/meta-yoriito>. Leda may need to patch the layer
   to support its current Yocto release.
-- **Fork branch:** create `leda-integration` based on upstream `main` for the
-  Wrynose compatibility work; pin the KAS layer to that branch's resulting
-  revision.
+- **Fork branch:** use `leda-integration` based on upstream `main` for the
+  Wrynose compatibility work; follow the branch without a fixed revision
+  during active integration.
 - **Yocto release:** target Wrynose, which is the release currently used by
   this repository. The upstream layer currently supports Scarthgap.
 - **First target:** QEMU x86-64.
@@ -76,54 +76,135 @@ and VSPEC data must be available and usable on the image.
   `packagegroup-sdv-additions`.
 - [x] Include the package group in `sdv-image-full` only; do not add it to the
   minimal or rescue images.
-- [ ] Use the upstream Kura systemd unit, which is enabled by default, and
+- [x] Use the upstream Kura systemd unit, which is enabled by default, and
   verify it starts successfully on the image.
-- [ ] Ensure the example configuration and VSS/VSPEC data work with the
+- [x] Ensure the example configuration and VSS/VSPEC data work with the
   installed server.
 - [x] Add the upstream `vshot` VISS CLI/TUI through a Leda recipe and install
   it with the Yoriito package group.
 - [x] Build `sdv-image-full` and verify the `vshot` help output using the
   target Python environment.
-- [ ] Exercise `vshot` against the running Kura service to verify signal
+- [x] Exercise `vshot` against the running Kura service to verify signal
   reads, writes, subscriptions, and the interactive TUI.
 
 ### 3. Verify the first user workflow
 
-- [ ] Build `sdv-image-all` for `leda-qemux86-64` using the repository's KAS
+- [x] Build `sdv-image-all` for `leda-qemux86-64` using the repository's KAS
   workflow. This aggregate target also builds the full image containing
   Yoriito.
-- [ ] Start the image with `scripts/leda`.
-- [ ] Verify the systemd unit is enabled, starts at boot, and reports a healthy
+- [x] Start the image with `scripts/leda`.
+- [x] Verify the systemd unit is enabled, starts at boot, and reports a healthy
   running service.
-- [ ] Verify with the simplest working `curl` request, from the host or guest,
-  that the HTTP API is reachable and responds as expected.
-- [ ] Exercise the Yoriito CLI to query, set, get, and subscribe to example
+- [x] Verify with the simplest working `curl` request, from the host or guest,
+  that the HTTP API is reachable and responds as expected. Note: tested with "vshot" instead of curl.
+- [x] Exercise the Yoriito CLI to query, set, get, and subscribe to example
   signals, recording the exact commands and expected output for the Usage
-  section.
-- [ ] Plan a follow-up `sdv-health` check in the separate `leda-utils`
+  section. Note: Used "vshot".
+- [x] Plan a follow-up `sdv-health` check in the separate `leda-utils`
   repository so service/API availability is covered by the Leda health check.
 
 ### 4. Add containerized deployment (later phase)
 
-- [ ] Decide which Yoriito server components should run in containers and how
+- [x] Decide which Yoriito server components should run in containers and how
   users select either the native or containerized deployment. The deployments
   are expected to be alternatives, not active side-by-side in one image.
-- [ ] Add the required images to Leda's airgap container workflow so they are
+- [x] Add the required images to Leda's airgap container workflow so they are
   available from the data partition.
-- [ ] Decide whether to extend
+- [x] Decide whether to extend
   `packagegroup-sdv-airgap-containers` and
   `packagegroup-sdv-additions`, or introduce a separate package group.
-- [ ] Document how to select, start, inspect, and troubleshoot the
+- [x] Document how to select, start, inspect, and troubleshoot the
   containerized deployment.
+- [ ] Verify container-mode reads, writes, subscriptions, and TUI operation
+  on the other supported machines (QEMU ARM64 and Raspberry Pi).
 
-## Usage guide to complete after implementation
+## Usage guide
+
+See [Yoriito Kura at runtime on Eclipse Leda](jaspar-yoriito-runtime.md) for
+the tested `Vehicle.Speed` read/write example, source-verified subscription
+syntax, service management, ports, installed commands, and troubleshooting.
+Runtime reads, writes, subscriptions, and TUI operation have been confirmed
+by the maintainer on QEMU; no HTTP endpoint has been verified or added.
+
+### Health-check follow-up for `leda-utils`
+
+Implement this in the separate `leda-utils` repository, then update the
+`leda-utils_git.bb` source revision in `meta-leda` after upstream review:
+
+1. Gate the Yoriito section on its installation so minimal/rescue images
+   without Yoriito remain healthy. Missing `vshot` when Yoriito is selected
+   must be reported as a failure, not skipped.
+2. For native mode, check `kura.service` with the existing service-check
+   helper. For container mode, check the Kanto `kura` container instead;
+   a deliberately disabled native service is not a container-mode failure.
+3. Check both loopback gRPC listeners, `50052` and `50053`. Port checks alone
+   are diagnostics, not proof of a working VISS API.
+4. Run `vshot get-current Vehicle.Speed` with a bounded timeout (for example,
+   5 seconds), capture its exit status and stderr, and require the expected
+   `Vehicle.Speed` path in the response. Exit status alone is insufficient
+   to establish that the response contains the requested signal. An unset
+   datapoint is valid.
+5. Report timeout, connection failure, missing command, invalid response,
+   or failed service/container explicitly through the existing health output.
+   Do not write signal values, start services, or create a persistent
+   subscription as part of a health check.
+6. Cover valid/unset responses, empty output with exit status zero, RPC
+   errors, timeout, either missing listener, native-service failure, and
+   the not-installed and container-mode cases with mocked commands.
+
+This is a planned upstream change, not an installed health check. The pinned
+health script currently checks services, sockets, and containers but has no
+Yoriito API probe.
+
+### Container implementation constraints
+
+The requested scope is Kura only, using an enabled Kanto deployment manifest
+and the existing airgap image archive workflow. Native remains the default;
+the build-time container-mode selection prevents native service startup,
+installs the active manifest, and includes the corresponding archive on the
+data partition. Both modes retain `vshot` and the example data.
+
+Use host networking for the pinned loopback-only server and run without
+privileged mode. Package configuration and VSS data into the OCI image:
+the installed Kanto version does not expose read-only bind mounts, so do
+not grant writable host configuration mounts. Verify the container
+entry point, architecture support, license, size, and a reproducible image
+reference before adding the archive recipe; upstream's development-container
+CI is not evidence of a supported Kura runtime image.
+
+The maintainer selected building an OCI image from Leda's existing Kura
+recipe. `kas/yoriito-container.yaml` selects the alternative deployment;
+native remains the default. Dedicated `sdv-container-kura` and
+`sdv-kura-deployment` packages are installed only in the container-mode data
+image. The generic additions and airgap example package groups are unchanged.
+The Kura archive and its host-side installer are always included for this
+local-only image reference, even without the optional `airgap-containers`
+feature.
+
+Validation: the OCI/archive/descriptor packages and container-mode
+`sdv-image-all` build passed on QEMU x86-64. An isolated Docker run verified
+Kura startup and both loopback listeners. A fresh QEMU boot confirmed native
+Kura is disabled, the archive imports successfully, and Kanto auto-deploys
+the `kura` container in Running state. A second fresh QEMU boot verified a
+`vshot set-current Vehicle.Speed 123` followed by `get-current` returns a
+datapoint containing `float: 123` from the container.
+The OCI layout is about 5.5 MiB compressed; the Docker-compatible archive
+is about 13 MiB, with about 26 MiB of unpacked image content. Configuration
+checks also verified native service enablement and archive/installer
+inclusion when container mode is selected without `airgap-containers`.
+After the final rebuild, another snapshot boot repeated the read/write
+check successfully. The guest reported about 404 MiB free on `/` and
+1.9 GiB free on `/data`; the installed Kura archive occupied 12.5 MiB.
+
+### Usage documentation checklist
 
 The user-facing Usage section should document the tested Leda workflow and
 include:
 
 - how to start the server and check, restart, and stop its systemd service;
 - the installed binary and configuration/data locations;
-- the HTTP endpoint, port, and a working `curl` example;
+- the gRPC endpoints, ports, and a working `vshot` example (there is no
+  implemented HTTP controller in the pinned source);
 - the CLI tool names and exact commands to query, set, get, and subscribe to
   named example vehicle signals;
 - where service logs are available and how to retrieve them; and
@@ -182,13 +263,36 @@ The following upstream details have been confirmed from the Yoriito fork:
   layer-level patch branch is published on
   [`mikehaller/meta-yoriito:fix-timebased-filter-header`](https://github.com/mikehaller/meta-yoriito/tree/fix-timebased-filter-header).
 
+## Building containerized Yoriito
+
+You can decide whether to build the Leda image `sdv-image-all` with Yoriito Kura installed
+as native system binary (systemd service) and bake it into the disk image -- or if you want to
+deploy it at runtime (on startup) as a container.
+
+For the Leda Quickstart image, the container images are pre-installed on the data partition by default,
+to minimize startup problems when no internet is available (air-gap installation).
+
+Containers are updatable at runtime using OTA and cloud connector, or manually by editing JSON-based
+deployment manifest files and retriggering the container-management service to pull and restart the updated containers.
+
+```
+# Build and install Yoriito (Kura only) as container instead of native installation:
+kas build kas/leda-qemux86-64.yaml:kas/yoriito-container.yaml
+
+# Test it on qemu:
+kas shell kas/leda-qemux86-64.yaml:kas/yoriito-container.yaml \
+  -c 'runqemu slirp ovmf kvm nographic sdv-image-all'
+```
+
 ## Open questions
 
 Still to be confirmed during implementation and image testing:
 
-- Which example vehicle-signal names should be used?
+- Which example vehicle-signal names should be used? -> "Vehicle.Speed" is good enough
 - Do the Vshot default ports match the deployed Kura configuration, and do
   its read/write/subscribe commands work against the running service?
-- What are the HTTP API ports and paths?
+  -> Yes, works out of the box, already tested on Leda via runqemu and sdv-image-all
+- The pinned Kura source implements loopback gRPC endpoints, not an HTTP
+  controller. Use `vshot`; there is no verified HTTP URL to document.
 - Which container runtime and Yoriito images should the later airgap phase
-  support, and how should users select one deployment mode?
+  support, and how should users select one deployment mode? -> kura server as container, kanto deployment manifest prepared, enabled and auto-deployed

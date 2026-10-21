@@ -1,0 +1,6 @@
+header:
+  version: 12
+
+local_conf_header:
+  yoriito-container: |
+    LEDA_YORIITO_DEPLOYMENT = "container"

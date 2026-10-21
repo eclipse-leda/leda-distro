@@ -191,6 +191,206 @@ the appropriate `sdv-core-containers.bb` or `sdv-example-containers.bb`
 `SRC_URI`, `do_install`, and `FILES` entries. For an airgap image, include the
 matching archive and ensure the manifest uses the exact image reference/tag.
 
+## Maintain a service with native and container deployment modes
+
+Kura is the first example of a build-time choice between an enabled native
+systemd service and a Kanto-managed container built from the same application
+recipe. This is currently a **Kura-specific implementation**, not a generic
+deployment class or a runtime switch. Use it as a reference when integrating
+another service; the variable names below are the implemented interface.
+
+### Select the deployment
+
+The distro configuration defines:
+
+```bitbake
+LEDA_YORIITO_DEPLOYMENT ?= "native"
+LEDA_YORIITO_CONTAINER_REF = "localhost/leda/kura:integration"
+```
+
+`LEDA_YORIITO_DEPLOYMENT` accepts `native` or `container`. The data image rejects
+other values during parsing. The image reference is shared by the archive
+recipe and deployment descriptor, so they name exactly the same imported image.
+The `integration` tag is a local development tag, not an upstream release or
+an immutable digest; source reproducibility still depends on the application
+and layer revisions selected by the build.
+
+Users select container mode through a KAS overlay,
+[kas/yoriito-container.yaml](../kas/yoriito-container.yaml):
+
+```yaml
+header:
+  version: 12
+
+local_conf_header:
+  yoriito-container: |
+    LEDA_YORIITO_DEPLOYMENT = "container"
+```
+
+Build and launch with the same configuration:
+
+```sh
+kas build kas/leda-qemux86-64.yaml:kas/yoriito-container.yaml
+kas shell kas/leda-qemux86-64.yaml:kas/yoriito-container.yaml \
+  -c 'runqemu slirp ovmf kvm nographic sdv-image-all'
+```
+
+Omit the overlay for native mode. `scripts/leda` uses the native configuration,
+so use the explicit launch command above for container mode.
+
+### Recipes and configuration a maintainer must wire together
+
+Paths in this table are relative to the `meta-leda` layer repository:
+
+| Surface | Kura reference | Responsibility |
+| --- | --- | --- |
+| Application recipe or append | [kura_git.bbappend](../meta-leda/meta-leda-components/recipes-sdv/yoriito/kura_git.bbappend) | Reuse the upstream application build; control native service enablement. |
+| OCI image recipe | [sdv-image-kura.bb](../meta-leda/meta-leda-distro-container/recipes-sdv/images/sdv-image-kura.bb) | Assemble target packages and define the container entrypoint. |
+| Offline archive package | [sdv-container-kura.bb](../meta-leda/meta-leda-components/recipes-sdv/yoriito/sdv-container-kura.bb) | Convert the local OCI image into an importable, machine-specific archive. |
+| Deployment package and JSON | [sdv-kura-deployment.bb](../meta-leda/meta-leda-components/recipes-sdv/yoriito/sdv-kura-deployment.bb), [kura.json](../meta-leda/meta-leda-components/recipes-sdv/yoriito/files/kura.json) | Install an active Kanto descriptor using the same image reference. |
+| Host package group | [packagegroup-sdv-yoriito.bb](../meta-leda/meta-leda-components/recipes-sdv/yoriito/packagegroup-sdv-yoriito.bb) | Retain native client tools and include the archive installer in container mode. |
+| Data image selection | [sdv-image-data.bb](../meta-leda/meta-leda-distro/recipes-sdv-distro/images/sdv-image-data.bb) | Include archive and descriptor together, only in container mode; validate the selection. |
+| Distro defaults | [leda.conf](../meta-leda/meta-leda-distro/conf/distro/leda.conf) | Define deployment default and the shared image reference. |
+
+The application recipe can remain in its upstream layer. A `.bbappend` matches
+the recipe filename/version and must be covered by the layer's `BBFILES`;
+its directory need not match the upstream recipe directory.
+
+#### 1. Keep application packaging separate from host activation
+
+Do not add a second build of the application just for its container. Keep the
+binary, runtime dependencies, configuration, and systemd unit in the existing
+packages. Kura's append selects service enablement with:
+
+```bitbake
+SYSTEMD_AUTO_ENABLE:${PN} = "${@'disable' if d.getVar('LEDA_YORIITO_DEPLOYMENT') == 'container' else 'enable'}"
+```
+
+Use the package that actually owns the unit if it differs from `${PN}`.
+Disabling auto-enable is not masking the service or removing its executable:
+Kura's host binary remains installed, but must not run alongside its container.
+Clients such as `vshot` remain native in both modes.
+
+#### 2. Build a minimal OCI runtime from the application packages
+
+Kura's image recipe inherits `image image-oci` directly:
+
+```bitbake
+inherit image image-oci
+
+IMAGE_FSTYPES = "container oci"
+IMAGE_FEATURES = ""
+IMAGE_LINGUAS = ""
+IMAGE_INSTALL = "base-files base-passwd busybox kura yoriito-vss"
+NO_RECOMMENDATIONS = "1"
+IMAGE_CONTAINER_NO_DUMMY = "1"
+
+OCI_IMAGE_TAG = "integration"
+OCI_IMAGE_ENTRYPOINT = "/usr/bin/kura"
+OCI_IMAGE_CMD = "--config-file-path /etc/yoriito/viss/config.yml"
+OCI_IMAGE_WORKINGDIR = "/etc/yoriito/viss"
+OCI_IMAGE_PORTS = "50052/tcp 50053/tcp"
+OCI_IMAGE_APP_RECIPE = "kura"
+```
+
+Also provide the recipe's summary and license metadata. `IMAGE_INSTALL` names
+target packages, not recipe dependencies or host-side deployment packages.
+Include the configuration/data the application needs, and verify that the
+entrypoint stays in the foreground. `OCI_IMAGE_PORTS` is metadata; it does not
+publish ports or change the addresses on which the application listens.
+
+#### 3. Package the local image for offline import
+
+The archive recipe uses `DEPENDS = "skopeo-native"` and:
+
+```bitbake
+do_install[depends] += "sdv-image-kura:do_image_complete"
+PACKAGE_ARCH = "${MACHINE_ARCH}"
+```
+
+The explicit task dependency ensures the machine's OCI output exists before
+conversion. Kura converts the deployed layout with:
+
+```sh
+skopeo --insecure-policy copy \
+    oci:${DEPLOY_DIR_IMAGE}/sdv-image-kura-integration-oci:integration \
+    docker-archive:${B}/kura.tar:${LEDA_YORIITO_CONTAINER_REF}
+```
+
+These are BitBake task-body variables. `--insecure-policy` accepts the locally
+built unsigned image; it does not disable registry TLS. Keep the layout path
+and source tag in sync with the OCI recipe.
+
+Install the result under `${D}/var/containers/images/kura-<sha256>.tar`,
+where the hash is computed from the archive, and list it in `FILES:${PN}`.
+Kura names the destination directory through `CONTAINERS_TARGET_PATH`.
+The content-dependent filename matters: the current importer caches successful
+imports by archive basename and would skip changed content under an old name.
+
+At runtime this data-image path becomes
+`/data/var/containers/images/kura-<sha256>.tar`.
+`PREINSTALLED_CTR_IMAGES_DIR` configures the host installer to read that mounted
+directory. Do not install the archive under an extra `/data` prefix inside the
+data image.
+
+#### 4. Install the matching Kanto descriptor
+
+The deployment recipe inherits `kanto-auto-deployer`, fetches its JSON through
+`SRC_URI`, and installs it into `${D}${KANTO_MANIFESTS_LOCAL_DIR}`.
+The class defaults `KANTO_MANIFESTS_LOCAL_DIR` to `/var/containers/manifests`;
+the guest sees it under `/data/var/containers/manifests`.
+Declare the installed JSON in `FILES:${PN}`.
+
+Kura replaces the JSON's `@KURA_IMAGE@` placeholder with
+`${LEDA_YORIITO_CONTAINER_REF}` during `do_install`. A matching name/tag is
+essential: an archive alone does not deploy a container, and a descriptor
+without its local image may cause an unwanted registry pull.
+
+Choose networking, mounts, privileges, and restart policy for the application,
+not by copying another service blindly. Kura requires host networking because
+its gRPC servers bind to loopback. It uses `io.containerd.runc.v2`, runs without
+privileged mode, and bakes configuration/VSS into the image without host mounts.
+The pinned Kanto version has no read-only bind-mount field; do not assume a
+Docker option is supported by its descriptor schema.
+
+#### 5. Select both data packages and the host importer
+
+The data image appends `sdv-kura-deployment sdv-container-kura` to `IMAGE_INSTALL`
+only when `LEDA_YORIITO_DEPLOYMENT` is `container`.
+The host Yoriito package group similarly appends `airgap-container-installer`
+to `RDEPENDS:${PN}` in that mode. This is deliberately independent of the
+optional `airgap-containers` feature: a local-only image must be importable even
+when unrelated cached examples are disabled.
+
+Keep host clients in the full image, not the data partition or only inside the
+container. Do not add the new service to minimal/rescue images unintentionally.
+Kura does not modify the generic airgap package group or the existing
+core/example manifests.
+
+### Validation and mode-switching checklist
+
+- Inspect effective `SYSTEMD_AUTO_ENABLE`, package-group `RDEPENDS`, and data
+  `IMAGE_INSTALL` with `bitbake -e` for both modes. Reject invalid selections.
+- Build the application, OCI image, archive, and deployment packages, then
+  `sdv-image-all`. A successful OCI build alone does not update the boot disk.
+- Test container mode with `airgap-containers` removed as well as enabled.
+- Boot a fresh disk and verify native service disablement, successful archive
+  import, the exact image reference, and a single running Kanto deployment.
+- Exercise the actual client API, not just an open socket or container status.
+  For Kura, write and read `Vehicle.Speed` with guest-side `vshot`.
+- Check archive size, unpacked runtime storage, and free root/data space.
+  Verify each supported architecture separately.
+- Recheck native mode so the existing service and client workflow still work.
+
+Deployment selection is a build-time policy, not a live migration mechanism.
+Changing only a RAUC rootfs slot leaves persistent manifests, imported images,
+and container state on the data partition. For the current integration, boot a
+fresh disk/data partition when switching modes; disabling native auto-start
+alone does not remove a previously deployed container.
+
+See the [Kura runtime guide](jaspar-yoriito-runtime.md#container-deployment)
+for the tested build, inspection, and client commands.
+
 ## Deploy a prebuilt OCI image
 
 Use this path when the OCI image is built elsewhere and Leda only needs to
