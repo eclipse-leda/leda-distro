@@ -59,7 +59,7 @@ meta-lts-mixins/
 meta-lts-mixins_go/
 meta-lts-mixins_rust/
 meta-clang/
-
+openembedded-core/
 bitbake/
 
 # BitBake Hash Equivalence Server database
