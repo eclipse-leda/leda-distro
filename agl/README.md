@@ -113,7 +113,7 @@ DISTRO_FEATURES_BACKFILL_CONSIDERED = "sysvinit"
 VIRTUAL-RUNTIME_initscripts = "systemd-compat-units"
 
 # Add the Eclipse Kanto components
-# leda-utils, blueprint-selector, kantui, kanto-auto-deployer, sdv-databroker-cli
+# leda-utils, blueprint-selector, kantui, kanto-auto-deployer
 IMAGE_INSTALL:append = " suite-connector container-management update-manager leda-utils blueprint-selector kantui kanto-auto-deployer jq"
 ```
 

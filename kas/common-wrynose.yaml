@@ -1,5 +1,5 @@
 # /********************************************************************************
-# * Copyright (c) 2022 Contributors to the Eclipse Foundation
+# * Copyright (c) 2022-2026 Contributors to the Eclipse Foundation
 # *
 # * See the NOTICE file(s) distributed with this work for additional
 # * information regarding copyright ownership.
@@ -91,10 +91,15 @@ repos:
     url: https://github.com/kraj/meta-clang
     branch: wrynose
     commit: ef0d22f21910a0c30c967eeb17d8f209806e2d81
+  meta-rust-bin:
+    url: https://github.com/rust-embedded/meta-rust-bin.git
+    branch: master
+  meta-yoriito:
+    url: https://github.com/mikehaller/meta-yoriito.git
+    branch: leda-integration
   meta-leda:
     url: "https://github.com/eclipse-leda/meta-leda"
-    branch: wrynose
-    commit: d2f2b82b3d0db070e0b25438e155c2d3b006d22b
+    branch: jaspar-yoriito-integration
     layers:
       meta-leda-bsp:
       meta-leda-components:
